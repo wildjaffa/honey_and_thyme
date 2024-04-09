@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-const backgroundColor = Color.fromRGBO(217, 217, 217, 1);
+import '../../utils/constants.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget child;
@@ -12,6 +13,10 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height -
+        AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -23,20 +28,63 @@ class AppScaffold extends StatelessWidget {
             fontSize: 24,
           ),
         ),
-        backgroundColor: backgroundColor,
+        backgroundColor: Constants.backgroundColor,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: backgroundColor,
+      backgroundColor: Constants.backgroundColor,
       body: Center(
         child: Column(
           children: [
-            Container(
-              width: screenWidth,
-              height: 5,
-              color: Colors.black,
+            SizedBox(
+              height: 50,
+              child: Column(
+                children: [
+                  Container(
+                    width: screenWidth,
+                    height: 5,
+                    color: Constants.goldColor,
+                  ),
+                  const Row(children: [
+                    Spacer(),
+                    NavItem(title: '• Pricing •'),
+                    Spacer(),
+                    NavItem(title: '• Gallery •'),
+                    Spacer(),
+                    NavItem(title: '• Contact •'),
+                    Spacer(),
+                  ]),
+                  Container(
+                    width: screenWidth,
+                    height: 5,
+                    color: Constants.goldColor,
+                  ),
+                ],
+              ),
             ),
-            child
+            SizedBox(
+              width: screenWidth,
+              height: screenHeight - 100,
+              child: child,
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class NavItem extends StatelessWidget {
+  final String title;
+  const NavItem({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Text(
+        title,
+        style: GoogleFonts.imFellEnglishSc(
+          fontSize: 24,
+          color: Colors.black,
         ),
       ),
     );
