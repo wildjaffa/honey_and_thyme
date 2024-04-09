@@ -46,11 +46,11 @@ class AppScaffold extends StatelessWidget {
                   ),
                   const Row(children: [
                     Spacer(),
-                    NavItem(title: '• Pricing •'),
+                    NavItem(title: 'Pricing'),
                     Spacer(),
-                    NavItem(title: '• Gallery •'),
+                    NavItem(title: 'Gallery'),
                     Spacer(),
-                    NavItem(title: '• Contact •'),
+                    NavItem(title: 'Contact'),
                     Spacer(),
                   ]),
                   Container(
@@ -73,19 +73,47 @@ class AppScaffold extends StatelessWidget {
   }
 }
 
-class NavItem extends StatelessWidget {
+class NavItem extends StatefulWidget {
   final String title;
   const NavItem({super.key, required this.title});
 
   @override
+  State<NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<NavItem> {
+  bool _hovering = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Text(
-        title,
-        style: GoogleFonts.imFellEnglishSc(
-          fontSize: 24,
-          color: Colors.black,
-        ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.click,
+      child: Row(
+        children: [
+          Text(
+            '• ',
+            style: GoogleFonts.imFellEnglishSc(
+              fontSize: 24,
+              color: _hovering ? Constants.goldColor : Colors.black,
+            ),
+          ),
+          Text(
+            widget.title,
+            style: GoogleFonts.imFellEnglishSc(
+              fontSize: 24,
+              color: Colors.black,
+            ),
+          ),
+          Text(
+            ' •',
+            style: GoogleFonts.imFellEnglishSc(
+              fontSize: 24,
+              color: _hovering ? Constants.goldColor : Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
