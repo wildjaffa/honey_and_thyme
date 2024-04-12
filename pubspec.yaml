@@ -15,6 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   google_fonts: ^6.2.1
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:
