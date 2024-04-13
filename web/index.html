@@ -112,7 +112,12 @@
   </head>
   <body>
     <div id="loader-parent">
-      <img class="loader" id="hexagons" src="./assets/images/hexagons.png" />
+      <img
+        class="loader"
+        alt="Loading..."
+        id="hexagons"
+        src="./assets/images/hexagons.png"
+      />
       <img
         class="loader"
         onload="this.style.opacity=1"
@@ -129,6 +134,7 @@
           },
           onEntrypointLoaded: function (engineInitializer) {
             engineInitializer.initializeEngine().then(function (appRunner) {
+              document.getElementById("loader-parent").style.display = "none";
               appRunner.runApp();
             });
           },

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
+import '../utils/constants.dart';
 import 'home/home.dart';
-import 'sample_feature/sample_item_details_view.dart';
-import 'sample_feature/sample_item_list_view.dart';
+
 import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
@@ -57,8 +58,23 @@ class MyApp extends StatelessWidget {
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Constants.goldColor,
+              selectionColor: Constants.goldColor.withOpacity(0.3),
+              selectionHandleColor: Constants.goldColor,
+            ),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: Constants.goldColor,
+              secondary: Constants.goldColor,
+              // error:
+            ),
+            inputDecorationTheme:
+                const InputDecorationTheme(border: InputBorder.none),
+          ),
+          // darkTheme: ThemeData.dark(
+
+          // ),
           themeMode: settingsController.themeMode,
 
           // Define a function to handle named routes in order to support
@@ -70,9 +86,8 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case PricingView.route:
                     return const PricingView();
-                  case SampleItemDetailsView.routeName:
-                    return const SampleItemDetailsView();
-                  case SampleItemListView.routeName:
+                  case ContactView.route:
+                    return const ContactView();
                   default:
                     return const Home();
                 }

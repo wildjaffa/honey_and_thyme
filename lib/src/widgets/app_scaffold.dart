@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
 import '../../utils/constants.dart';
@@ -91,7 +92,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                                   ),
                                   const Spacer(),
                                   NavItem(
-                                    route: PricingView.route,
+                                    route: ContactView.route,
                                     title: 'Contact',
                                     isSelected: widget.currentScreen ==
                                         ScreensEnum.contact,

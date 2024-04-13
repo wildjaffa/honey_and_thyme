@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
@@ -79,8 +77,11 @@ class PricingView extends StatelessWidget {
 
 class PricingEntry extends StatelessWidget {
   final double width;
-  const PricingEntry(
-      {super.key, required this.pricingEntryData, required this.width});
+  const PricingEntry({
+    super.key,
+    required this.pricingEntryData,
+    required this.width,
+  });
 
   final PricingEntryData pricingEntryData;
 
@@ -89,7 +90,7 @@ class PricingEntry extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(
         minHeight: pricingEntryData.imageHeight,
-        maxWidth: 600,
+        maxWidth: width,
       ),
       padding: const EdgeInsets.only(top: 80),
       child: Row(
@@ -114,13 +115,13 @@ class PricingEntry extends StatelessWidget {
               ),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: width - pricingEntryData.imageWidth - 16,
+                  maxWidth: width - (pricingEntryData.imageWidth + 20),
                 ),
                 child: Flexible(
                   child: Text(
                     pricingEntryData.description,
                     textAlign: TextAlign.left,
-                    style: GoogleFonts.imFellEnglishSc(
+                    style: GoogleFonts.imFellEnglish(
                       fontSize: 12,
                       color: Colors.black,
                     ),
