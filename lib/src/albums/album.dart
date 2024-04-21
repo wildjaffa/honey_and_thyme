@@ -3,10 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/services/album_service.dart';
+import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:web/web.dart' as web;
 
+import '../../utils/constants.dart';
 import '../../utils/screen_size.dart';
 import '../models/album.dart';
 import '../models/enums/image_sizes.dart';
@@ -27,20 +29,20 @@ class AlbumView extends StatefulWidget {
 }
 
 class _AlbumViewState extends State<AlbumView> {
+  web.Storage localStorage = web.window.localStorage;
+
   late Future<Album?> fetchAlbum;
+  late Future googleFontsPending;
 
   static const formWidth = 300.0;
   static const double imageWidth = 333;
 
-  late Future googleFontsPending;
+  final scrollController = ScrollController();
 
   int passwordAttempts = 0;
-
-  web.Storage localStorage = web.window.localStorage;
-
   String? password;
-
   List<int> selectedImages = [];
+  double appBarPercent = 0;
 
   Future<Album?> tryGetAlbum() async {
     final album =
@@ -79,11 +81,22 @@ class _AlbumViewState extends State<AlbumView> {
     googleFontsPending = GoogleFonts.pendingFonts();
     password = localStorage.getItem('${widget.albumName}-password');
     fetchAlbum = tryGetAlbum();
+    // scrollController.addListener(() {
+    //   if (scrollController.position.pixels > 1000) return;
+    //   appBarPercent = scrollController.position.pixels * 0.001;
+    //   if (appBarPercent > 1) {
+    //     appBarPercent = 1;
+    //   }
+    //   setState(() {
+    //     appBarPercent = appBarPercent;
+    //   });
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      showAppBar: false,
       currentScreen: ScreensEnum.gallery,
       child: FutureBuilder(
           future: fetchAlbum,
@@ -117,11 +130,13 @@ class _AlbumViewState extends State<AlbumView> {
               );
             }
             final screenWidth = MediaQuery.of(context).size.width;
-            final screenHeight = ScreenSizeUtils.contentHeight(context);
+            // final contentHeight = ScreenSizeUtils.contentHeight(context);
+            final screenHeight = MediaQuery.of(context).size.height;
             final coverPhotoId =
                 album.coverImageId ?? album.images!.values!.first!.imageId!;
             final crossAxisCount = screenWidth ~/ imageWidth;
             return CustomScrollView(
+              controller: scrollController,
               physics: const ScrollPhysics(),
               slivers: [
                 SliverList(
@@ -137,6 +152,18 @@ class _AlbumViewState extends State<AlbumView> {
                     ),
                   ),
                 ])),
+                SliverAppBar(
+                  backgroundColor: Constants.grayColor,
+                  shadowColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  automaticallyImplyLeading: false,
+                  toolbarHeight: 150,
+                  pinned: true,
+                  floating: false,
+                  title: CustomAppBar(
+                      currentScreen: ScreensEnum.gallery,
+                      googleFontsPending: googleFontsPending),
+                ),
                 SliverMasonryGrid(
                   gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
