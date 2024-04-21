@@ -49,10 +49,11 @@ class _AppScaffoldState extends State<AppScaffold> {
             fontSize: 24,
           ),
         ),
-        backgroundColor: Constants.backgroundColor,
+        backgroundColor: Constants.grayColor,
+        foregroundColor: Constants.grayColor,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: Constants.backgroundColor,
+      backgroundColor: Constants.grayColor,
       body: Center(
         child: Column(
           children: [

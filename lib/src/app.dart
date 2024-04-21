@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
 import '../utils/constants.dart';
+import 'admin/admin.dart';
 import 'home/home.dart';
 
 import 'settings/settings_controller.dart';
@@ -80,14 +82,21 @@ class MyApp extends StatelessWidget {
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
+            final routeParts = routeSettings.name!.split('?');
+
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
-                switch (routeSettings.name) {
+                switch (routeParts[0]) {
                   case PricingView.route:
                     return const PricingView();
                   case ContactView.route:
                     return const ContactView();
+                  case AdminView.route:
+                    return const AdminView();
+                  case EditAlbum.route:
+                    return EditAlbum(
+                        albumId: int.parse(routeParts[1].split('=')[1]));
                   default:
                     return const Home();
                 }
