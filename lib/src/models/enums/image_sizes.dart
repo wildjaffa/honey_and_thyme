@@ -1,6 +1,8 @@
 enum ImageSizes {
-  small,
-  medium,
-  large,
   extraLarge,
+  large,
+  big,
+  medium,
+  preview,
+  small,
 }

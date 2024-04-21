@@ -21,16 +21,20 @@ class AlbumService {
     return result;
   }
 
-  static Future<Album> fetchAlbumByName(
+  static Future<Album?> fetchAlbumByName(
       String albumName, String? password) async {
-    Map<String, String>? queryParameters;
-    if (password != null) {
-      queryParameters = {'password': password};
+    try {
+      Map<String, String>? queryParameters;
+      if (password != null) {
+        queryParameters = {'password': password};
+      }
+      final result = await ApiService.getRequest<Album>(
+          'albums/$albumName', Album.fromJson,
+          queryParameters: queryParameters);
+      return result;
+    } catch (e) {
+      return null;
     }
-    final result = await ApiService.getRequest<Album>(
-        'albums/$albumName', Album.fromJson,
-        queryParameters: queryParameters);
-    return result;
   }
 
   static Future<Album> createAlbum(Album album) async {

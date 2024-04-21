@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
+import 'package:honey_and_thyme/utils/screen_size.dart';
 
 import '../../utils/constants.dart';
 import '../models/enums/screens.dart';
@@ -34,10 +35,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height -
-        AppBar().preferredSize.height -
-        MediaQuery.of(context).padding.top -
-        MediaQuery.of(context).padding.bottom;
+    final contentHeight = ScreenSizeUtils.contentHeight(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -49,6 +47,7 @@ class _AppScaffoldState extends State<AppScaffold> {
             fontSize: 24,
           ),
         ),
+        surfaceTintColor: Colors.transparent,
         backgroundColor: Constants.grayColor,
         foregroundColor: Constants.grayColor,
         automaticallyImplyLeading: false,
@@ -86,7 +85,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                                   ),
                                   const Spacer(),
                                   NavItem(
-                                    route: PricingView.route,
+                                    route: '/albums/my-cool-album',
                                     title: 'Gallery',
                                     isSelected: widget.currentScreen ==
                                         ScreensEnum.gallery,
@@ -121,7 +120,7 @@ class _AppScaffoldState extends State<AppScaffold> {
             ),
             SizedBox(
               width: screenWidth,
-              height: screenHeight - 100,
+              height: contentHeight,
               child: widget.child,
             ),
           ],

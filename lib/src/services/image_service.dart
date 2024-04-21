@@ -33,8 +33,8 @@ class ImageService {
 
   static String getImageUrl(int imageId, ImageSizes size) {
     const baseUrl = ApiService.url;
-    final size = ImageSizes.medium.index;
-    final uri = ApiService.getUri(baseUrl, 'thumb/$size/$imageId');
+    final sizeId = size.index;
+    final uri = ApiService.getUri(baseUrl, 'thumb/$sizeId/$imageId');
     return uri.toString();
   }
 

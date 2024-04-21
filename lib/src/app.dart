@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
+import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
@@ -87,6 +88,13 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
+                if (routeParts[0].startsWith('/albums')) {
+                  final albumName = routeParts[0].split('/')[1];
+                  return AlbumView(
+                    albumName: albumName,
+                  );
+                }
+
                 switch (routeParts[0]) {
                   case PricingView.route:
                     return const PricingView();
