@@ -55,7 +55,9 @@ class _AlbumViewState extends State<AlbumView> {
       }
       return null;
     }
-    localStorage.setItem('${widget.albumName}-password', password!);
+    if (password != null) {
+      localStorage.setItem('${widget.albumName}-password', password!);
+    }
     return album;
   }
 
@@ -119,29 +121,28 @@ class _AlbumViewState extends State<AlbumView> {
             final coverPhotoId =
                 album.coverImageId ?? album.images!.values!.first!.imageId!;
             final crossAxisCount = screenWidth ~/ imageWidth;
-            return SingleChildScrollView(
+            return CustomScrollView(
               physics: const ScrollPhysics(),
-              child: Column(
-                children: [
-                  CoverImage(
-                    imageUrl: ImageService.getImageUrl(
-                        coverPhotoId, ImageSizes.extraLarge),
-                    width: screenWidth,
-                    height: screenHeight,
-                    name: album.name!,
+              slivers: [
+                SliverList(
+                    delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: CoverImage(
+                      imageUrl: ImageService.getImageUrl(
+                          coverPhotoId, ImageSizes.extraLarge),
+                      width: screenWidth,
+                      height: screenHeight,
+                      name: album.name!,
+                    ),
                   ),
-                  // SizedBox(
-                  //   width: screenWidth,
-                  //   height: screenHeight,
-                  //   child:
-                  MasonryGridView.count(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: itemCount,
+                ])),
+                SliverMasonryGrid(
+                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                    itemBuilder: (context, index) {
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
                       final image = album.images!.values![index]!;
                       return FadeInImageWithPlaceHolder(
                         isSelected: selectedImages.contains(image.imageId!),
@@ -154,9 +155,10 @@ class _AlbumViewState extends State<AlbumView> {
                       );
                     },
                   ),
-                  // ),
-                ],
-              ),
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
+                ),
+              ],
             );
           }),
     );

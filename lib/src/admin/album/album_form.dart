@@ -54,7 +54,7 @@ class _AlbumFormState extends State<AlbumForm> {
     super.initState();
     if (widget.album.id == null) {
       widget.album.isPublic = false;
-      widget.album.password = null;
+      widget.album.password = generatePassword(6);
     }
   }
 
@@ -173,13 +173,14 @@ class _AlbumFormState extends State<AlbumForm> {
                     child: const Text('Submit'),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: confirmDelete,
-                    child: const Text('Delete'),
+                if (widget.album.albumId != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: confirmDelete,
+                      child: const Text('Delete'),
+                    ),
                   ),
-                ),
               ],
             ),
           ),

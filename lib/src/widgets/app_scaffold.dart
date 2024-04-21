@@ -85,7 +85,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                                   ),
                                   const Spacer(),
                                   NavItem(
-                                    route: '/albums/my-cool-album',
+                                    route: '/albums/kara-and-thomas',
                                     title: 'Gallery',
                                     isSelected: widget.currentScreen ==
                                         ScreensEnum.gallery,

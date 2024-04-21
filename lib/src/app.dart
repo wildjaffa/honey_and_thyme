@@ -84,12 +84,11 @@ class MyApp extends StatelessWidget {
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
             final routeParts = routeSettings.name!.split('?');
-
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
                 if (routeParts[0].startsWith('/albums')) {
-                  final albumName = routeParts[0].split('/')[1];
+                  final albumName = routeParts[0].replaceAll('/albums/', '');
                   return AlbumView(
                     albumName: albumName,
                   );

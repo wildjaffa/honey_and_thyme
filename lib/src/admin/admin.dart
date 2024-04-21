@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:honey_and_thyme/src/admin/album/album_form.dart';
 import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
 import 'package:honey_and_thyme/src/models/album.dart';
 import 'package:honey_and_thyme/src/models/enums/image_sizes.dart';
@@ -23,7 +24,7 @@ class AdminView extends StatefulWidget {
 }
 
 class _AdminViewState extends State<AdminView> {
-  final albums = AlbumService.fetchAlbums();
+  Future<List<Album>> albums = AlbumService.fetchAlbums();
 
   bool addingAlbum = false;
 
@@ -34,32 +35,39 @@ class _AdminViewState extends State<AdminView> {
       child: Center(
         child: SizedBox(
           width: 300,
-          child: FutureBuilder(
-            future: albums,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              return ListView.builder(
-                itemCount: snapshot.data!.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return ListTile(
-                      title: const Text('Create New Album'),
-                      onTap: () => Navigator.of(context).pushNamed(
-                        '${EditAlbum.route}',
-                        arguments: Album(),
-                      ),
+          child: addingAlbum
+              ? AlbumForm(
+                  album: Album(),
+                  onAlbumSaved: () => setState(() {
+                    addingAlbum = false;
+                    albums = AlbumService.fetchAlbums();
+                  }),
+                )
+              : FutureBuilder(
+                  future: albums,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return ListTile(
+                            title: const Text('Create New Album'),
+                            onTap: () => setState(() {
+                              addingAlbum = true;
+                            }),
+                          );
+                        }
+                        return AlbumSummary(album: snapshot.data![index - 1]);
+                      },
                     );
-                  }
-                  return AlbumSummary(album: snapshot.data![index - 1]);
-                },
-              );
-            },
-          ),
+                  },
+                ),
         ),
       ),
     );
