@@ -21,29 +21,34 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final double fontSizeMultiplier = screenWidth >= 500 ? 1 : 0.75;
     return Column(children: [
       SizedBox(
-        // duration: animationDuration,
         height: 150,
         child: Column(
           children: [
-            const SizedBox(
-              // duration: animationDuration,
+            SizedBox(
               height: 100,
               child: Center(
-                child: Text(
-                  'Honey+Thyme',
-                  // duration: animationDuration,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 60,
-                      fontFamily: 'MarchRough'),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/', (route) => route.isFirst);
+                    },
+                    child: Text(
+                      'Honey+Thyme',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: screenWidth >= 500 ? 60 : 40,
+                          fontFamily: 'MarchRough'),
+                    ),
+                  ),
                 ),
-                //child: const Text('Honey+Thyme')),
               ),
             ),
             Container(
-              // duration: animationDuration,
               width: screenWidth,
               height: separatorHeight,
               color: Constants.goldColor,
@@ -62,7 +67,7 @@ class CustomAppBar extends StatelessWidget {
                             const Spacer(),
                             NavItem(
                               animationDuration: animationDuration,
-                              appBarPercent: 1,
+                              fontSizeMultiplier: fontSizeMultiplier,
                               route: PricingView.route,
                               title: 'Pricing',
                               isSelected: currentScreen == ScreensEnum.pricing,
@@ -70,7 +75,7 @@ class CustomAppBar extends StatelessWidget {
                             const Spacer(),
                             NavItem(
                               animationDuration: animationDuration,
-                              appBarPercent: 1,
+                              fontSizeMultiplier: fontSizeMultiplier,
                               route: '/albums/kara-and-thomas',
                               title: 'Gallery',
                               isSelected: currentScreen == ScreensEnum.gallery,
@@ -78,7 +83,7 @@ class CustomAppBar extends StatelessWidget {
                             const Spacer(),
                             NavItem(
                               animationDuration: animationDuration,
-                              appBarPercent: 1,
+                              fontSizeMultiplier: fontSizeMultiplier,
                               route: ContactView.route,
                               title: 'Contact',
                               isSelected: currentScreen == ScreensEnum.contact,
@@ -86,18 +91,17 @@ class CustomAppBar extends StatelessWidget {
                             const Spacer(),
                           ],
                         )
-                      : const SizedBox(
-                          key: ValueKey('loading'),
+                      : SizedBox(
+                          key: const ValueKey('loading'),
                           child: Text(
                             ' ',
-                            style: TextStyle(fontSize: 24),
+                            style: TextStyle(fontSize: 24 * fontSizeMultiplier),
                           ),
                         ),
                 );
               },
             ),
             Container(
-              // duration: animationDuration,
               width: screenWidth,
               height: separatorHeight,
               color: Constants.goldColor,
@@ -113,7 +117,7 @@ class NavItem extends StatefulWidget {
   final String title;
   final bool isSelected;
   final String route;
-  final double appBarPercent;
+  final double fontSizeMultiplier;
   final Duration animationDuration;
 
   const NavItem(
@@ -121,7 +125,7 @@ class NavItem extends StatefulWidget {
       required this.title,
       required this.isSelected,
       required this.route,
-      required this.appBarPercent,
+      required this.fontSizeMultiplier,
       required this.animationDuration});
 
   @override
@@ -147,55 +151,24 @@ class _NavItemState extends State<NavItem> {
             Text(
               '• ',
               style: GoogleFonts.imFellEnglishSc(
-                fontSize: 24 * widget.appBarPercent,
+                fontSize: 24 * widget.fontSizeMultiplier,
                 color: _hovering ? Constants.goldColor : Colors.black,
               ),
             ),
-
             Text(
               widget.title,
               style: GoogleFonts.imFellEnglishSc(
-                fontSize: 24 * widget.appBarPercent,
+                fontSize: 24 * widget.fontSizeMultiplier,
                 color: widget.isSelected ? Constants.goldColor : Colors.black,
               ),
             ),
             Text(
               ' •',
               style: GoogleFonts.imFellEnglishSc(
-                fontSize: 24 * widget.appBarPercent,
+                fontSize: 24 * widget.fontSizeMultiplier,
                 color: _hovering ? Constants.goldColor : Colors.black,
               ),
             ),
-            // AnimatedDefaultTextStyle(
-            //   style: GoogleFonts.imFellEnglishSc(
-            //     fontSize: 24 * widget.appBarPercent,
-            //     color: _hovering ? Constants.goldColor : Colors.black,
-            //   ),
-            //   duration: widget.animationDuration,
-            //   child: const Text(
-            //     '• ',
-            //   ),
-            // ),
-            // AnimatedDefaultTextStyle(
-            //   style: GoogleFonts.imFellEnglishSc(
-            //     fontSize: 24 * widget.appBarPercent,
-            //     color: widget.isSelected ? Constants.goldColor : Colors.black,
-            //   ),
-            //   duration: widget.animationDuration,
-            //   child: Text(
-            //     widget.title,
-            //   ),
-            // ),
-            // AnimatedDefaultTextStyle(
-            //   style: GoogleFonts.imFellEnglishSc(
-            //     fontSize: 24 * widget.appBarPercent,
-            //     color: _hovering ? Constants.goldColor : Colors.black,
-            //   ),
-            //   duration: widget.animationDuration,
-            //   child: const Text(
-            //     ' •',
-            //   ),
-            // ),
           ],
         ),
       ),

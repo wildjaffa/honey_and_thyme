@@ -68,6 +68,33 @@ class _EditAlbumState extends State<EditAlbum> {
     });
   }
 
+  Future<void> confirmDeleteImages() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Album'),
+          content: const Text('Are you sure you want to delete this album?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await deleteSelectedImages();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> deleteSelectedImages() async {
     try {
       final awaitedAlbum = await album;

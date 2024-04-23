@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
 
                 switch (routeParts[0]) {
                   case PricingView.route:
-                    return const PricingView();
+                    return PricingView();
                   case ContactView.route:
                     return const ContactView();
                   case AdminView.route:
@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
                     return EditAlbum(
                         albumId: int.parse(routeParts[1].split('=')[1]));
                   default:
-                    return const Home();
+                    return Home();
                 }
               },
             );

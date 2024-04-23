@@ -37,25 +37,23 @@ class _AppScaffoldState extends State<AppScaffold> {
     final contentHeight = ScreenSizeUtils.contentHeight(context);
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        toolbarHeight: widget.showAppBar ? 150 : 0,
-        title: widget.showAppBar
-            ? CustomAppBar(
+      backgroundColor: Constants.grayColor,
+      body: Column(
+        children: [
+          if (widget.showAppBar)
+            SizedBox(
+              height: 150,
+              child: CustomAppBar(
                 currentScreen: widget.currentScreen,
                 googleFontsPending: googleFontsPending,
-              )
-            : null,
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Constants.grayColor,
-        foregroundColor: Constants.grayColor,
-        automaticallyImplyLeading: false,
-      ),
-      backgroundColor: Constants.grayColor,
-      body: SizedBox(
-        width: screenWidth,
-        height: widget.showAppBar ? contentHeight : screenHeight,
-        child: widget.child,
+              ),
+            ),
+          SizedBox(
+            width: screenWidth,
+            height: widget.showAppBar ? contentHeight : screenHeight,
+            child: widget.child,
+          ),
+        ],
       ),
     );
   }
