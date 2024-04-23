@@ -22,37 +22,43 @@ class PricingView extends StatelessWidget {
   // need to know the end width we want
   final List<PricingEntryData> pricingEntries = [
     PricingEntryData(
-        title: 'The Mini - \$50',
-        description: '5 minutes with unlimited edited images back. \n'
-            'Up to 5 people. Message for pricing for additional people',
-        imageId: 134,
-        imageSize: const Size(200, 0)),
+      title: 'The Mini - \$50',
+      description: '5 minutes with unlimited edited images back. \n'
+          'Up to 5 people. Message for pricing for additional people',
+      imageId: 134,
+      imageWidth: 400,
+    ),
     PricingEntryData(
-        title: 'The Half - \$75',
-        description: '30 minutes with unlimited edited images back. '
-            'Up to 5 people. Message for pricing for additional people',
-        imageId: 136,
-        imageSize: const Size(100, 0)),
+      title: 'The Half - \$75',
+      description: '30 minutes with unlimited edited images back. '
+          'Up to 5 people. Message for pricing for additional people',
+      imageId: 136,
+      imageWidth: 200,
+    ),
     PricingEntryData(
-        title: 'The Full - \$100',
-        description: '60 minutes with unlimited edited images back. '
-            'Up to 5 people. '
-            'Message for pricing for additional people.',
-        imageId: 135,
-        imageSize: const Size(200, 0)),
+      title: 'The Full - \$100',
+      description: '60 minutes with unlimited edited images back. '
+          'Up to 5 people. '
+          'Message for pricing for additional people.',
+      imageId: 135,
+      imageWidth: 400,
+    ),
     PricingEntryData(
-        title: 'The Double - \$200',
-        description: '120 minutes with unlimited edited images back. '
-            'Up to 5 people. Message for pricing for additional people.',
-        imageId: 137,
-        imageSize: const Size(100, 0)),
+      title: 'The Double - \$200',
+      description: '120 minutes with unlimited edited images back. '
+          'Up to 5 people. Message for pricing for additional people.',
+      imageId: 137,
+      imageWidth: 200,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+    var multiplier = 0.5;
     if (screenWidth > 600) {
       screenWidth = 600;
+      multiplier = 1.0;
     }
     return AppScaffold(
       currentScreen: ScreensEnum.pricing,
@@ -69,30 +75,23 @@ class PricingView extends StatelessWidget {
                 child: Text('Error loading pricing page'),
               );
             }
-            var multiplier = 1.0;
-            if (screenWidth > 600) {
-              multiplier = 2.0;
-            }
-            for (var pricingEntry in pricingEntries) {
-              final image = snapshot.data!.images!.values!.firstWhere(
-                (element) => element!.imageId == pricingEntry.imageId,
-              );
-              pricingEntry.imageSize = ImageUtils.calculateImageSize(
-                  aspectRatio: image!.metaData!.aspectRatio!,
-                  imageWidth: pricingEntry.imageSize!.width * multiplier);
-            }
+
             return ListView.builder(
               shrinkWrap: true,
               itemCount: pricingEntries.length,
               itemBuilder: (context, index) {
                 final pricingEntry = pricingEntries[index];
-                return UnconstrainedBox(
-                  child: SizedBox(
+                final image = snapshot.data!.images!.values!.firstWhere(
+                  (element) => element!.imageId == pricingEntry.imageId,
+                );
+                return SizedBox(
+                  width: screenWidth,
+                  child: PricingEntry(
                     width: screenWidth,
-                    child: PricingEntry(
-                      width: screenWidth,
-                      pricingEntryData: pricingEntry,
-                    ),
+                    pricingEntryData: pricingEntry,
+                    imageSize: ImageUtils.calculateImageSize(
+                        aspectRatio: image!.metaData!.aspectRatio!,
+                        imageWidth: pricingEntry.imageWidth * multiplier),
                   ),
                 );
               },
@@ -104,36 +103,38 @@ class PricingView extends StatelessWidget {
 
 class PricingEntry extends StatelessWidget {
   final double width;
-  const PricingEntry({
-    super.key,
-    required this.pricingEntryData,
-    required this.width,
-  });
+  final Size imageSize;
+  const PricingEntry(
+      {super.key,
+      required this.pricingEntryData,
+      required this.width,
+      required this.imageSize});
 
   final PricingEntryData pricingEntryData;
 
   @override
   Widget build(BuildContext context) {
-    print(pricingEntryData.imageSize!.height);
     return Container(
       constraints: BoxConstraints(
-        minHeight: pricingEntryData.imageSize!.height,
+        minHeight: imageSize.height,
         maxWidth: width,
       ),
       padding: const EdgeInsets.only(top: 80),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0, left: 8),
             child: FadeInImage.memoryNetwork(
-              height: pricingEntryData.imageSize!.height,
-              width: pricingEntryData.imageSize!.width,
+              height: imageSize.height,
+              width: imageSize.width,
               placeholder: kTransparentImage,
               image: ImageService.getImageUrl(
-                  pricingEntryData.imageId, ImageSizes.medium, null),
+                  pricingEntryData.imageId, ImageSizes.large, null),
             ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 pricingEntryData.title,
@@ -141,19 +142,16 @@ class PricingEntry extends StatelessWidget {
                   fontSize: 18,
                   color: Colors.black,
                 ),
+                textAlign: TextAlign.left,
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: width - (pricingEntryData.imageSize!.width + 30),
-                ),
-                child: Flexible(
-                  child: Text(
-                    pricingEntryData.description,
-                    textAlign: TextAlign.left,
-                    style: GoogleFonts.imFellEnglish(
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
+              SizedBox(
+                width: width - (imageSize.width + 30),
+                child: Text(
+                  pricingEntryData.description,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.imFellEnglish(
+                    fontSize: 12,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -169,12 +167,12 @@ class PricingEntryData {
   String title;
   String description;
   int imageId;
-  Size? imageSize;
+  double imageWidth;
 
   PricingEntryData({
     required this.title,
     required this.description,
     required this.imageId,
-    this.imageSize,
+    required this.imageWidth,
   });
 }
