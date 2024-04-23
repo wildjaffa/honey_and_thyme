@@ -1,8 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:honey_and_thyme/src/models/bool_result.dart';
+import 'package:honey_and_thyme/src/models/download_request_config.dart';
+import 'package:honey_and_thyme/src/models/download_request_response.dart';
+import 'package:honey_and_thyme/src/models/enums/download_image_type.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../models/download_request.dart';
+import '../models/enums/download_image_sizes.dart';
 import '../models/enums/image_sizes.dart';
 import '../models/form_file.dart';
 import '../models/image.dart';
@@ -31,10 +36,12 @@ class ImageService {
     return image;
   }
 
-  static String getImageUrl(int imageId, ImageSizes size) {
+  static String getImageUrl(int imageId, ImageSizes size, String? password) {
     const baseUrl = ApiService.url;
     final sizeId = size.index;
-    final uri = ApiService.getUri(baseUrl, 'thumb/$sizeId/$imageId');
+    final uri = ApiService.getUri(baseUrl, 'thumb/$sizeId/$imageId', {
+      if (password != null) 'password': password,
+    });
     return uri.toString();
   }
 
@@ -42,5 +49,27 @@ class ImageService {
     final result =
         await ApiService.deleteRequest('images/$imageId', BoolResult.fromJson);
     return result;
+  }
+
+  static Future<Uri> getImageDownloadUrl(List<int> imageIds,
+      DownloadImageSizes downloadSize, String? password) async {
+    final DownloadRequestConfig config = DownloadRequestConfig(
+      exportConfigId: 0,
+      keepFolders: false,
+      name: 'Download',
+      watermarkText: null,
+      size: downloadSize.index,
+      type: DownloadImageType.download.index,
+    );
+    final downloadImageRequest = DownloadImageRequest(
+      imageIds: imageIds,
+      config: config,
+      password: password,
+    );
+    final result = await ApiService.postRequest<DownloadRequestResponse>(
+        'api/download/images',
+        DownloadRequestResponse.fromJson,
+        downloadImageRequest.toJson());
+    return ApiService.getUri(ApiService.url, result.downloadUrl!);
   }
 }

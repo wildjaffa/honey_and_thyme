@@ -35,9 +35,9 @@ class CustomAppBar extends StatelessWidget {
                   'Honey+Thyme',
                   // duration: animationDuration,
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                  ),
+                      color: Colors.black,
+                      fontSize: 60,
+                      fontFamily: 'MarchRough'),
                 ),
                 //child: const Text('Honey+Thyme')),
               ),

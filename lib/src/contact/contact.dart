@@ -78,7 +78,8 @@ class _ContactViewState extends State<ContactView> {
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 80, top: 40),
+                    padding:
+                        const EdgeInsets.only(left: 80, top: 40, bottom: 10),
                     child: Text('Contact:',
                         style: GoogleFonts.imFellEnglish(
                           color: Colors.black,

@@ -26,18 +26,7 @@ class FadeInImageWithPlaceHolder extends StatefulWidget {
 
 class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
     with TickerProviderStateMixin {
-  bool _hovering = false;
   bool _selectorHovering = false;
-
-  double selectorOpacity() {
-    if (_selectorHovering || widget.isSelected) {
-      return 1;
-    } else if (_hovering) {
-      return 0.5;
-    } else {
-      return 0;
-    }
-  }
 
   final DecorationTween decorationTween = DecorationTween(
     begin: const BoxDecoration(),
@@ -81,17 +70,18 @@ class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
             onEnter: widget.onSelected != null
                 ? (_) {
                     if (_selectorHovering) return;
-                    setState(() => _hovering = true);
                     boxDecorationController.forward();
                   }
                 : null,
             onExit: widget.onSelected != null
                 ? (_) {
                     if (_selectorHovering) return;
-                    setState(() => _hovering = false);
                     boxDecorationController.reverse();
                   }
                 : null,
+            cursor: widget.onTapped != null
+                ? SystemMouseCursors.click
+                : SystemMouseCursors.basic,
             child: GestureDetector(
               onTap: widget.onTapped,
               child: DecoratedBoxTransition(
@@ -108,28 +98,28 @@ class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
               ),
             ),
           ),
-          if (_hovering || _selectorHovering || widget.isSelected)
-            Positioned(
-              top: 5,
-              right: 5,
-              child: MouseRegion(
-                onEnter: widget.onSelected != null
-                    ? (_) => setState(() => _selectorHovering = true)
-                    : null,
-                onExit: widget.onSelected != null
-                    ? (_) => setState(() => _selectorHovering = false)
-                    : null,
-                child: IconButton(
-                  icon: Icon(
-                    widget.isSelected
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    color: Constants.goldColor.withOpacity(selectorOpacity()),
-                  ),
-                  onPressed: widget.onSelected,
+          Positioned(
+            top: 5,
+            right: 5,
+            child: MouseRegion(
+              onEnter: widget.onSelected != null
+                  ? (_) => setState(() => _selectorHovering = true)
+                  : null,
+              onExit: widget.onSelected != null
+                  ? (_) => setState(() => _selectorHovering = false)
+                  : null,
+              child: IconButton(
+                icon: Icon(
+                  Icons.check_circle,
+                  color: widget.isSelected
+                      ? Constants.goldColor
+                      : Constants.pinkColor
+                          .withOpacity(_selectorHovering ? 1 : 0.5),
                 ),
+                onPressed: widget.onSelected,
               ),
             ),
+          ),
         ],
       ),
     );

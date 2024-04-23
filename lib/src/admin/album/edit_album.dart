@@ -223,7 +223,7 @@ class _EditAlbumState extends State<EditAlbum> {
                             isSelected: selectedImages.contains(image.imageId!),
                             onSelected: () => {imageSelected(image.imageId!)},
                             imageUrl: ImageService.getImageUrl(
-                                image.imageId!, ImageSizes.medium),
+                                image.imageId!, ImageSizes.medium, null),
                             size: ImageUtils.calculateImageSize(
                                 imageWidth: 333,
                                 aspectRatio: image.metaData?.aspectRatio ?? 1),
