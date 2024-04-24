@@ -243,6 +243,20 @@ class _AlbumViewState extends State<AlbumView> {
                       mainAxisSpacing: 4,
                       crossAxisSpacing: 4,
                     ),
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 50, top: 50),
+                          child: Center(
+                            child: Image(
+                              image: AssetImage('assets/images/logo.png'),
+                              width: 300,
+                              height: 300,
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
                   ],
                 ),
                 Positioned(

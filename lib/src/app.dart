@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
 import 'package:honey_and_thyme/src/albums/album.dart';
+import 'package:honey_and_thyme/src/albums/gallery.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
@@ -102,6 +103,8 @@ class MyApp extends StatelessWidget {
                     return const ContactView();
                   case AdminView.route:
                     return const AdminView();
+                  case PublicGallery.route:
+                    return const PublicGallery();
                   case EditAlbum.route:
                     return EditAlbum(
                         albumId: int.parse(routeParts[1].split('=')[1]));

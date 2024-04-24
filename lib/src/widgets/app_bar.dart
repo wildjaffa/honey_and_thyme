@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/albums/gallery.dart';
 
 import '../../utils/constants.dart';
 import '../contact/contact.dart';
@@ -76,7 +77,7 @@ class CustomAppBar extends StatelessWidget {
                             NavItem(
                               animationDuration: animationDuration,
                               fontSizeMultiplier: fontSizeMultiplier,
-                              route: '/albums/kara-and-thomas',
+                              route: PublicGallery.route,
                               title: 'Gallery',
                               isSelected: currentScreen == ScreensEnum.gallery,
                             ),

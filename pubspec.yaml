@@ -40,6 +40,8 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/fonts/IMFellEnglishSC-Regular.ttf
+    - assets/fonts/IMFellEnglish-Regular.ttf
   fonts:
     - family: MarchRough
       fonts:

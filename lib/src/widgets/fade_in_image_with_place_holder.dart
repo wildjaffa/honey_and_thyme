@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 class FadeInImageWithPlaceHolder extends StatefulWidget {
   final String imageUrl;
   final Size size;
-  final bool isSelected;
+  final bool? isSelected;
   final void Function()? onSelected;
   final void Function()? onTapped;
 
@@ -14,7 +14,7 @@ class FadeInImageWithPlaceHolder extends StatefulWidget {
     super.key,
     required this.imageUrl,
     required this.size,
-    required this.isSelected,
+    this.isSelected,
     this.onSelected,
     this.onTapped,
   });
@@ -98,28 +98,29 @@ class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
               ),
             ),
           ),
-          Positioned(
-            top: 5,
-            right: 5,
-            child: MouseRegion(
-              onEnter: widget.onSelected != null
-                  ? (_) => setState(() => _selectorHovering = true)
-                  : null,
-              onExit: widget.onSelected != null
-                  ? (_) => setState(() => _selectorHovering = false)
-                  : null,
-              child: IconButton(
-                icon: Icon(
-                  Icons.check_circle,
-                  color: widget.isSelected
-                      ? Constants.goldColor
-                      : Constants.pinkColor
-                          .withOpacity(_selectorHovering ? 1 : 0.5),
+          if (widget.isSelected != null)
+            Positioned(
+              top: 5,
+              right: 5,
+              child: MouseRegion(
+                onEnter: widget.onSelected != null
+                    ? (_) => setState(() => _selectorHovering = true)
+                    : null,
+                onExit: widget.onSelected != null
+                    ? (_) => setState(() => _selectorHovering = false)
+                    : null,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.check_circle,
+                    color: widget.isSelected == true
+                        ? Constants.goldColor
+                        : Constants.pinkColor
+                            .withOpacity(_selectorHovering ? 1 : 0.5),
+                  ),
+                  onPressed: widget.onSelected,
                 ),
-                onPressed: widget.onSelected,
               ),
             ),
-          ),
         ],
       ),
     );
