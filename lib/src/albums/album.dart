@@ -49,6 +49,8 @@ class _AlbumViewState extends State<AlbumView> {
   bool scrolled = false;
   bool passwordInputVisible = false;
   bool isLoading = false;
+  bool modalIsOpen = false;
+  DownloadImageSizes selectedDownloadSize = DownloadImageSizes.medium;
 
   Future<Album?> tryGetAlbum() async {
     final album =
@@ -75,9 +77,18 @@ class _AlbumViewState extends State<AlbumView> {
     return album;
   }
 
+  Future<void> startDownload() async {
+    if (selectedImages.isEmpty) {
+      downloadAlbum();
+      return;
+    }
+    await downloadSelected();
+  }
+
   Future<void> downloadAlbum() async {
-    final selected = List<int>.generate(
-        (await fetchAlbum)!.images!.values!.length, (i) => i);
+    final selected =
+        (await fetchAlbum)!.images!.values!.map((e) => e!.imageId!).toList();
+
     await downloadSelectedImages(selected);
   }
 
@@ -90,10 +101,11 @@ class _AlbumViewState extends State<AlbumView> {
 
   Future<void> downloadSelectedImages(List<int> selected) async {
     setState(() {
+      modalIsOpen = false;
       isLoading = true;
     });
     final url = await ImageService.getImageDownloadUrl(
-        selected, DownloadImageSizes.large, password);
+        selected, selectedDownloadSize, password);
     setState(() {
       isLoading = false;
     });
@@ -290,9 +302,11 @@ class _AlbumViewState extends State<AlbumView> {
                                       ? IconButton(
                                           key:
                                               const ValueKey('download-images'),
-                                          onPressed: selectedImages.isNotEmpty
-                                              ? downloadSelected
-                                              : null,
+                                          onPressed: () {
+                                            setState(() {
+                                              modalIsOpen = true;
+                                            });
+                                          },
                                           icon: badges.Badge(
                                             badgeAnimation: const badges
                                                 .BadgeAnimation.scale(
@@ -315,7 +329,11 @@ class _AlbumViewState extends State<AlbumView> {
                                           ))
                                       : IconButton(
                                           key: const ValueKey('download-album'),
-                                          onPressed: downloadSelected,
+                                          onPressed: () {
+                                            setState(() {
+                                              modalIsOpen = true;
+                                            });
+                                          },
                                           icon: const Icon(Icons.download),
                                         ),
                                 ),
@@ -412,6 +430,140 @@ class _AlbumViewState extends State<AlbumView> {
                       child: CircularProgressIndicator(),
                     ),
                   ),
+                if (modalIsOpen)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        modalIsOpen = false;
+                      });
+                    },
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      width: screenWidth,
+                      height: screenHeight,
+                    ),
+                  ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.decelerate,
+                  top: modalIsOpen ? (screenHeight - 300) / 2 : screenHeight,
+                  left: (screenWidth - 300) / 2,
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          )
+                        ]),
+                    child: Column(
+                      children: [
+                        const Text('Image Size'),
+                        SizedBox(
+                          height: 200,
+                          child: ListView(
+                            children: [
+                              ListTile(
+                                leading: selectedDownloadSize ==
+                                        DownloadImageSizes.medium
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Constants.goldColor,
+                                      )
+                                    : null,
+                                title: Text(
+                                  'Medium Quality',
+                                  style: GoogleFonts.imFellEnglishSc(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedDownloadSize =
+                                        DownloadImageSizes.medium;
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                leading: selectedDownloadSize ==
+                                        DownloadImageSizes.extraLarge
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Constants.goldColor,
+                                      )
+                                    : null,
+                                title: Text(
+                                  'High Quality',
+                                  style: GoogleFonts.imFellEnglishSc(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedDownloadSize =
+                                        DownloadImageSizes.extraLarge;
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                leading: selectedDownloadSize ==
+                                        DownloadImageSizes.fullRes
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Constants.goldColor,
+                                      )
+                                    : null,
+                                title: Text(
+                                  'Original Quality',
+                                  style: GoogleFonts.imFellEnglishSc(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
+                                  style: GoogleFonts.imFellEnglishSc(
+                                    fontSize: 12,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedDownloadSize =
+                                        DownloadImageSizes.fullRes;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Spacer(),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  modalIsOpen = false;
+                                });
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            const Spacer(),
+                            ElevatedButton(
+                              onPressed: startDownload,
+                              child: const Text('Download'),
+                            ),
+                            const Spacer(),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
               ],
             );
           }),
@@ -464,6 +616,7 @@ class _CoverImageState extends State<CoverImage>
       width: widget.width,
       height: widget.height,
       child: Stack(
+        alignment: Alignment.center,
         children: [
           FadeInImage.memoryNetwork(
             placeholder: kTransparentImage,

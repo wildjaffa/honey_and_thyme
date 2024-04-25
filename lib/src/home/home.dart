@@ -334,6 +334,7 @@ class HomePageImage extends StatelessWidget {
       builder: ((context, snapshot) {
         if (controller.value >= delayInSeconds) {
           return FadeInImage.memoryNetwork(
+            fadeInDuration: const Duration(milliseconds: 1000),
             height: imageSize.height,
             width: imageSize.width,
             placeholder: kTransparentImage,

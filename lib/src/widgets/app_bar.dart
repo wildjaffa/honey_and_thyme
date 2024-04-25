@@ -24,7 +24,17 @@ class CustomAppBar extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final double fontSizeMultiplier = screenWidth >= 500 ? 1 : 0.75;
     return Column(children: [
-      SizedBox(
+      Container(
+        decoration: BoxDecoration(
+          color: Constants.grayColor.withOpacity(0.9),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.grey,
+                blurRadius: 10,
+                spreadRadius: 1,
+                offset: Offset(0, 2)),
+          ],
+        ),
         height: 150,
         child: Column(
           children: [
