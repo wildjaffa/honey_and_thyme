@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:honey_and_thyme/src/models/form_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -112,14 +113,12 @@ class ApiService {
   }
 
   static Future<Map<String, String>> _getHeaders() async {
-    return {};
+    if (FirebaseAuth.instance.currentUser == null) {
+      return {};
+    }
+    var idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
+    return {
+      'Authorization': 'Bearer ${idToken!}',
+    };
   }
-  //   if (FirebaseAuth.instance.currentUser == null) {
-  //     return {};
-  //   }
-  //   var idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
-  //   return {
-  //     'Authorization': 'Bearer ${idToken!}',
-  //   };
-  // }
 }

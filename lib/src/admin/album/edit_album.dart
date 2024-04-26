@@ -249,8 +249,8 @@ class _EditAlbumState extends State<EditAlbum> {
                           return FadeInImageWithPlaceHolder(
                             isSelected: selectedImages.contains(image.imageId!),
                             onSelected: () => {imageSelected(image.imageId!)},
-                            imageUrl: ImageService.getImageUrl(
-                                image.imageId!, ImageSizes.medium, null),
+                            imageUrl: ImageService.getImageUrl(image.imageId!,
+                                ImageSizes.medium, album.password),
                             size: ImageUtils.calculateImageSize(
                                 imageWidth: 333,
                                 aspectRatio: image.metaData?.aspectRatio ?? 1),
