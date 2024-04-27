@@ -26,7 +26,7 @@ enum ContactState {
 class _ContactViewState extends State<ContactView> {
   final formKey = GlobalKey<FormState>();
 
-  ContactState contactState = ContactState.failed;
+  ContactState contactState = ContactState.notSent;
   String contactMessage = '';
   String contactEmail = '';
 
@@ -51,6 +51,24 @@ class _ContactViewState extends State<ContactView> {
     setState(() {
       contactState = result ? ContactState.sent : ContactState.failed;
     });
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Message Sent'),
+          content: const Text(
+              'Your message has been sent. We will get back to you as soon as possible. Thank you!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -68,15 +86,14 @@ class _ContactViewState extends State<ContactView> {
               Container(
                 padding: const EdgeInsets.all(20),
                 constraints: const BoxConstraints(maxWidth: 600),
-                child: Flexible(
-                  child: Text(
-                    'Follow me on Facebook and Instagram to see all my '
-                    'upcoming events and deals.',
-                    style: GoogleFonts.imFellEnglish(
-                      color: Colors.black,
-                      fontSize: 18,
-                    ),
+                child: Text(
+                  'Follow me on Facebook and Instagram to see all my '
+                  'upcoming events and deals.',
+                  style: GoogleFonts.imFellEnglish(
+                    color: Colors.black,
+                    fontSize: 18,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const Row(
@@ -87,11 +104,11 @@ class _ContactViewState extends State<ContactView> {
                   ExternalLinkIcon(
                     linkUrl:
                         'https://www.instagram.com/honeyandthymephotography?igsh=ZDd4cTk2M3cwYzU5',
-                    assetPath: 'images/Instagram_Glyph_Gradient.png',
+                    assetPath: 'assets/images/Instagram_Glyph_Gradient.png',
                   ),
                   Spacer(flex: 1),
                   ExternalLinkIcon(
-                    assetPath: '/images/Facebook_Logo_Primary.png',
+                    assetPath: 'assets/images/Facebook_Logo_Primary.png',
                     linkUrl:
                         'https://www.facebook.com/profile.php?id=100088143396234',
                   ),
@@ -100,6 +117,24 @@ class _ContactViewState extends State<ContactView> {
                   ),
                 ],
               ),
+              if (contactState == ContactState.failed)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 50),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: formWidth,
+                      child: Text(
+                        'Sorry, there was an issue trying to submit your message. Please try again later.',
+                        style: GoogleFonts.imFellEnglish(
+                          fontSize: 18,
+                          color: Colors.red,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
               if (contactState != ContactState.sent)
                 Row(
                   children: [
@@ -248,33 +283,18 @@ class _ContactViewState extends State<ContactView> {
                     ),
                   ),
                 ),
-              if (contactState == ContactState.failed)
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0, left: 50),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: formWidth,
-                      child: Text(
-                        'Sorry, there was an issue trying to submit your message. Please try again later.',
-                        style: GoogleFonts.imFellEnglish(
-                          fontSize: 18,
-                          color: Colors.red,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              if (contactState == ContactState.sent)
-                Center(
-                  child: Text(
-                    'Your message has been sent. We will get back to you as soon as possible. Thank you!',
-                    style: GoogleFonts.imFellEnglish(
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
+              // if (contactState == ContactState.sent)
+              //   Padding(
+              //     padding: const EdgeInsets.only(top: 20.0),
+              //     child: Center(
+              //       child: Text(
+              //         'Your message has been sent. We will get back to you as soon as possible. Thank you!',
+              //         style: GoogleFonts.imFellEnglish(
+              //           fontSize: 18,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
         ),

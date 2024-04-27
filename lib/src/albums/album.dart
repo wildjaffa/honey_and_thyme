@@ -2,9 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/albums/image_gallery.dart';
+import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
 import 'package:honey_and_thyme/src/models/enums/download_image_sizes.dart';
 import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_bar.dart';
+import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:badges/badges.dart' as badges;
@@ -196,19 +199,10 @@ class _AlbumViewState extends State<AlbumView> {
             final screenHeight = MediaQuery.of(context).size.height;
             final coverPhotoId =
                 album.coverImageId ?? album.images!.values!.first!.imageId!;
-            var crossAxisCount = 2;
             var imageSize = ImageSizes.medium;
-            if (screenWidth > 500) {
-              crossAxisCount = 3;
-            }
             if (screenWidth > 750) {
-              crossAxisCount = 4;
               imageSize = ImageSizes.large;
             }
-            if (screenWidth > 1000) {
-              crossAxisCount = 5;
-            }
-            final imageWidth = screenWidth / crossAxisCount;
             return Stack(
               children: [
                 CustomScrollView(
@@ -216,58 +210,57 @@ class _AlbumViewState extends State<AlbumView> {
                   physics: const ScrollPhysics(),
                   slivers: [
                     SliverList(
-                        delegate: SliverChildListDelegate([
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: CoverImage(
-                          imageUrl: ImageService.getImageUrl(
-                              coverPhotoId, ImageSizes.extraLarge, password),
-                          width: screenWidth,
-                          height: screenHeight,
-                          name: album.name!,
-                          onIconTap: () => scrollPastCoverImage(context),
-                        ),
-                      ),
-                    ])),
-                    SliverMasonryGrid(
-                      gridDelegate:
-                          SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          if (index >= itemCount) {
-                            return null;
-                          }
-                          final image = album.images!.values![index]!;
-                          return FadeInImageWithPlaceHolder(
-                            isSelected: selectedImages.contains(image.imageId!),
-                            onSelected: () => {imageSelected(image.imageId!)},
-                            onTapped: () => {imageTapped(index)},
-                            imageUrl: ImageService.getImageUrl(
-                                image.imageId!, imageSize, password),
-                            size: ImageUtils.calculateImageSize(
-                                imageWidth: imageWidth,
-                                aspectRatio: image.metaData?.aspectRatio ?? 1),
-                          );
-                        },
-                      ),
-                      mainAxisSpacing: 4,
-                      crossAxisSpacing: 4,
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 50, top: 50),
-                          child: Center(
-                            child: Image(
-                              image: AssetImage('assets/images/logo.png'),
-                              width: 300,
-                              height: 300,
+                      delegate: SliverChildListDelegate(
+                        [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: CoverImage(
+                              imageUrl: ImageService.getImageUrl(coverPhotoId,
+                                  ImageSizes.extraLarge, password),
+                              width: screenWidth,
+                              height: screenHeight,
+                              name: album.name!,
+                              onIconTap: () => scrollPastCoverImage(context),
                             ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
+                    ),
+                    ImageGallery(
+                      album: album,
+                      selectedImages: selectedImages,
+                      password: password,
+                      onImageTapped: imageTapped,
+                      onImageSelected: imageSelected,
+                    ),
+                    // SliverMasonryGrid(
+                    //   gridDelegate:
+                    //       SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                    //     crossAxisCount: crossAxisCount,
+                    //   ),
+                    //   delegate: SliverChildBuilderDelegate(
+                    //     (context, index) {
+                    //       if (index >= itemCount) {
+                    //         return null;
+                    //       }
+                    //       final image = album.images!.values![index]!;
+                    //       return FadeInImageWithPlaceHolder(
+                    //         isSelected: selectedImages.contains(image.imageId!),
+                    //         onSelected: () => {imageSelected(image.imageId!)},
+                    //         onTapped: () => {imageTapped(index)},
+                    //         imageUrl: ImageService.getImageUrl(
+                    //             image.imageId!, imageSize, password),
+                    //         size: ImageUtils.calculateImageSize(
+                    //             imageWidth: imageWidth,
+                    //             aspectRatio: image.metaData?.aspectRatio ?? 1),
+                    //       );
+                    //     },
+                    //   ),
+                    //   mainAxisSpacing: 4,
+                    //   crossAxisSpacing: 4,
+                    // ),
+                    SliverList(
+                      delegate: SliverChildListDelegate([const AppFooter()]),
                     ),
                   ],
                 ),
@@ -345,82 +338,36 @@ class _AlbumViewState extends State<AlbumView> {
                     ),
                   ),
                 ),
-                Visibility(
-                  maintainState: true,
-                  maintainAnimation: true,
-                  visible: slideShowImageIndex != null,
-                  child: CarouselSlider.builder(
-                    itemCount: itemCount,
-                    carouselController: carouselController,
-                    options: CarouselOptions(
-                      viewportFraction: 1,
-                      autoPlay: false,
-                      height: screenHeight,
-                    ),
-                    itemBuilder: (BuildContext context, int itemIndex,
-                        int pageViewIndex) {
-                      final image = album.images!.values![itemIndex]!;
-                      final smallImageUrl = ImageService.getImageUrl(
-                          image.imageId!, imageSize, password);
-
-                      return Container(
-                        width: screenWidth,
-                        height: screenHeight,
-                        color: Colors.black.withOpacity(0.8),
-                        child: FadeInImage.memoryNetwork(
-                          fadeInDuration: const Duration(milliseconds: 100),
-                          placeholder: kTransparentImage,
-                          image: smallImageUrl,
-                        ),
-                      );
-                    },
-                  ),
+                ImageSlideshow(
+                  carouselController: carouselController,
+                  slideShowImageIndex: slideShowImageIndex,
+                  album: album,
+                  password: password,
+                  imageSize: imageSize,
+                  onDismissed: () {
+                    setState(() {
+                      slideShowImageIndex = null;
+                    });
+                  },
+                  onPreviousTapped: () {
+                    if (slideShowImageIndex == 0) {
+                      return;
+                    }
+                    setState(() {
+                      slideShowImageIndex = slideShowImageIndex! - 1;
+                    });
+                    carouselController.previousPage();
+                  },
+                  onNextTapped: () {
+                    if (slideShowImageIndex == album.images!.values!.length) {
+                      return;
+                    }
+                    setState(() {
+                      slideShowImageIndex = slideShowImageIndex! + 1;
+                    });
+                    carouselController.nextPage();
+                  },
                 ),
-                if (slideShowImageIndex != null)
-                  Positioned(
-                    top: 5,
-                    right: 5,
-                    child: IconButton(
-                      color: Constants.goldColor,
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        setState(() {
-                          slideShowImageIndex = null;
-                        });
-                      },
-                    ),
-                  ),
-                if (slideShowImageIndex != null && slideShowImageIndex! > 0)
-                  Positioned(
-                    left: 5,
-                    top: (screenHeight - 24) / 2,
-                    child: IconButton(
-                      color: Constants.goldColor,
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        setState(() {
-                          slideShowImageIndex = slideShowImageIndex! - 1;
-                        });
-                        carouselController.previousPage();
-                      },
-                    ),
-                  ),
-                if (slideShowImageIndex != null &&
-                    slideShowImageIndex! < itemCount)
-                  Positioned(
-                    right: 5,
-                    top: (screenHeight - 24) / 2,
-                    child: IconButton(
-                      color: Constants.goldColor,
-                      icon: const Icon(Icons.arrow_forward),
-                      onPressed: () {
-                        setState(() {
-                          slideShowImageIndex = slideShowImageIndex! + 1;
-                        });
-                        carouselController.nextPage();
-                      },
-                    ),
-                  ),
                 if (isLoading)
                   Container(
                     color: Colors.black.withOpacity(0.5),
@@ -463,22 +410,27 @@ class _AlbumViewState extends State<AlbumView> {
                         ]),
                     child: Column(
                       children: [
-                        const Text('Image Size'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Downloaded Image Size',
+                            style: GoogleFonts.imFellEnglish(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
                         SizedBox(
                           height: 200,
                           child: ListView(
                             children: [
                               ListTile(
-                                leading: selectedDownloadSize ==
-                                        DownloadImageSizes.medium
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Constants.goldColor,
-                                      )
-                                    : null,
+                                selected: selectedDownloadSize ==
+                                    DownloadImageSizes.medium,
+                                tileColor: Constants.grayColor,
+                                // selectedColor: Constants.pinkColor,
                                 title: Text(
                                   'Medium Quality',
-                                  style: GoogleFonts.imFellEnglishSc(
+                                  style: GoogleFonts.imFellEnglish(
                                     fontSize: 16,
                                   ),
                                 ),
@@ -490,16 +442,11 @@ class _AlbumViewState extends State<AlbumView> {
                                 },
                               ),
                               ListTile(
-                                leading: selectedDownloadSize ==
-                                        DownloadImageSizes.extraLarge
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Constants.goldColor,
-                                      )
-                                    : null,
+                                selected: selectedDownloadSize ==
+                                    DownloadImageSizes.extraLarge,
                                 title: Text(
                                   'High Quality',
-                                  style: GoogleFonts.imFellEnglishSc(
+                                  style: GoogleFonts.imFellEnglish(
                                     fontSize: 16,
                                   ),
                                 ),
@@ -511,22 +458,17 @@ class _AlbumViewState extends State<AlbumView> {
                                 },
                               ),
                               ListTile(
-                                leading: selectedDownloadSize ==
-                                        DownloadImageSizes.fullRes
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Constants.goldColor,
-                                      )
-                                    : null,
+                                selected: selectedDownloadSize ==
+                                    DownloadImageSizes.fullRes,
                                 title: Text(
                                   'Original Quality',
-                                  style: GoogleFonts.imFellEnglishSc(
+                                  style: GoogleFonts.imFellEnglish(
                                     fontSize: 16,
                                   ),
                                 ),
                                 subtitle: Text(
                                   'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
-                                  style: GoogleFonts.imFellEnglishSc(
+                                  style: GoogleFonts.imFellEnglish(
                                     fontSize: 12,
                                   ),
                                   textAlign: TextAlign.center,

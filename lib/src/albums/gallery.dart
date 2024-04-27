@@ -1,6 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/albums/image_gallery.dart';
+import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
+import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 
 import '../models/album.dart';
@@ -21,10 +27,15 @@ class PublicGallery extends StatefulWidget {
 
 class _PublicGalleryState extends State<PublicGallery> {
   final Future<Album?> album = AlbumService.fetchAlbumByName('gallery', null);
+  final CarouselController carouselController = CarouselController();
+  late Future googleFontsPending = GoogleFonts.pendingFonts();
+
+  int? slideShowImageIndex;
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      showAppBar: false,
       currentScreen: ScreensEnum.gallery,
       child: FutureBuilder(
         future: album,
@@ -43,64 +54,89 @@ class _PublicGalleryState extends State<PublicGallery> {
             );
           }
           final album = snapshot.data as Album;
-          var itemCount = album.images!.values?.length ?? 0;
-          if (itemCount == 0) {
-            return const Center(
-              child: Text('No images found in this album'),
-            );
-          }
-
           final screenWidth = MediaQuery.of(context).size.width;
-          var crossAxisCount = 2;
+          final screenHeight = MediaQuery.of(context).size.height;
           var imageSize = ImageSizes.medium;
-          if (screenWidth > 500) {
-            crossAxisCount = 3;
-          }
           if (screenWidth > 750) {
-            crossAxisCount = 4;
             imageSize = ImageSizes.large;
           }
-          if (screenWidth > 1000) {
-            crossAxisCount = 5;
-          }
-          final imageWidth = screenWidth / crossAxisCount;
-          return CustomScrollView(
-            slivers: [
-              SliverMasonryGrid(
-                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index >= itemCount) {
-                      return null;
-                    }
-                    final image = album.images!.values![index]!;
-                    return FadeInImageWithPlaceHolder(
-                      imageUrl: ImageService.getImageUrl(
-                          image.imageId!, imageSize, null),
-                      size: ImageUtils.calculateImageSize(
-                          imageWidth: imageWidth,
-                          aspectRatio: image.metaData?.aspectRatio ?? 1),
-                    );
-                  },
-                ),
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 50, top: 50),
-                    child: Center(
-                      child: Image(
-                        image: AssetImage('assets/images/logo.png'),
-                        width: 300,
-                        height: 300,
-                      ),
+          return Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [const SizedBox(height: AppScaffold.appBarHeight)],
                     ),
                   ),
-                ]),
+                  ImageGallery(
+                    album: album,
+                    onImageTapped: (index) {
+                      setState(() {
+                        slideShowImageIndex = index;
+                      });
+                      carouselController.jumpToPage(index);
+                    },
+                  ),
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 50, top: 50),
+                        child: Center(
+                          child: Image(
+                            image: AssetImage('assets/images/logo.png'),
+                            width: 300,
+                            height: 300,
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ],
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: SizedBox(
+                  width: screenWidth,
+                  height: AppScaffold.appBarHeight,
+                  child: CustomAppBar(
+                    currentScreen: ScreensEnum.gallery,
+                    googleFontsPending: googleFontsPending,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: SizedBox(
+                  height: screenHeight,
+                  width: screenWidth,
+                  child: ImageSlideshow(
+                    carouselController: carouselController,
+                    slideShowImageIndex: slideShowImageIndex,
+                    album: album,
+                    password: null,
+                    imageSize: imageSize,
+                    onDismissed: () {
+                      setState(() {
+                        slideShowImageIndex = null;
+                      });
+                    },
+                    onPreviousTapped: () {
+                      carouselController.previousPage();
+                      setState(() {
+                        slideShowImageIndex = slideShowImageIndex! - 1;
+                      });
+                    },
+                    onNextTapped: () {
+                      carouselController.nextPage();
+                      setState(() {
+                        slideShowImageIndex = slideShowImageIndex! + 1;
+                      });
+                    },
+                  ),
+                ),
               ),
             ],
           );

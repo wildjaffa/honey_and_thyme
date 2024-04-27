@@ -7,15 +7,13 @@ import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
 class ApiService {
-  // https://mindfulmeasuresapi.playable.online/
-  // static const url = 'mindfulmeasuresapi.playable.online';
-  // static const url = 'jensenpro.duckdns.org:8567';
-  static const url = 'localhost:6363';
+  // static const url = 'localhost:6363';
+  static const url = 'api.honeyandthymephotography.com';
   // static const url = '10.0.2.2:44364';
 
   static Uri getUri(String baseUrl,
       [String route = '', Map<String, dynamic>? queryParameters]) {
-    return Uri.http(baseUrl, route, queryParameters);
+    return Uri.https(baseUrl, route, queryParameters);
   }
 
   static Future<T> getRequest<T>(

@@ -20,6 +20,12 @@ class SettingsController with ChangeNotifier {
   // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
 
+  bool get homePageLoaded => _settingsService.homePageLoaded;
+
+  set homePageLoaded(bool value) {
+    _settingsService.homePageLoaded = value;
+  }
+
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.

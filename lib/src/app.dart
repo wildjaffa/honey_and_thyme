@@ -109,7 +109,11 @@ class MyApp extends StatelessWidget {
                     return EditAlbum(
                         albumId: int.parse(routeParts[1].split('=')[1]));
                   default:
-                    return Home();
+                    final homePageLoaded = settingsController.homePageLoaded;
+                    settingsController.homePageLoaded = true;
+                    return Home(
+                      slowLoadImages: homePageLoaded,
+                    );
                 }
               },
             );

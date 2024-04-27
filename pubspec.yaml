@@ -28,10 +28,18 @@ dependencies:
   web: ^0.5.1
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^3.0.0
+
+flutter_launcher_icons:
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
 
 flutter:
   uses-material-design: true

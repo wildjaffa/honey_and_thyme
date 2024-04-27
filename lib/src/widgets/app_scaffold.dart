@@ -7,6 +7,8 @@ import '../../utils/constants.dart';
 import '../models/enums/screens.dart';
 
 class AppScaffold extends StatefulWidget {
+  static const appBarHeight = 150.0;
+
   final Widget child;
   final ScreensEnum currentScreen;
   final bool showAppBar;
@@ -42,7 +44,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         children: [
           if (widget.showAppBar)
             SizedBox(
-              height: 150,
+              height: AppScaffold.appBarHeight,
               child: CustomAppBar(
                 currentScreen: widget.currentScreen,
                 googleFontsPending: googleFontsPending,

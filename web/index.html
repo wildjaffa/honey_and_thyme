@@ -116,19 +116,20 @@
         class="loader"
         alt="Loading..."
         id="hexagons"
-        src="./assets/images/hexagons.png"
+        src="./assets/assets/images/hexagons.png"
       />
       <img
         class="loader"
         onload="this.style.opacity=1"
         id="logo"
-        src="./assets/images/logo-no-hexagons.png"
+        src="./assets/assets/images/logo-no-hexagons.png"
       />
     </div>
     <script>
       window.addEventListener("load", function (ev) {
         // Download main.dart.js
         _flutter.loader.loadEntrypoint({
+          entrypointUrl: "main.dart.js",
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,
           },
