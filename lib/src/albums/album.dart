@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
@@ -18,8 +17,6 @@ import '../models/album.dart';
 import '../models/enums/image_sizes.dart';
 import '../models/enums/screens.dart';
 import '../services/image_service.dart';
-import '../services/utils/image_utils.dart';
-import '../widgets/fade_in_image_with_place_holder.dart';
 import 'password_form.dart';
 
 class AlbumView extends StatefulWidget {
@@ -107,8 +104,9 @@ class _AlbumViewState extends State<AlbumView> {
       modalIsOpen = false;
       isLoading = true;
     });
+    final album = await fetchAlbum;
     final url = await ImageService.getImageDownloadUrl(
-        selected, selectedDownloadSize, password);
+        selected, selectedDownloadSize, album!.password);
     setState(() {
       isLoading = false;
     });
@@ -216,7 +214,7 @@ class _AlbumViewState extends State<AlbumView> {
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: CoverImage(
                               imageUrl: ImageService.getImageUrl(coverPhotoId,
-                                  ImageSizes.extraLarge, password),
+                                  ImageSizes.extraLarge, album.password),
                               width: screenWidth,
                               height: screenHeight,
                               name: album.name!,
@@ -229,7 +227,6 @@ class _AlbumViewState extends State<AlbumView> {
                     ImageGallery(
                       album: album,
                       selectedImages: selectedImages,
-                      password: password,
                       onImageTapped: imageTapped,
                       onImageSelected: imageSelected,
                     ),
@@ -342,7 +339,6 @@ class _AlbumViewState extends State<AlbumView> {
                   carouselController: carouselController,
                   slideShowImageIndex: slideShowImageIndex,
                   album: album,
-                  password: password,
                   imageSize: imageSize,
                   onDismissed: () {
                     setState(() {

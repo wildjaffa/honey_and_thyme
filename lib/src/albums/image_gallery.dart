@@ -9,7 +9,6 @@ import '../widgets/fade_in_image_with_place_holder.dart';
 
 class ImageGallery extends StatelessWidget {
   final Album album;
-  final String? password;
   final void Function(int)? onImageTapped;
   final void Function(int)? onImageSelected;
   final List<int>? selectedImages;
@@ -17,7 +16,6 @@ class ImageGallery extends StatelessWidget {
     super.key,
     required this.album,
     this.selectedImages,
-    this.password,
     this.onImageTapped,
     this.onImageSelected,
   });
@@ -61,8 +59,8 @@ class ImageGallery extends StatelessWidget {
                 : null,
             onTapped:
                 onImageTapped != null ? () => {onImageTapped!(index)} : null,
-            imageUrl:
-                ImageService.getImageUrl(image.imageId!, imageSize, password),
+            imageUrl: ImageService.getImageUrl(
+                image.imageId!, imageSize, album.password),
             size: ImageUtils.calculateImageSize(
               imageWidth: imageWidth,
               aspectRatio: image.metaData?.aspectRatio ?? 1,

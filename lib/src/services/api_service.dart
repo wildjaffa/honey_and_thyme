@@ -2,17 +2,20 @@ import 'dart:convert';
 
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:honey_and_thyme/src/models/form_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
 class ApiService {
-  // static const url = 'localhost:6363';
-  static const url = 'api.honeyandthymephotography.com';
-  // static const url = '10.0.2.2:44364';
+  static String get url =>
+      kDebugMode ? 'localhost:6363' : 'api.honeyandthymephotography.com';
 
   static Uri getUri(String baseUrl,
       [String route = '', Map<String, dynamic>? queryParameters]) {
+    if (kDebugMode) {
+      return Uri.http(baseUrl, route, queryParameters);
+    }
     return Uri.https(baseUrl, route, queryParameters);
   }
 

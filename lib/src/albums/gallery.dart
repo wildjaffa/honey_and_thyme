@@ -1,7 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
@@ -12,9 +10,6 @@ import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import '../models/album.dart';
 import '../models/enums/image_sizes.dart';
 import '../services/album_service.dart';
-import '../services/image_service.dart';
-import '../services/utils/image_utils.dart';
-import '../widgets/fade_in_image_with_place_holder.dart';
 
 class PublicGallery extends StatefulWidget {
   const PublicGallery({super.key});
@@ -116,7 +111,6 @@ class _PublicGalleryState extends State<PublicGallery> {
                     carouselController: carouselController,
                     slideShowImageIndex: slideShowImageIndex,
                     album: album,
-                    password: null,
                     imageSize: imageSize,
                     onDismissed: () {
                       setState(() {

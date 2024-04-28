@@ -37,7 +37,7 @@ class ImageService {
   }
 
   static String getImageUrl(int imageId, ImageSizes size, String? password) {
-    const baseUrl = ApiService.url;
+    final baseUrl = ApiService.url;
     final sizeId = size.index;
     final uri = ApiService.getUri(baseUrl, 'thumb/$sizeId/$imageId', {
       if (password != null) 'password': password,

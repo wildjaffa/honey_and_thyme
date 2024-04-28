@@ -11,7 +11,6 @@ class ImageSlideshow extends StatelessWidget {
   final CarouselController carouselController;
   final int? slideShowImageIndex;
   final Album album;
-  final String? password;
   final ImageSizes imageSize;
   final void Function() onDismissed;
   final void Function() onPreviousTapped;
@@ -21,7 +20,6 @@ class ImageSlideshow extends StatelessWidget {
     required this.carouselController,
     required this.slideShowImageIndex,
     required this.album,
-    required this.password,
     required this.imageSize,
     required this.onDismissed,
     required this.onPreviousTapped,
@@ -49,8 +47,8 @@ class ImageSlideshow extends StatelessWidget {
             itemBuilder:
                 (BuildContext context, int itemIndex, int pageViewIndex) {
               final image = album.images!.values![itemIndex]!;
-              final smallImageUrl =
-                  ImageService.getImageUrl(image.imageId!, imageSize, password);
+              final smallImageUrl = ImageService.getImageUrl(
+                  image.imageId!, imageSize, album.password);
 
               return Container(
                 width: screenWidth,

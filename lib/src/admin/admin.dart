@@ -35,18 +35,6 @@ class _AdminViewState extends State<AdminView> {
   @override
   void initState() {
     isAuthenticated = FirebaseAuth.instance.currentUser != null;
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        setState(() {
-          isAuthenticated = false;
-        });
-      } else {
-        setState(() {
-          isAuthenticated = true;
-          albums = AlbumService.fetchAlbums();
-        });
-      }
-    });
     super.initState();
   }
 
@@ -102,7 +90,14 @@ class _AdminViewState extends State<AdminView> {
                         },
                       ),
               )
-            : const LoginForm(),
+            : LoginForm(
+                onSignIn: () {
+                  setState(() {
+                    isAuthenticated = true;
+                    albums = AlbumService.fetchAlbums();
+                  });
+                },
+              ),
       ),
     );
   }
@@ -141,8 +136,8 @@ class _AlbumSummaryState extends State<AlbumSummary> {
     }
   }
 
-  void onPressed() {
-    final url = '${Uri.base}/gallery/${widget.album.urlName}';
+  void copyShareData() {
+    final url = '${Uri.base.origin}/#/albums/${widget.album.urlName}';
     var text = 'Check out your album at $url';
     if (widget.album.password != null) {
       text += ' and use password ${widget.album.password}';
@@ -238,7 +233,7 @@ class _AlbumSummaryState extends State<AlbumSummary> {
                     SizedBox(
                       width: 30,
                       child: IconButton(
-                        onPressed: onPressed,
+                        onPressed: copyShareData,
                         icon: const Icon(Icons.share),
                       ),
                     )
