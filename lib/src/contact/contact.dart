@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/services/contact_service.dart';
+import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:web/web.dart' as html;
 
@@ -295,6 +296,7 @@ class _ContactViewState extends State<ContactView> {
               //       ),
               //     ),
               //   ),
+              const AppFooter(),
             ],
           ),
         ),

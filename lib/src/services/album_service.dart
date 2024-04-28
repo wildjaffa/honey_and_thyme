@@ -5,9 +5,13 @@ import '../models/album.dart';
 
 class AlbumService {
   static Future<List<Album>> fetchAlbums() async {
-    final result =
-        await ApiService.getRequest<Albums>('albums/all', Albums.fromJson);
-    return result.values as List<Album>;
+    try {
+      final result =
+          await ApiService.getRequest<Albums>('albums/all', Albums.fromJson);
+      return result.values as List<Album>;
+    } catch (e) {
+      return [];
+    }
   }
 
   static Future<Album> fetchAlbumById(int albumId, String? password) async {

@@ -492,12 +492,16 @@ class _AlbumViewState extends State<AlbumView> {
                                   modalIsOpen = false;
                                 });
                               },
-                              child: const Text('Cancel'),
+                              child: Text('Cancel',
+                                  style: GoogleFonts.imFellEnglish()),
                             ),
                             const Spacer(),
                             ElevatedButton(
                               onPressed: startDownload,
-                              child: const Text('Download'),
+                              child: Text(
+                                'Download',
+                                style: GoogleFonts.imFellEnglish(),
+                              ),
                             ),
                             const Spacer(),
                           ],

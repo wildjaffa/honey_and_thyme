@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:honey_and_thyme/src/services/user_service.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -13,7 +14,7 @@ class LoginForm extends StatelessWidget {
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithPopup(googleProvider);
-
+    await UserService.userSignedIn();
     return;
   }
 
