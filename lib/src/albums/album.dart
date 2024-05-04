@@ -43,7 +43,7 @@ class _AlbumViewState extends State<AlbumView> {
 
   int passwordAttempts = 0;
   String? password;
-  List<int> selectedImages = [];
+  List<String> selectedImages = [];
   double appBarPercent = 0;
   int? slideShowImageIndex;
   bool scrolled = false;
@@ -99,7 +99,7 @@ class _AlbumViewState extends State<AlbumView> {
     });
   }
 
-  Future<void> downloadSelectedImages(List<int> selected) async {
+  Future<void> downloadSelectedImages(List<String> selected) async {
     setState(() {
       modalIsOpen = false;
       isLoading = true;
@@ -110,10 +110,10 @@ class _AlbumViewState extends State<AlbumView> {
     setState(() {
       isLoading = false;
     });
-    web.window.open(url.toString(), 'Download Images');
+    web.window.open(url, 'Download Images');
   }
 
-  void imageSelected(int imageId) {
+  void imageSelected(String imageId) {
     if (selectedImages.contains(imageId)) {
       selectedImages.remove(imageId);
     } else {
@@ -197,10 +197,7 @@ class _AlbumViewState extends State<AlbumView> {
             final screenHeight = MediaQuery.of(context).size.height;
             final coverPhotoId =
                 album.coverImageId ?? album.images!.values!.first!.imageId!;
-            var imageSize = ImageSizes.medium;
-            if (screenWidth > 750) {
-              imageSize = ImageSizes.large;
-            }
+            var imageSize = ImageSizes.large;
             return Stack(
               children: [
                 CustomScrollView(

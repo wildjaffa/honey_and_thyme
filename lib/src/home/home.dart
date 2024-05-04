@@ -21,13 +21,13 @@ class Home extends StatelessWidget {
   final Future<Album?> album =
       AlbumService.fetchAlbumByName('site-images', null);
 
-  static const List<int> imageIds = [
-    131,
-    130,
-    133,
-    129,
-    132,
-    128,
+  static const List<String> fileNames = [
+    "IMG_1636.jpg",
+    "PXL_20221218_174920383.PORTRAIT.jpg",
+    "PXL_20231109_195510638.PORTRAIT.ORIGINAL.jpg",
+    "PXL_20220620_001017270.PORTRAIT.jpg",
+    "IMG_1832.jpg",
+    "PXL_20231129_211208106.PORTRAIT.jpg",
   ];
 
   @override
@@ -48,13 +48,13 @@ class Home extends StatelessWidget {
             builder: (context, constraints) {
               if (constraints.maxWidth < 600) {
                 return MobileView(
-                  imageIds: imageIds,
+                  fileNames: fileNames,
                   album: snapshot.data!,
                   slowLoadImages: slowLoadImages,
                 );
               } else {
                 return DesktopView(
-                  imageIds: imageIds,
+                  fileNames: fileNames,
                   album: snapshot.data!,
                   slowLoadImages: slowLoadImages,
                 );
@@ -69,12 +69,12 @@ class Home extends StatelessWidget {
 
 class MobileView extends StatefulWidget {
   final Album album;
-  final List<int> imageIds;
+  final List<String> fileNames;
   final bool slowLoadImages;
   const MobileView({
     super.key,
     required this.album,
-    required this.imageIds,
+    required this.fileNames,
     required this.slowLoadImages,
   });
 
@@ -122,7 +122,7 @@ class _MobileViewState extends State<MobileView>
                       height: 150, // 2/3
                       width: 150,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[0])!,
+                          (image) => image!.fileName == widget.fileNames[0])!,
                       delayInSeconds: 0,
                       controller: imagesController,
                     ),
@@ -132,7 +132,7 @@ class _MobileViewState extends State<MobileView>
                     child: HomePageImage(
                       width: 175,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[1])!,
+                          (image) => image!.fileName == widget.fileNames[1])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 2,
                       controller: imagesController,
                     ),
@@ -157,7 +157,8 @@ class _MobileViewState extends State<MobileView>
                         child: HomePageImage(
                           width: 175,
                           image: widget.album.images!.values!.firstWhere(
-                              (image) => image!.imageId == widget.imageIds[3])!,
+                              (image) =>
+                                  image!.fileName == widget.fileNames[3])!,
                           delayInSeconds: widget.slowLoadImages ? 0 : 3,
                           controller: imagesController,
                         ),
@@ -167,7 +168,8 @@ class _MobileViewState extends State<MobileView>
                         child: HomePageImage(
                           width: 175,
                           image: widget.album.images!.values!.firstWhere(
-                              (image) => image!.imageId == widget.imageIds[2])!,
+                              (image) =>
+                                  image!.fileName == widget.fileNames[2])!,
                           delayInSeconds: widget.slowLoadImages ? 0 : 5,
                           controller: imagesController,
                         ),
@@ -181,7 +183,8 @@ class _MobileViewState extends State<MobileView>
                         child: HomePageImage(
                           width: 165,
                           image: widget.album.images!.values!.firstWhere(
-                              (image) => image!.imageId == widget.imageIds[4])!,
+                              (image) =>
+                                  image!.fileName == widget.fileNames[4])!,
                           delayInSeconds: widget.slowLoadImages ? 0 : 1,
                           controller: imagesController,
                         ),
@@ -191,7 +194,8 @@ class _MobileViewState extends State<MobileView>
                         child: HomePageImage(
                           width: 165,
                           image: widget.album.images!.values!.firstWhere(
-                              (image) => image!.imageId == widget.imageIds[5])!,
+                              (image) =>
+                                  image!.fileName == widget.fileNames[5])!,
                           delayInSeconds: widget.slowLoadImages ? 0 : 4,
                           controller: imagesController,
                         ),
@@ -212,11 +216,11 @@ class _MobileViewState extends State<MobileView>
 
 class DesktopView extends StatefulWidget {
   final Album album;
-  final List<int> imageIds;
+  final List<String> fileNames;
   final bool slowLoadImages;
   const DesktopView({
     super.key,
-    required this.imageIds,
+    required this.fileNames,
     required this.album,
     required this.slowLoadImages,
   });
@@ -277,7 +281,7 @@ class _DesktopViewState extends State<DesktopView>
                       height: 150 * heightRatio,
                       width: 150 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[0])!,
+                          (image) => image!.fileName == widget.fileNames[0])!,
                       delayInSeconds: 0,
                       controller: imagesController,
                     ),
@@ -288,7 +292,7 @@ class _DesktopViewState extends State<DesktopView>
                       height: 300 * heightRatio,
                       width: 200 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[1])!,
+                          (image) => image!.fileName == widget.fileNames[1])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 2,
                       controller: imagesController,
                     ),
@@ -299,7 +303,7 @@ class _DesktopViewState extends State<DesktopView>
                       height: 200 * heightRatio,
                       width: 200 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[2])!,
+                          (image) => image!.fileName == widget.fileNames[2])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 4,
                       controller: imagesController,
                     ),
@@ -322,7 +326,7 @@ class _DesktopViewState extends State<DesktopView>
                     child: HomePageImage(
                       width: 190 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[3])!,
+                          (image) => image!.fileName == widget.fileNames[3])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 3,
                       controller: imagesController,
                     ),
@@ -332,7 +336,7 @@ class _DesktopViewState extends State<DesktopView>
                     child: HomePageImage(
                       width: 187 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[4])!,
+                          (image) => image!.fileName == widget.fileNames[4])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 5,
                       controller: imagesController,
                     ),
@@ -342,7 +346,7 @@ class _DesktopViewState extends State<DesktopView>
                     child: HomePageImage(
                       width: 190 * widthRatio,
                       image: widget.album.images!.values!.firstWhere(
-                          (image) => image!.imageId == widget.imageIds[5])!,
+                          (image) => image!.fileName == widget.fileNames[5])!,
                       delayInSeconds: widget.slowLoadImages ? 0 : 1,
                       controller: imagesController,
                     ),

@@ -29,14 +29,14 @@ class PricingView extends StatelessWidget {
       title: 'The Mini - \$50',
       description: '5 minutes with unlimited edited images back. \n'
           'Up to 5 people. Message for pricing for additional people',
-      imageId: 134,
+      fileName: 'TheMini.jpg',
       imageWidth: 400,
     ),
     PricingEntryData(
       title: 'The Half - \$75',
       description: '30 minutes with unlimited edited images back. '
           'Up to 5 people. Message for pricing for additional people',
-      imageId: 136,
+      fileName: 'TheHalf.png',
       imageWidth: 200,
     ),
     PricingEntryData(
@@ -44,14 +44,14 @@ class PricingView extends StatelessWidget {
       description: '60 minutes with unlimited edited images back. '
           'Up to 5 people. '
           'Message for pricing for additional people.',
-      imageId: 135,
+      fileName: 'TheFull.png',
       imageWidth: 400,
     ),
     PricingEntryData(
       title: 'The Double - \$200',
       description: '120 minutes with unlimited edited images back. '
           'Up to 5 people. Message for pricing for additional people.',
-      imageId: 137,
+      fileName: 'TheDouble.png',
       imageWidth: 200,
     ),
   ];
@@ -132,7 +132,7 @@ class PricingView extends StatelessWidget {
 
                 final pricingEntry = pricingEntries[index];
                 final image = snapshot.data!.images!.values!.firstWhere(
-                  (element) => element!.imageId == pricingEntry.imageId,
+                  (element) => element!.fileName == pricingEntry.fileName,
                 );
                 return Align(
                   alignment: Alignment.center,
@@ -144,8 +144,9 @@ class PricingView extends StatelessWidget {
                           : Constants.sageColor,
                       width: screenWidth,
                       pricingEntryData: pricingEntry,
+                      imageId: image!.imageId!,
                       imageSize: ImageUtils.calculateImageSize(
-                        aspectRatio: image!.metaData!.aspectRatio!,
+                        aspectRatio: image.metaData!.aspectRatio!,
                         imageWidth: pricingEntry.imageWidth * multiplier,
                       ),
                     ),
@@ -164,12 +165,14 @@ class PricingEntry extends StatelessWidget {
   final double width;
   final Size imageSize;
   final Color backgroundColor;
+  final String imageId;
   const PricingEntry({
     super.key,
     required this.pricingEntryData,
     required this.width,
     required this.imageSize,
     required this.backgroundColor,
+    required this.imageId,
   });
 
   final PricingEntryData pricingEntryData;
@@ -204,8 +207,7 @@ class PricingEntry extends StatelessWidget {
               height: imageSize.height,
               width: imageSize.width,
               placeholder: kTransparentImage,
-              image: ImageService.getImageUrl(
-                  pricingEntryData.imageId, ImageSizes.large, null),
+              image: ImageService.getImageUrl(imageId, ImageSizes.large, null),
             ),
           ),
           Column(
@@ -241,13 +243,13 @@ class PricingEntry extends StatelessWidget {
 class PricingEntryData {
   String title;
   String description;
-  int imageId;
+  String fileName;
   double imageWidth;
 
   PricingEntryData({
     required this.title,
     required this.description,
-    required this.imageId,
+    required this.fileName,
     required this.imageWidth,
   });
 }

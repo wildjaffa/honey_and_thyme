@@ -13,7 +13,7 @@ import '../../widgets/fade_in_image_with_place_holder.dart';
 import 'image_upload.dart';
 
 class EditAlbum extends StatefulWidget {
-  final int albumId;
+  final String albumId;
 
   static const String route = '/admin/album';
 
@@ -31,9 +31,9 @@ class _EditAlbumState extends State<EditAlbum> {
 
   bool editing = false;
 
-  List<int> selectedImages = [];
+  List<String> selectedImages = [];
 
-  void imageSelected(int imageId) {
+  void imageSelected(String imageId) {
     if (selectedImages.contains(imageId)) {
       selectedImages.remove(imageId);
     } else {
@@ -187,6 +187,8 @@ class _EditAlbumState extends State<EditAlbum> {
                   children: [
                     Text(album.name!),
                     Text(album.description!),
+                    Text(
+                        'There are ${album.images!.values!.length} images in this album'),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(

@@ -1,3 +1,4 @@
+import 'package:flutter/semantics.dart';
 import 'package:honey_and_thyme/src/models/bool_result.dart';
 import 'package:honey_and_thyme/src/services/api_service.dart';
 
@@ -14,7 +15,7 @@ class AlbumService {
     }
   }
 
-  static Future<Album> fetchAlbumById(int albumId, String? password) async {
+  static Future<Album> fetchAlbumById(String albumId, String? password) async {
     Map<String, String>? queryParameters;
     if (password != null) {
       queryParameters = {'password': password};
@@ -59,7 +60,7 @@ class AlbumService {
     return result;
   }
 
-  static Future<void> deleteAlbum(int albumId) async {
+  static Future<void> deleteAlbum(String albumId) async {
     await ApiService.deleteRequest('albums/$albumId', BoolResult.fromJson);
   }
 }

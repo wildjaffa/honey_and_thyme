@@ -28,7 +28,7 @@ class ImagesData implements Parsable {
 
 class ImageData implements Parsable {
   String? id;
-  int? imageId;
+  String? imageId;
   String? fileName;
   DateTime? sortDate;
   MetaData? metaData;

@@ -28,13 +28,13 @@ class Albums implements Parsable {
 
 class Album implements Parsable {
   String? id;
-  int? albumId;
+  String? albumId;
   String? name;
   String? urlName;
   String? description;
   bool? isPublic;
   String? password;
-  int? coverImageId;
+  String? coverImageId;
   bool? isLocked;
   ImagesData? images;
 

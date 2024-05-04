@@ -107,8 +107,7 @@ class MyApp extends StatelessWidget {
                   case PublicGallery.route:
                     return const PublicGallery();
                   case EditAlbum.route:
-                    return EditAlbum(
-                        albumId: int.parse(routeParts[1].split('=')[1]));
+                    return EditAlbum(albumId: routeParts[1].split('=')[1]);
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;

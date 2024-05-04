@@ -2,8 +2,8 @@ import 'parsable.dart';
 
 class MetaData implements Parsable {
   String? id;
-  int? metaDataId;
-  int? imageId;
+  String? metaDataId;
+  String? imageId;
   int? width;
   int? height;
   double? aspectRatio;

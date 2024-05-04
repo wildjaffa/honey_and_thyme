@@ -15,7 +15,7 @@ import 'api_service.dart';
 
 class ImageService {
   static Future<ImageData> uploadImage(
-      int albumId, Uint8List image, String fileName) async {
+      String albumId, Uint8List image, String fileName) async {
     final newImage = await ApiService.multiPartFormRequest<ImagesData>(
         'images/upload', ImagesData.fromJson, {
       "AlbumId": albumId.toString(),
@@ -30,13 +30,13 @@ class ImageService {
     return newImage.values!.first!;
   }
 
-  static Future<ImageData> getImageData(int imageId) async {
+  static Future<ImageData> getImageData(String imageId) async {
     final image = await ApiService.getRequest<ImageData>(
         'images/imageData/$imageId', ImageData.fromJson);
     return image;
   }
 
-  static String getImageUrl(int imageId, ImageSizes size, String? password) {
+  static String getImageUrl(String imageId, ImageSizes size, String? password) {
     final baseUrl = ApiService.url;
     final sizeId = size.index;
     final uri = ApiService.getUri(baseUrl, 'thumb/$sizeId/$imageId', {
@@ -45,13 +45,13 @@ class ImageService {
     return uri.toString();
   }
 
-  static Future<BoolResult> deleteImage(int imageId) async {
+  static Future<BoolResult> deleteImage(String imageId) async {
     final result =
         await ApiService.deleteRequest('images/$imageId', BoolResult.fromJson);
     return result;
   }
 
-  static Future<Uri> getImageDownloadUrl(List<int> imageIds,
+  static Future<String> getImageDownloadUrl(List<String> imageIds,
       DownloadImageSizes downloadSize, String? password) async {
     final DownloadRequestConfig config = DownloadRequestConfig(
       exportConfigId: 0,
@@ -70,6 +70,7 @@ class ImageService {
         'api/download/images',
         DownloadRequestResponse.fromJson,
         downloadImageRequest.toJson());
-    return ApiService.getUri(ApiService.url, result.downloadUrl!);
+    return '${Uri.base.origin}/${result.downloadUrl}';
+    // return ApiService.getUri(ApiService.url, result.downloadUrl!);
   }
 }

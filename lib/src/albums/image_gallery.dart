@@ -10,8 +10,8 @@ import '../widgets/fade_in_image_with_place_holder.dart';
 class ImageGallery extends StatelessWidget {
   final Album album;
   final void Function(int)? onImageTapped;
-  final void Function(int)? onImageSelected;
-  final List<int>? selectedImages;
+  final void Function(String)? onImageSelected;
+  final List<String>? selectedImages;
   const ImageGallery({
     super.key,
     required this.album,

@@ -1,7 +1,7 @@
 import 'download_request_config.dart';
 
 class DownloadImageRequest {
-  List<int?>? imageIds;
+  List<String?>? imageIds;
   DownloadRequestConfig? config;
   String? password;
 
@@ -9,7 +9,7 @@ class DownloadImageRequest {
 
   DownloadImageRequest.fromJson(dynamic json) {
     if (json['ImageIds'] != null) {
-      imageIds = <int>[];
+      imageIds = <String>[];
       json['ImageIds'].forEach((v) {
         imageIds!.add(v);
       });
