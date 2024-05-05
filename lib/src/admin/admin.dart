@@ -181,7 +181,6 @@ class _AlbumSummaryState extends State<AlbumSummary> {
                     }
 
                     return FadeInImageWithPlaceHolder(
-                      isSelected: false,
                       imageUrl: ImageService.getImageUrl(
                           widget.album.coverImageId!,
                           ImageSizes.medium,

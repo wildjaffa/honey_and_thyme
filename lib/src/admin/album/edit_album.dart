@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:honey_and_thyme/src/admin/album/album_form.dart';
-import 'package:honey_and_thyme/src/models/enums/image_sizes.dart';
+import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/services/image_service.dart';
-import 'package:honey_and_thyme/src/services/utils/image_utils.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 
 import '../../models/album.dart';
-import '../../widgets/fade_in_image_with_place_holder.dart';
 import 'image_upload.dart';
 
 class EditAlbum extends StatefulWidget {
@@ -28,6 +25,8 @@ class EditAlbum extends StatefulWidget {
 
 class _EditAlbumState extends State<EditAlbum> {
   late Future<Album> album = AlbumService.fetchAlbumById(widget.albumId, null);
+  late Future<List<Album>> albums = AlbumService.fetchAlbums();
+  String? selectedOtherAlbum;
 
   bool editing = false;
 
@@ -42,6 +41,37 @@ class _EditAlbumState extends State<EditAlbum> {
     setState(() {
       selectedImages = selectedImages;
     });
+  }
+
+  Future<void> addToOtherAlbum() async {
+    try {
+      if (selectedOtherAlbum == null) {
+        return;
+      }
+      final otherAlbum = (await albums)
+          .firstWhere((element) => element.albumId == selectedOtherAlbum);
+      final result = await AlbumService.addImagesToAlbum(
+          selectedOtherAlbum!, selectedImages);
+      SnackBar snackBar;
+      if (result) {
+        snackBar = SnackBar(
+          content: Text('Images added to ${otherAlbum.name}'),
+        );
+      } else {
+        snackBar = const SnackBar(
+          content: Text('There was a problem adding images to other album'),
+        );
+      }
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+        selectedImages = [];
+      });
+    } catch (e) {
+      final snackBar = SnackBar(
+        content: Text('Error adding images to other album: $e'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   Future<void> unlockAlbum() async {
@@ -183,83 +213,139 @@ class _EditAlbumState extends State<EditAlbum> {
                     ),
                   ],
                 )
-              : Column(
-                  children: [
-                    Text(album.name!),
-                    Text(album.description!),
-                    Text(
-                        'There are ${album.images!.values!.length} images in this album'),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () => {
-                          setState(() {
-                            editing = true;
-                          })
-                        },
-                        child: const Text('Edit Album'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ImageUpload(
-                        album: album,
-                        onUploadComplete: refreshAlbum,
-                      ),
-                    ),
-                    if (album.isLocked == true)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: unlockAlbum,
-                          child: const Text('Unlock Album'),
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        // width: 1000,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: selectedImages.isEmpty
-                                  ? null
-                                  : deleteSelectedImages,
-                              icon: const Icon(Icons.delete),
+              : CustomScrollView(
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Center(child: Text(album.name!)),
+                          Center(child: Text(album.description!)),
+                          Center(
+                            child: Text(
+                                'There are ${album.images!.values!.length} images in this album'),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () => {
+                                    setState(() {
+                                      editing = true;
+                                    })
+                                  },
+                                  child: const Text('Edit Album'),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ImageUpload(
+                                  album: album,
+                                  onUploadComplete: refreshAlbum,
+                                ),
+                              ),
+                              FutureBuilder(
+                                  future: albums,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    }
+                                    return DropdownButton<String>(
+                                      hint: const Text("Other Album"),
+                                      value: selectedOtherAlbum,
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          selectedOtherAlbum = value;
+                                        });
+                                      },
+                                      items: snapshot.data!
+                                          .where(
+                                              (a) => a.albumId != album.albumId)
+                                          .map((a) => DropdownMenuItem<String>(
+                                                value: a.albumId,
+                                                child: Text(a.name!),
+                                              ))
+                                          .toList(),
+                                    );
+                                  }),
+                            ],
+                          ),
+                          if (album.isLocked == true)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                onPressed: unlockAlbum,
+                                child: const Text('Unlock Album'),
+                              ),
                             ),
-                            ElevatedButton(
-                              onPressed: selectedImages.length == 1
-                                  ? updateCoverPhoto
-                                  : null,
-                              child: const Text('Mark as Cover Photo'),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              // width: 1000,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    onPressed: selectedImages.isEmpty
+                                        ? null
+                                        : deleteSelectedImages,
+                                    icon: const Icon(Icons.delete),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: selectedImages.length == 1
+                                        ? updateCoverPhoto
+                                        : null,
+                                    child: const Text('Mark as Cover Photo'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: selectedImages.isEmpty ||
+                                            selectedOtherAlbum == null
+                                        ? null
+                                        : addToOtherAlbum,
+                                    child: const Text('Add to Other Album'),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 600,
-                      width: 1000,
-                      child: MasonryGridView.count(
-                        itemCount: album.images!.values?.length ?? 0,
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 4,
-                        crossAxisSpacing: 4,
-                        itemBuilder: (context, index) {
-                          final image = album.images!.values![index]!;
-                          return FadeInImageWithPlaceHolder(
-                            isSelected: selectedImages.contains(image.imageId!),
-                            onSelected: () => {imageSelected(image.imageId!)},
-                            imageUrl: ImageService.getImageUrl(image.imageId!,
-                                ImageSizes.medium, album.password),
-                            size: ImageUtils.calculateImageSize(
-                                imageWidth: 333,
-                                aspectRatio: image.metaData?.aspectRatio ?? 1),
-                          );
-                        },
-                      ),
+                    ImageGallery(
+                      album: album,
+                      onImageSelected: (imageId) {
+                        imageSelected(imageId);
+                      },
+                      selectedImages: selectedImages,
                     )
+                    // SizedBox(
+                    //   height: 600,
+                    //   width: 1000,
+                    //   child: MasonryGridView.count(
+                    //     itemCount: album.images!.values?.length ?? 0,
+                    //     crossAxisCount: 4,
+                    //     mainAxisSpacing: 4,
+                    //     crossAxisSpacing: 4,
+                    //     itemBuilder: (context, index) {
+                    //       final image = album.images!.values![index]!;
+                    //       return FadeInImageWithPlaceHolder(
+                    //         isSelected: selectedImages.contains(image.imageId!),
+                    //         onSelected: () => {imageSelected(image.imageId!)},
+                    //         imageUrl: ImageService.getImageUrl(image.imageId!,
+                    //             ImageSizes.medium, album.password),
+                    //         size: ImageUtils.calculateImageSize(
+                    //             imageWidth: 333,
+                    //             aspectRatio: image.metaData?.aspectRatio ?? 1),
+                    //       );
+                    //     },
+                    //   ),
+                    // )
                   ],
                 );
         },

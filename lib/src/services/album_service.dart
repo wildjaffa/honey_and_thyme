@@ -1,7 +1,7 @@
-import 'package:flutter/semantics.dart';
 import 'package:honey_and_thyme/src/models/bool_result.dart';
 import 'package:honey_and_thyme/src/services/api_service.dart';
 
+import '../models/add_existing_images_to_album_request.dart';
 import '../models/album.dart';
 
 class AlbumService {
@@ -62,5 +62,16 @@ class AlbumService {
 
   static Future<void> deleteAlbum(String albumId) async {
     await ApiService.deleteRequest('albums/$albumId', BoolResult.fromJson);
+  }
+
+  static Future<bool> addImagesToAlbum(
+      String albumId, List<String> selectedImages) async {
+    final request = AddExistingImagesToAlbumRequest(
+      albumId: albumId,
+      imageIds: selectedImages,
+    );
+    final result = await ApiService.postRequest(
+        'albums/AddExistingImages', BoolResult.fromJson, request.toJson());
+    return result.result!;
   }
 }
