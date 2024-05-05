@@ -56,6 +56,7 @@ class _ContactViewState extends State<ContactView> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Constants.pinkColor,
           title: const Text('Message Sent'),
           content: const Text(
               'Your message has been sent. We will get back to you as soon as possible. Thank you!'),
@@ -284,18 +285,6 @@ class _ContactViewState extends State<ContactView> {
                     ),
                   ),
                 ),
-              // if (contactState == ContactState.sent)
-              //   Padding(
-              //     padding: const EdgeInsets.only(top: 20.0),
-              //     child: Center(
-              //       child: Text(
-              //         'Your message has been sent. We will get back to you as soon as possible. Thank you!',
-              //         style: GoogleFonts.imFellEnglish(
-              //           fontSize: 18,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
               const AppFooter(),
             ],
           ),

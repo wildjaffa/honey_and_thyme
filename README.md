@@ -1,6 +1,6 @@
 # honey_and_thyme
 
-A new Flutter project.
+Gallery for Honey and Thyme
 
 ## Getting Started
 

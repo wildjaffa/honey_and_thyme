@@ -1,5 +1,5 @@
 name: honey_and_thyme
-description: "A new Flutter project."
+description: "Gallery for Honey and Thyme"
 
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"

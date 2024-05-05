@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
 import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
+import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
@@ -106,6 +107,8 @@ class MyApp extends StatelessWidget {
                     return const AdminView();
                   case PublicGallery.route:
                     return const PublicGallery();
+                  case BookingView.route:
+                    return const BookingView();
                   case EditAlbum.route:
                     return EditAlbum(albumId: routeParts[1].split('=')[1]);
                   default:
