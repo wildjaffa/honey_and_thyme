@@ -25,8 +25,14 @@ class ImageGallery extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     var itemCount = album.images!.values?.length ?? 0;
     if (itemCount == 0) {
-      return const Center(
-        child: Text('No images found in this album'),
+      return SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            const Center(
+              child: Text('No images found in this album'),
+            )
+          ],
+        ),
       );
     }
     var crossAxisCount = 2;

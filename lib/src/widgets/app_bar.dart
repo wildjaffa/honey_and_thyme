@@ -32,7 +32,7 @@ class CustomAppBar extends StatelessWidget {
                 color: Colors.grey,
                 blurRadius: 10,
                 spreadRadius: 1,
-                offset: Offset(0, 2)),
+                offset: Offset(0, .5)),
           ],
         ),
         height: 150,
@@ -51,11 +51,11 @@ class CustomAppBar extends StatelessWidget {
                     child: Text(
                       'Honey+Thyme',
                       style: TextStyle(
-                          shadows: const [
+                          shadows: [
                             Shadow(
-                              color: Colors.grey,
-                              blurRadius: 1,
-                              offset: Offset(3, 3),
+                              color: Colors.black.withOpacity(0.35),
+                              blurRadius: 7,
+                              offset: Offset(0, 0),
                             )
                           ],
                           color: Colors.black,
