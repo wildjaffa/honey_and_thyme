@@ -51,6 +51,13 @@ class CustomAppBar extends StatelessWidget {
                     child: Text(
                       'Honey+Thyme',
                       style: TextStyle(
+                          shadows: const [
+                            Shadow(
+                              color: Colors.grey,
+                              blurRadius: 1,
+                              offset: Offset(3, 3),
+                            )
+                          ],
                           color: Colors.black,
                           fontSize: screenWidth >= 500 ? 60 : 40,
                           fontFamily: 'MarchRough'),
@@ -170,6 +177,15 @@ class _NavItemState extends State<NavItem> {
               widget.title,
               style: GoogleFonts.imFellEnglishSc(
                 fontSize: 24 * widget.fontSizeMultiplier,
+                shadows: [
+                  Shadow(
+                    color: widget.isSelected
+                        ? Constants.goldColor.withOpacity(.5)
+                        : Colors.grey,
+                    blurRadius: 1,
+                    offset: const Offset(2, 2),
+                  ),
+                ],
                 color: widget.isSelected ? Constants.goldColor : Colors.black,
               ),
             ),

@@ -45,7 +45,7 @@ class _AlbumViewState extends State<AlbumView> {
   String? password;
   List<String> selectedImages = [];
   double appBarPercent = 0;
-  int? slideShowImageIndex;
+  bool showSlideShow = false;
   bool scrolled = false;
   bool passwordInputVisible = false;
   bool isLoading = false;
@@ -126,7 +126,7 @@ class _AlbumViewState extends State<AlbumView> {
 
   void imageTapped(int index) {
     setState(() {
-      slideShowImageIndex = index;
+      showSlideShow = true;
     });
     carouselController.jumpToPage(index);
   }
@@ -227,32 +227,6 @@ class _AlbumViewState extends State<AlbumView> {
                       onImageTapped: imageTapped,
                       onImageSelected: imageSelected,
                     ),
-                    // SliverMasonryGrid(
-                    //   gridDelegate:
-                    //       SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    //     crossAxisCount: crossAxisCount,
-                    //   ),
-                    //   delegate: SliverChildBuilderDelegate(
-                    //     (context, index) {
-                    //       if (index >= itemCount) {
-                    //         return null;
-                    //       }
-                    //       final image = album.images!.values![index]!;
-                    //       return FadeInImageWithPlaceHolder(
-                    //         isSelected: selectedImages.contains(image.imageId!),
-                    //         onSelected: () => {imageSelected(image.imageId!)},
-                    //         onTapped: () => {imageTapped(index)},
-                    //         imageUrl: ImageService.getImageUrl(
-                    //             image.imageId!, imageSize, password),
-                    //         size: ImageUtils.calculateImageSize(
-                    //             imageWidth: imageWidth,
-                    //             aspectRatio: image.metaData?.aspectRatio ?? 1),
-                    //       );
-                    //     },
-                    //   ),
-                    //   mainAxisSpacing: 4,
-                    //   crossAxisSpacing: 4,
-                    // ),
                     SliverList(
                       delegate: SliverChildListDelegate([const AppFooter()]),
                     ),
@@ -334,31 +308,13 @@ class _AlbumViewState extends State<AlbumView> {
                 ),
                 ImageSlideshow(
                   carouselController: carouselController,
-                  slideShowImageIndex: slideShowImageIndex,
+                  isOpen: showSlideShow,
                   album: album,
                   imageSize: imageSize,
                   onDismissed: () {
                     setState(() {
-                      slideShowImageIndex = null;
+                      showSlideShow = false;
                     });
-                  },
-                  onPreviousTapped: () {
-                    if (slideShowImageIndex == 0) {
-                      return;
-                    }
-                    setState(() {
-                      slideShowImageIndex = slideShowImageIndex! - 1;
-                    });
-                    carouselController.previousPage();
-                  },
-                  onNextTapped: () {
-                    if (slideShowImageIndex == album.images!.values!.length) {
-                      return;
-                    }
-                    setState(() {
-                      slideShowImageIndex = slideShowImageIndex! + 1;
-                    });
-                    carouselController.nextPage();
                   },
                 ),
                 if (isLoading)

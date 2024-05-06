@@ -9,21 +9,17 @@ import '../services/image_service.dart';
 
 class ImageSlideshow extends StatelessWidget {
   final CarouselController carouselController;
-  final int? slideShowImageIndex;
   final Album album;
+  final bool isOpen;
   final ImageSizes imageSize;
   final void Function() onDismissed;
-  final void Function() onPreviousTapped;
-  final void Function() onNextTapped;
   const ImageSlideshow({
     super.key,
     required this.carouselController,
-    required this.slideShowImageIndex,
     required this.album,
     required this.imageSize,
     required this.onDismissed,
-    required this.onPreviousTapped,
-    required this.onNextTapped,
+    required this.isOpen,
   });
 
   @override
@@ -32,10 +28,16 @@ class ImageSlideshow extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     return Stack(
       children: [
+        if (isOpen)
+          Container(
+            width: screenWidth,
+            height: screenHeight,
+            color: Colors.black.withOpacity(0.4),
+          ),
         Visibility(
           maintainState: true,
           maintainAnimation: true,
-          visible: slideShowImageIndex != null,
+          visible: isOpen,
           child: CarouselSlider.builder(
             itemCount: album.images!.values!.length,
             carouselController: carouselController,
@@ -53,7 +55,7 @@ class ImageSlideshow extends StatelessWidget {
               return Container(
                 width: screenWidth,
                 height: screenHeight,
-                color: Colors.black.withOpacity(0.8),
+                color: Colors.black.withOpacity(0.4),
                 child: FadeInImage.memoryNetwork(
                   fadeInDuration: const Duration(milliseconds: 100),
                   placeholder: kTransparentImage,
@@ -63,7 +65,7 @@ class ImageSlideshow extends StatelessWidget {
             },
           ),
         ),
-        if (slideShowImageIndex != null)
+        if (isOpen) ...[
           Positioned(
             top: 5,
             right: 5,
@@ -73,27 +75,25 @@ class ImageSlideshow extends StatelessWidget {
               onPressed: onDismissed,
             ),
           ),
-        if (slideShowImageIndex != null && slideShowImageIndex! > 0)
           Positioned(
             left: 5,
             top: (screenHeight - 24) / 2,
             child: IconButton(
               color: Constants.goldColor,
               icon: const Icon(Icons.arrow_back),
-              onPressed: onPreviousTapped,
+              onPressed: carouselController.previousPage,
             ),
           ),
-        if (slideShowImageIndex != null &&
-            slideShowImageIndex! < album.images!.values!.length - 1)
           Positioned(
             right: 5,
             top: (screenHeight - 24) / 2,
             child: IconButton(
               color: Constants.goldColor,
               icon: const Icon(Icons.arrow_forward),
-              onPressed: onNextTapped,
+              onPressed: carouselController.nextPage,
             ),
           ),
+        ]
       ],
     );
   }

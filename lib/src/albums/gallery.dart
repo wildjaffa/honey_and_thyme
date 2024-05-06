@@ -25,7 +25,7 @@ class _PublicGalleryState extends State<PublicGallery> {
   final CarouselController carouselController = CarouselController();
   late Future googleFontsPending = GoogleFonts.pendingFonts();
 
-  int? slideShowImageIndex;
+  bool showSlideshow = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class _PublicGalleryState extends State<PublicGallery> {
                     album: album,
                     onImageTapped: (index) {
                       setState(() {
-                        slideShowImageIndex = index;
+                        showSlideshow = true;
                       });
                       carouselController.jumpToPage(index);
                     },
@@ -109,24 +109,12 @@ class _PublicGalleryState extends State<PublicGallery> {
                   width: screenWidth,
                   child: ImageSlideshow(
                     carouselController: carouselController,
-                    slideShowImageIndex: slideShowImageIndex,
+                    isOpen: showSlideshow,
                     album: album,
                     imageSize: imageSize,
                     onDismissed: () {
                       setState(() {
-                        slideShowImageIndex = null;
-                      });
-                    },
-                    onPreviousTapped: () {
-                      carouselController.previousPage();
-                      setState(() {
-                        slideShowImageIndex = slideShowImageIndex! - 1;
-                      });
-                    },
-                    onNextTapped: () {
-                      carouselController.nextPage();
-                      setState(() {
-                        slideShowImageIndex = slideShowImageIndex! + 1;
+                        showSlideshow = false;
                       });
                     },
                   ),
