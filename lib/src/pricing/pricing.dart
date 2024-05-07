@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
 import 'package:honey_and_thyme/src/models/enums/image_sizes.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
@@ -109,10 +110,8 @@ class PricingView extends StatelessWidget {
                               text: "CONTACT ME",
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      ContactView.route,
-                                      (route) => route.isFirst);
+                                  Navigator.pushNamed(
+                                      context, ContactView.route);
                                 },
                               style: const TextStyle(
                                 color: Constants.goldColor,
@@ -186,16 +185,6 @@ class PricingEntry extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor,
-        // border: Border.all(color: Constants.sageColor),
-        // borderRadius: BorderRadius.circular(8),
-        // boxShadow: const [
-        //   BoxShadow(
-        //     color: Constants.sageColor,
-        //     spreadRadius: 1,
-        //     blurRadius: 2,
-        //     offset: Offset(3, 3),
-        //   ),
-        // ]),
       ),
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -231,6 +220,15 @@ class PricingEntry extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                    width: 115,
+                    child: ElevatedButton(
+                        onPressed: () =>
+                            {Navigator.pushNamed(context, BookingView.route)},
+                        child: const Text('Book Now'))),
               ),
             ],
           ),

@@ -78,7 +78,7 @@ class _BookingViewState extends State<BookingView> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final formWidth = screenWidth < 400 ? screenWidth - 80 : screenWidth / 2;
+    final formWidth = screenWidth < 450 ? screenWidth - 80 : screenWidth / 2;
     return AppScaffold(
       currentScreen: ScreensEnum.contact,
       child: SingleChildScrollView(
@@ -182,7 +182,8 @@ class _BookingViewState extends State<BookingView> {
                     ),
                     FormField(
                       label: 'Occasion',
-                      hintText: 'Enter Occasion',
+                      hintText:
+                          'e.g. Birthday, Anniversary, couples/family etc.',
                       onChanged: (value) => setState(() {
                         bookingRequest.occasion = value;
                       }),
@@ -192,7 +193,8 @@ class _BookingViewState extends State<BookingView> {
                     ),
                     FormField(
                       label: 'Location Preferences',
-                      hintText: 'Enter Location Preferences',
+                      hintText:
+                          'e.g. Indoor, Outdoor, Specific Location, Aesthetic etc',
                       onChanged: (value) => setState(() {
                         bookingRequest.location = value;
                       }),

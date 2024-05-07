@@ -45,8 +45,7 @@ class CustomAppBar extends StatelessWidget {
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/', (route) => route.isFirst);
+                      Navigator.pushNamed(context, '/');
                     },
                     child: Text(
                       'Honey+Thyme',
@@ -55,7 +54,7 @@ class CustomAppBar extends StatelessWidget {
                             Shadow(
                               color: Colors.black.withOpacity(0.35),
                               blurRadius: 7,
-                              offset: Offset(0, 0),
+                              offset: const Offset(0, 0),
                             )
                           ],
                           color: Colors.black,
@@ -161,8 +160,7 @@ class _NavItemState extends State<NavItem> {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamedAndRemoveUntil(
-              context, widget.route, (route) => route.isFirst);
+          Navigator.pushNamed(context, widget.route);
         },
         child: Row(
           children: [
@@ -180,10 +178,10 @@ class _NavItemState extends State<NavItem> {
                 shadows: [
                   Shadow(
                     color: widget.isSelected
-                        ? Constants.goldColor.withOpacity(.5)
-                        : Colors.grey,
-                    blurRadius: 1,
-                    offset: const Offset(2, 2),
+                        ? Constants.goldColor.withOpacity(.35)
+                        : Colors.black.withOpacity(.35),
+                    blurRadius: 7,
+                    offset: const Offset(0, 0),
                   ),
                 ],
                 color: widget.isSelected ? Constants.goldColor : Colors.black,

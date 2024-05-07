@@ -88,8 +88,7 @@ class _AlbumFormState extends State<AlbumForm> {
                   content: Text('Album deleted'),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                Navigator.pushNamedAndRemoveUntil(
-                    context, AdminView.route, (route) => route.isFirst);
+                Navigator.pushNamed(context, AdminView.route);
               },
               child: const Text('Delete'),
             ),

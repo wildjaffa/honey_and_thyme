@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:honey_and_thyme/src/admin/album/album_form.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
@@ -32,7 +33,40 @@ class _EditAlbumState extends State<EditAlbum> {
 
   List<String> selectedImages = [];
 
-  void imageSelected(String imageId) {
+  void imageSelected(String imageId) async {
+    final isShiftPressed =
+        HardwareKeyboard.instance.logicalKeysPressed.contains(
+              LogicalKeyboardKey.shiftLeft,
+            ) ||
+            HardwareKeyboard.instance.logicalKeysPressed.contains(
+              LogicalKeyboardKey.shiftRight,
+            );
+
+    if (isShiftPressed && selectedImages.isNotEmpty) {
+      final albumDetails = await album;
+      final firstIndex = albumDetails.images!.values!
+          .toList()
+          .indexWhere((element) => element!.imageId == selectedImages.first);
+      final lastIndex = albumDetails.images!.values!
+          .toList()
+          .indexWhere((element) => element!.imageId == imageId);
+      final start = firstIndex < lastIndex ? firstIndex : lastIndex;
+      final end = firstIndex < lastIndex ? lastIndex : firstIndex;
+      final newSelected = albumDetails.images!.values!
+          .toList()
+          .sublist(start, end + 1)
+          .map((e) => e!.imageId!)
+          .toList();
+      for (final newImage in newSelected) {
+        if (!selectedImages.contains(newImage)) {
+          selectedImages.add(newImage);
+        }
+      }
+      setState(() {
+        selectedImages = selectedImages;
+      });
+      return;
+    }
     if (selectedImages.contains(imageId)) {
       selectedImages.remove(imageId);
     } else {
@@ -323,29 +357,7 @@ class _EditAlbumState extends State<EditAlbum> {
                         imageSelected(imageId);
                       },
                       selectedImages: selectedImages,
-                    )
-                    // SizedBox(
-                    //   height: 600,
-                    //   width: 1000,
-                    //   child: MasonryGridView.count(
-                    //     itemCount: album.images!.values?.length ?? 0,
-                    //     crossAxisCount: 4,
-                    //     mainAxisSpacing: 4,
-                    //     crossAxisSpacing: 4,
-                    //     itemBuilder: (context, index) {
-                    //       final image = album.images!.values![index]!;
-                    //       return FadeInImageWithPlaceHolder(
-                    //         isSelected: selectedImages.contains(image.imageId!),
-                    //         onSelected: () => {imageSelected(image.imageId!)},
-                    //         imageUrl: ImageService.getImageUrl(image.imageId!,
-                    //             ImageSizes.medium, album.password),
-                    //         size: ImageUtils.calculateImageSize(
-                    //             imageWidth: 333,
-                    //             aspectRatio: image.metaData?.aspectRatio ?? 1),
-                    //       );
-                    //     },
-                    //   ),
-                    // )
+                    ),
                   ],
                 );
         },

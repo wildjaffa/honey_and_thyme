@@ -1,5 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
@@ -39,7 +39,6 @@ class _AlbumViewState extends State<AlbumView> {
   static const formWidth = 300.0;
 
   final scrollController = ScrollController();
-  final carouselController = CarouselController();
 
   int passwordAttempts = 0;
   String? password;
@@ -50,7 +49,10 @@ class _AlbumViewState extends State<AlbumView> {
   bool passwordInputVisible = false;
   bool isLoading = false;
   bool modalIsOpen = false;
+  int currentImageIndex = 0;
   DownloadImageSizes selectedDownloadSize = DownloadImageSizes.medium;
+  final focusNode = FocusNode();
+  bool ignoreKey = false;
 
   Future<Album?> tryGetAlbum() async {
     final album =
@@ -113,7 +115,40 @@ class _AlbumViewState extends State<AlbumView> {
     web.window.open(url, 'Download Images');
   }
 
-  void imageSelected(String imageId) {
+  void imageSelected(String imageId) async {
+    final isShiftPressed =
+        HardwareKeyboard.instance.logicalKeysPressed.contains(
+              LogicalKeyboardKey.shiftLeft,
+            ) ||
+            HardwareKeyboard.instance.logicalKeysPressed.contains(
+              LogicalKeyboardKey.shiftRight,
+            );
+
+    if (isShiftPressed && selectedImages.isNotEmpty) {
+      final album = await fetchAlbum;
+      final firstIndex = album!.images!.values!
+          .toList()
+          .indexWhere((element) => element!.imageId == selectedImages.first);
+      final lastIndex = album.images!.values!
+          .toList()
+          .indexWhere((element) => element!.imageId == imageId);
+      final start = firstIndex < lastIndex ? firstIndex : lastIndex;
+      final end = firstIndex < lastIndex ? lastIndex : firstIndex;
+      final newSelected = album.images!.values!
+          .toList()
+          .sublist(start, end + 1)
+          .map((e) => e!.imageId!)
+          .toList();
+      for (final newImage in newSelected) {
+        if (!selectedImages.contains(newImage)) {
+          selectedImages.add(newImage);
+        }
+      }
+      setState(() {
+        selectedImages = selectedImages;
+      });
+      return;
+    }
     if (selectedImages.contains(imageId)) {
       selectedImages.remove(imageId);
     } else {
@@ -127,13 +162,14 @@ class _AlbumViewState extends State<AlbumView> {
   void imageTapped(int index) {
     setState(() {
       showSlideShow = true;
+      currentImageIndex = index;
     });
-    carouselController.jumpToPage(index);
   }
 
   @override
   void initState() {
     super.initState();
+    focusNode.requestFocus();
     GoogleFonts.imFellEnglishSc();
     googleFontsPending = GoogleFonts.pendingFonts();
     password = localStorage.getItem('${widget.albumName}-password');
@@ -198,268 +234,296 @@ class _AlbumViewState extends State<AlbumView> {
             final coverPhotoId =
                 album.coverImageId ?? album.images!.values!.first!.imageId!;
             var imageSize = ImageSizes.large;
-            return Stack(
-              children: [
-                CustomScrollView(
-                  controller: scrollController,
-                  physics: const ScrollPhysics(),
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: CoverImage(
-                              imageUrl: ImageService.getImageUrl(coverPhotoId,
-                                  ImageSizes.extraLarge, album.password),
-                              width: screenWidth,
-                              height: screenHeight,
-                              name: album.name!,
-                              onIconTap: () => scrollPastCoverImage(context),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ImageGallery(
-                      album: album,
-                      selectedImages: selectedImages,
-                      onImageTapped: imageTapped,
-                      onImageSelected: imageSelected,
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([const AppFooter()]),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: AnimatedOpacity(
-                    opacity: scrolled ? 1 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: Container(
-                      color: Constants.grayColor,
-                      width: screenWidth,
-                      height: 190,
-                      child: Column(
-                        children: [
-                          CustomAppBar(
-                              currentScreen: ScreensEnum.gallery,
-                              googleFontsPending: googleFontsPending),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 250),
-                                  transitionBuilder: (child, animation) =>
-                                      ScaleTransition(
-                                    scale: animation,
-                                    child: child,
-                                  ),
-                                  child: selectedImages.isNotEmpty
-                                      ? IconButton(
-                                          key:
-                                              const ValueKey('download-images'),
-                                          onPressed: () {
-                                            setState(() {
-                                              modalIsOpen = true;
-                                            });
-                                          },
-                                          icon: badges.Badge(
-                                            badgeAnimation: const badges
-                                                .BadgeAnimation.scale(
-                                              animationDuration:
-                                                  Duration(milliseconds: 250),
-                                            ),
-                                            badgeStyle: const badges.BadgeStyle(
-                                              // padding: EdgeInsets.all(3),
-                                              badgeColor: Constants.goldColor,
-                                            ),
-                                            position:
-                                                badges.BadgePosition.topEnd(
-                                              top: -15,
-                                              end: -10,
-                                            ),
-                                            badgeContent: Text(
-                                              selectedImages.length.toString(),
-                                            ),
-                                            child: const Icon(Icons.photo),
-                                          ))
-                                      : IconButton(
-                                          key: const ValueKey('download-album'),
-                                          onPressed: () {
-                                            setState(() {
-                                              modalIsOpen = true;
-                                            });
-                                          },
-                                          icon: const Icon(Icons.download),
-                                        ),
-                                ),
+            return KeyboardListener(
+              focusNode: focusNode,
+              onKeyEvent: (value) {
+                if (showSlideShow || isLoading || modalIsOpen) return;
+                if (ignoreKey) {
+                  ignoreKey = false;
+                  return;
+                }
+                ignoreKey = true;
+                if (value.logicalKey == LogicalKeyboardKey.arrowDown) {
+                  scrollController.animateTo(
+                    scrollController.offset + 100,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.linear,
+                  );
+                } else if (value.logicalKey == LogicalKeyboardKey.arrowUp) {
+                  scrollController.animateTo(
+                    scrollController.offset - 100,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.linear,
+                  );
+                }
+              },
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    controller: scrollController,
+                    physics: const ScrollPhysics(),
+                    slivers: [
+                      SliverList(
+                        delegate: SliverChildListDelegate(
+                          [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: CoverImage(
+                                imageUrl: ImageService.getImageUrl(coverPhotoId,
+                                    ImageSizes.extraLarge, album.password),
+                                width: screenWidth,
+                                height: screenHeight,
+                                name: album.name!,
+                                onIconTap: () => scrollPastCoverImage(context),
                               ),
-                            ],
-                          )
-                        ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      ImageGallery(
+                        album: album,
+                        selectedImages: selectedImages,
+                        onImageTapped: imageTapped,
+                        onImageSelected: imageSelected,
+                      ),
+                      SliverList(
+                        delegate: SliverChildListDelegate([const AppFooter()]),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: AnimatedOpacity(
+                      opacity: scrolled ? 1 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Container(
+                        color: Constants.grayColor,
+                        width: screenWidth,
+                        height: 190,
+                        child: Column(
+                          children: [
+                            CustomAppBar(
+                                currentScreen: ScreensEnum.gallery,
+                                googleFontsPending: googleFontsPending),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 250),
+                                    transitionBuilder: (child, animation) =>
+                                        ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    ),
+                                    child: selectedImages.isNotEmpty
+                                        ? IconButton(
+                                            key: const ValueKey(
+                                                'download-images'),
+                                            onPressed: () {
+                                              setState(() {
+                                                modalIsOpen = true;
+                                              });
+                                            },
+                                            icon: badges.Badge(
+                                              badgeAnimation: const badges
+                                                  .BadgeAnimation.scale(
+                                                animationDuration:
+                                                    Duration(milliseconds: 250),
+                                              ),
+                                              badgeStyle:
+                                                  const badges.BadgeStyle(
+                                                // padding: EdgeInsets.all(3),
+                                                badgeColor: Constants.goldColor,
+                                              ),
+                                              position:
+                                                  badges.BadgePosition.topEnd(
+                                                top: -15,
+                                                end: -10,
+                                              ),
+                                              badgeContent: Text(
+                                                selectedImages.length
+                                                    .toString(),
+                                              ),
+                                              child: const Icon(Icons.photo),
+                                            ))
+                                        : IconButton(
+                                            key: const ValueKey(
+                                                'download-album'),
+                                            onPressed: () {
+                                              setState(() {
+                                                modalIsOpen = true;
+                                              });
+                                            },
+                                            icon: const Icon(Icons.download),
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                ImageSlideshow(
-                  carouselController: carouselController,
-                  isOpen: showSlideShow,
-                  album: album,
-                  imageSize: imageSize,
-                  onDismissed: () {
-                    setState(() {
-                      showSlideShow = false;
-                    });
-                  },
-                ),
-                if (isLoading)
-                  Container(
-                    color: Colors.black.withOpacity(0.5),
-                    width: screenWidth,
-                    height: screenHeight,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                if (modalIsOpen)
-                  GestureDetector(
-                    onTap: () {
+                  ImageSlideshow(
+                    initialImageIndex: currentImageIndex,
+                    isOpen: showSlideShow,
+                    album: album,
+                    imageSize: imageSize,
+                    onDismissed: () {
                       setState(() {
-                        modalIsOpen = false;
+                        showSlideShow = false;
                       });
+                      focusNode.requestFocus();
                     },
-                    child: Container(
+                  ),
+                  if (isLoading)
+                    Container(
                       color: Colors.black.withOpacity(0.5),
                       width: screenWidth,
                       height: screenHeight,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                  ),
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.decelerate,
-                  top: modalIsOpen ? (screenHeight - 300) / 2 : screenHeight,
-                  left: (screenWidth - 300) / 2,
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            spreadRadius: 5,
-                          )
-                        ]),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Downloaded Image Size',
-                            style: GoogleFonts.imFellEnglish(
-                              fontSize: 16,
+                  if (modalIsOpen)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          modalIsOpen = false;
+                        });
+                      },
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        width: screenWidth,
+                        height: screenHeight,
+                      ),
+                    ),
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.decelerate,
+                    top: modalIsOpen ? (screenHeight - 300) / 2 : screenHeight,
+                    left: (screenWidth - 300) / 2,
+                    child: Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 5,
+                            )
+                          ]),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Downloaded Image Size',
+                              style: GoogleFonts.imFellEnglish(
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 200,
-                          child: ListView(
+                          SizedBox(
+                            height: 200,
+                            child: ListView(
+                              children: [
+                                ListTile(
+                                  selected: selectedDownloadSize ==
+                                      DownloadImageSizes.medium,
+                                  tileColor: Constants.grayColor,
+                                  // selectedColor: Constants.pinkColor,
+                                  title: Text(
+                                    'Medium Quality',
+                                    style: GoogleFonts.imFellEnglish(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDownloadSize =
+                                          DownloadImageSizes.medium;
+                                    });
+                                  },
+                                ),
+                                ListTile(
+                                  selected: selectedDownloadSize ==
+                                      DownloadImageSizes.extraLarge,
+                                  title: Text(
+                                    'High Quality',
+                                    style: GoogleFonts.imFellEnglish(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDownloadSize =
+                                          DownloadImageSizes.extraLarge;
+                                    });
+                                  },
+                                ),
+                                ListTile(
+                                  selected: selectedDownloadSize ==
+                                      DownloadImageSizes.fullRes,
+                                  title: Text(
+                                    'Original Quality',
+                                    style: GoogleFonts.imFellEnglish(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
+                                    style: GoogleFonts.imFellEnglish(
+                                      fontSize: 12,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDownloadSize =
+                                          DownloadImageSizes.fullRes;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
                             children: [
-                              ListTile(
-                                selected: selectedDownloadSize ==
-                                    DownloadImageSizes.medium,
-                                tileColor: Constants.grayColor,
-                                // selectedColor: Constants.pinkColor,
-                                title: Text(
-                                  'Medium Quality',
-                                  style: GoogleFonts.imFellEnglish(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                onTap: () {
+                              const Spacer(),
+                              ElevatedButton(
+                                onPressed: () {
                                   setState(() {
-                                    selectedDownloadSize =
-                                        DownloadImageSizes.medium;
+                                    modalIsOpen = false;
                                   });
                                 },
+                                child: Text('Cancel',
+                                    style: GoogleFonts.imFellEnglish()),
                               ),
-                              ListTile(
-                                selected: selectedDownloadSize ==
-                                    DownloadImageSizes.extraLarge,
-                                title: Text(
-                                  'High Quality',
-                                  style: GoogleFonts.imFellEnglish(
-                                    fontSize: 16,
-                                  ),
+                              const Spacer(),
+                              ElevatedButton(
+                                onPressed: startDownload,
+                                child: Text(
+                                  'Download',
+                                  style: GoogleFonts.imFellEnglish(),
                                 ),
-                                onTap: () {
-                                  setState(() {
-                                    selectedDownloadSize =
-                                        DownloadImageSizes.extraLarge;
-                                  });
-                                },
                               ),
-                              ListTile(
-                                selected: selectedDownloadSize ==
-                                    DownloadImageSizes.fullRes,
-                                title: Text(
-                                  'Original Quality',
-                                  style: GoogleFonts.imFellEnglish(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
-                                  style: GoogleFonts.imFellEnglish(
-                                    fontSize: 12,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    selectedDownloadSize =
-                                        DownloadImageSizes.fullRes;
-                                  });
-                                },
-                              ),
+                              const Spacer(),
                             ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  modalIsOpen = false;
-                                });
-                              },
-                              child: Text('Cancel',
-                                  style: GoogleFonts.imFellEnglish()),
-                            ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: startDownload,
-                              child: Text(
-                                'Download',
-                                style: GoogleFonts.imFellEnglish(),
-                              ),
-                            ),
-                            const Spacer(),
-                          ],
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             );
           }),
     );

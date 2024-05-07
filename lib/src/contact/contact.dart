@@ -76,7 +76,7 @@ class _ContactViewState extends State<ContactView> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final formWidth = screenWidth < 400 ? screenWidth - 80 : screenWidth / 2;
+    final formWidth = screenWidth < 450 ? screenWidth - 80 : screenWidth / 2;
     return AppScaffold(
       currentScreen: ScreensEnum.contact,
       child: SingleChildScrollView(

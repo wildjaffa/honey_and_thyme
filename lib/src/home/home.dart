@@ -109,7 +109,7 @@ class _MobileViewState extends State<MobileView>
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0),
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8),
             child: SizedBox(
               height: 250,
               child: Row(
@@ -252,9 +252,6 @@ class _DesktopViewState extends State<DesktopView>
 
   @override
   Widget build(BuildContext context) {
-    final contentHeight = MediaQuery.of(context).size.height -
-        AppScaffold.appBarHeight -
-        AppFooter.footerHeight;
     final contentWidth = MediaQuery.of(context).size.width;
     double rowWidth = contentWidth - 150;
     double rowHeight = rowWidth / 2;

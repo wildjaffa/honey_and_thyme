@@ -1,5 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
@@ -22,10 +22,19 @@ class PublicGallery extends StatefulWidget {
 
 class _PublicGalleryState extends State<PublicGallery> {
   final Future<Album?> album = AlbumService.fetchAlbumByName('gallery', null);
-  final CarouselController carouselController = CarouselController();
   late Future googleFontsPending = GoogleFonts.pendingFonts();
-
+  int currentImageIndex = 0;
   bool showSlideshow = false;
+  final scrollController = ScrollController();
+  final focusNode = FocusNode();
+  bool ignoreKey = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode.requestFocus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,72 +64,98 @@ class _PublicGalleryState extends State<PublicGallery> {
           if (screenWidth > 750) {
             imageSize = ImageSizes.large;
           }
-          return Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [const SizedBox(height: AppScaffold.appBarHeight)],
+          return KeyboardListener(
+            focusNode: focusNode,
+            onKeyEvent: (value) {
+              if (showSlideshow) return;
+              if (ignoreKey) {
+                ignoreKey = false;
+                return;
+              }
+              ignoreKey = true;
+              if (value.logicalKey == LogicalKeyboardKey.arrowDown) {
+                scrollController.animateTo(
+                  scrollController.offset + 100,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                );
+              } else if (value.logicalKey == LogicalKeyboardKey.arrowUp) {
+                scrollController.animateTo(
+                  scrollController.offset - 100,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                );
+              }
+            },
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [const SizedBox(height: AppScaffold.appBarHeight)],
+                      ),
                     ),
-                  ),
-                  ImageGallery(
-                    album: album,
-                    onImageTapped: (index) {
-                      setState(() {
-                        showSlideshow = true;
-                      });
-                      carouselController.jumpToPage(index);
-                    },
-                  ),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 50, top: 50),
-                        child: Center(
-                          child: Image(
-                            image: AssetImage('assets/images/logo.png'),
-                            width: 300,
-                            height: 300,
+                    ImageGallery(
+                      album: album,
+                      onImageTapped: (index) {
+                        setState(() {
+                          showSlideshow = true;
+                          currentImageIndex = index;
+                        });
+                      },
+                    ),
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 50, top: 50),
+                          child: Center(
+                            child: Image(
+                              image: AssetImage('assets/images/logo.png'),
+                              width: 300,
+                              height: 300,
+                            ),
                           ),
                         ),
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                child: SizedBox(
-                  width: screenWidth,
-                  height: AppScaffold.appBarHeight,
-                  child: CustomAppBar(
-                    currentScreen: ScreensEnum.gallery,
-                    googleFontsPending: googleFontsPending,
+                      ]),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SizedBox(
+                    width: screenWidth,
+                    height: AppScaffold.appBarHeight,
+                    child: CustomAppBar(
+                      currentScreen: ScreensEnum.gallery,
+                      googleFontsPending: googleFontsPending,
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                child: SizedBox(
-                  height: screenHeight,
-                  width: screenWidth,
-                  child: ImageSlideshow(
-                    carouselController: carouselController,
-                    isOpen: showSlideshow,
-                    album: album,
-                    imageSize: imageSize,
-                    onDismissed: () {
-                      setState(() {
-                        showSlideshow = false;
-                      });
-                    },
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SizedBox(
+                    height: screenHeight,
+                    width: screenWidth,
+                    child: ImageSlideshow(
+                      initialImageIndex: currentImageIndex,
+                      isOpen: showSlideshow,
+                      album: album,
+                      imageSize: imageSize,
+                      onDismissed: () {
+                        setState(() {
+                          showSlideshow = false;
+                        });
+                        focusNode.requestFocus();
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
