@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
 import 'package:honey_and_thyme/src/models/enums/download_image_sizes.dart';
+import 'package:honey_and_thyme/src/models/stack_modal.dart';
 import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';
@@ -48,7 +49,8 @@ class _AlbumViewState extends State<AlbumView> {
   bool scrolled = false;
   bool passwordInputVisible = false;
   bool isLoading = false;
-  bool modalIsOpen = false;
+  bool qualitySelectorIsOpen = false;
+  String? downloadUrl;
   int currentImageIndex = 0;
   DownloadImageSizes selectedDownloadSize = DownloadImageSizes.medium;
   final focusNode = FocusNode();
@@ -103,7 +105,7 @@ class _AlbumViewState extends State<AlbumView> {
 
   Future<void> downloadSelectedImages(List<String> selected) async {
     setState(() {
-      modalIsOpen = false;
+      qualitySelectorIsOpen = false;
       isLoading = true;
     });
     final album = await fetchAlbum;
@@ -111,6 +113,7 @@ class _AlbumViewState extends State<AlbumView> {
         selected, selectedDownloadSize, album!.password);
     setState(() {
       isLoading = false;
+      downloadUrl = url;
     });
     web.window.open(url, 'Download Images');
   }
@@ -199,333 +202,365 @@ class _AlbumViewState extends State<AlbumView> {
       showAppBar: passwordInputVisible,
       currentScreen: ScreensEnum.gallery,
       child: FutureBuilder(
-          future: fetchAlbum,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-            if (snapshot.data == null) {
-              return PasswordForm(
-                onSubmitted: () {
-                  setState(() {
-                    fetchAlbum = tryGetAlbum();
-                  });
-                },
-                passwordAttempts: passwordAttempts,
-                fontLoader: googleFontsPending,
-                onPasswordChanged: (value) {
-                  password = value;
-                },
-                formWidth: formWidth,
-              );
-            }
-            final Album album = snapshot.data as Album;
-            var itemCount = album.images!.values?.length ?? 0;
-            if (itemCount == 0) {
-              return const Center(
-                child: Text('No images found in this album'),
-              );
-            }
-            final screenWidth = MediaQuery.of(context).size.width;
-            final screenHeight = MediaQuery.of(context).size.height;
-            final coverPhotoId =
-                album.coverImageId ?? album.images!.values!.first!.imageId!;
-            var imageSize = ImageSizes.large;
-            return KeyboardListener(
-              focusNode: focusNode,
-              onKeyEvent: (value) {
-                if (showSlideShow || isLoading || modalIsOpen) return;
-                if (ignoreKey) {
-                  ignoreKey = false;
-                  return;
-                }
-                ignoreKey = true;
-                if (value.logicalKey == LogicalKeyboardKey.arrowDown) {
-                  scrollController.animateTo(
-                    scrollController.offset + 100,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.linear,
-                  );
-                } else if (value.logicalKey == LogicalKeyboardKey.arrowUp) {
-                  scrollController.animateTo(
-                    scrollController.offset - 100,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.linear,
-                  );
-                }
+        future: fetchAlbum,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.data == null) {
+            return PasswordForm(
+              onSubmitted: () {
+                setState(() {
+                  fetchAlbum = tryGetAlbum();
+                });
               },
-              child: Stack(
-                children: [
-                  CustomScrollView(
-                    controller: scrollController,
-                    physics: const ScrollPhysics(),
-                    slivers: [
-                      SliverList(
-                        delegate: SliverChildListDelegate(
-                          [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: CoverImage(
-                                imageUrl: ImageService.getImageUrl(coverPhotoId,
-                                    ImageSizes.extraLarge, album.password),
-                                width: screenWidth,
-                                height: screenHeight,
-                                name: album.name!,
-                                onIconTap: () => scrollPastCoverImage(context),
-                              ),
+              passwordAttempts: passwordAttempts,
+              fontLoader: googleFontsPending,
+              onPasswordChanged: (value) {
+                password = value;
+              },
+              formWidth: formWidth,
+            );
+          }
+          final Album album = snapshot.data as Album;
+          var itemCount = album.images!.values?.length ?? 0;
+          if (itemCount == 0) {
+            return const Center(
+              child: Text('No images found in this album'),
+            );
+          }
+          final screenWidth = MediaQuery.of(context).size.width;
+          final screenHeight = MediaQuery.of(context).size.height;
+          final coverPhotoId =
+              album.coverImageId ?? album.images!.values!.first!.imageId!;
+          var imageSize = ImageSizes.large;
+          return KeyboardListener(
+            focusNode: focusNode,
+            onKeyEvent: (value) {
+              if (showSlideShow || isLoading || qualitySelectorIsOpen) return;
+              if (ignoreKey) {
+                ignoreKey = false;
+                return;
+              }
+              ignoreKey = true;
+              if (value.logicalKey == LogicalKeyboardKey.arrowDown) {
+                scrollController.animateTo(
+                  scrollController.offset + 100,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                );
+              } else if (value.logicalKey == LogicalKeyboardKey.arrowUp) {
+                scrollController.animateTo(
+                  scrollController.offset - 100,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                );
+              }
+            },
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  controller: scrollController,
+                  physics: const ScrollPhysics(),
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: CoverImage(
+                              imageUrl: ImageService.getImageUrl(coverPhotoId,
+                                  ImageSizes.extraLarge, album.password),
+                              width: screenWidth,
+                              height: screenHeight,
+                              name: album.name!,
+                              onIconTap: () => scrollPastCoverImage(context),
                             ),
-                          ],
-                        ),
-                      ),
-                      ImageGallery(
-                        album: album,
-                        selectedImages: selectedImages,
-                        onImageTapped: imageTapped,
-                        onImageSelected: imageSelected,
-                      ),
-                      SliverList(
-                        delegate: SliverChildListDelegate([const AppFooter()]),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: AnimatedOpacity(
-                      opacity: scrolled ? 1 : 0,
-                      duration: const Duration(milliseconds: 300),
-                      child: Container(
-                        color: Constants.grayColor,
-                        width: screenWidth,
-                        height: 190,
-                        child: Column(
-                          children: [
-                            CustomAppBar(
-                                currentScreen: ScreensEnum.gallery,
-                                googleFontsPending: googleFontsPending),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 250),
-                                    transitionBuilder: (child, animation) =>
-                                        ScaleTransition(
-                                      scale: animation,
-                                      child: child,
-                                    ),
-                                    child: selectedImages.isNotEmpty
-                                        ? IconButton(
-                                            key: const ValueKey(
-                                                'download-images'),
-                                            onPressed: () {
-                                              setState(() {
-                                                modalIsOpen = true;
-                                              });
-                                            },
-                                            icon: badges.Badge(
-                                              badgeAnimation: const badges
-                                                  .BadgeAnimation.scale(
-                                                animationDuration:
-                                                    Duration(milliseconds: 250),
-                                              ),
-                                              badgeStyle:
-                                                  const badges.BadgeStyle(
-                                                // padding: EdgeInsets.all(3),
-                                                badgeColor: Constants.goldColor,
-                                              ),
-                                              position:
-                                                  badges.BadgePosition.topEnd(
-                                                top: -15,
-                                                end: -10,
-                                              ),
-                                              badgeContent: Text(
-                                                selectedImages.length
-                                                    .toString(),
-                                              ),
-                                              child: const Icon(Icons.photo),
-                                            ))
-                                        : IconButton(
-                                            key: const ValueKey(
-                                                'download-album'),
-                                            onPressed: () {
-                                              setState(() {
-                                                modalIsOpen = true;
-                                              });
-                                            },
-                                            icon: const Icon(Icons.download),
-                                          ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  ImageSlideshow(
-                    initialImageIndex: currentImageIndex,
-                    isOpen: showSlideShow,
-                    album: album,
-                    imageSize: imageSize,
-                    onDismissed: () {
-                      setState(() {
-                        showSlideShow = false;
-                      });
-                      focusNode.requestFocus();
-                    },
-                  ),
-                  if (isLoading)
-                    Container(
-                      color: Colors.black.withOpacity(0.5),
-                      width: screenWidth,
-                      height: screenHeight,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    ImageGallery(
+                      album: album,
+                      selectedImages: selectedImages,
+                      onImageTapped: imageTapped,
+                      onImageSelected: imageSelected,
                     ),
-                  if (modalIsOpen)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          modalIsOpen = false;
-                        });
-                      },
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5),
-                        width: screenWidth,
-                        height: screenHeight,
-                      ),
+                    SliverList(
+                      delegate: SliverChildListDelegate([const AppFooter()]),
                     ),
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.decelerate,
-                    top: modalIsOpen ? (screenHeight - 300) / 2 : screenHeight,
-                    left: (screenWidth - 300) / 2,
+                  ],
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: AnimatedOpacity(
+                    opacity: scrolled ? 1 : 0,
+                    duration: const Duration(milliseconds: 300),
                     child: Container(
-                      width: 300,
-                      height: 300,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 10,
-                              spreadRadius: 5,
-                            )
-                          ]),
+                      color: Constants.grayColor,
+                      width: screenWidth,
+                      height: 190,
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Downloaded Image Size',
-                              style: GoogleFonts.imFellEnglish(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 200,
-                            child: ListView(
-                              children: [
-                                ListTile(
-                                  selected: selectedDownloadSize ==
-                                      DownloadImageSizes.medium,
-                                  tileColor: Constants.grayColor,
-                                  // selectedColor: Constants.pinkColor,
-                                  title: Text(
-                                    'Medium Quality',
-                                    style: GoogleFonts.imFellEnglish(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDownloadSize =
-                                          DownloadImageSizes.medium;
-                                    });
-                                  },
-                                ),
-                                ListTile(
-                                  selected: selectedDownloadSize ==
-                                      DownloadImageSizes.extraLarge,
-                                  title: Text(
-                                    'High Quality',
-                                    style: GoogleFonts.imFellEnglish(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDownloadSize =
-                                          DownloadImageSizes.extraLarge;
-                                    });
-                                  },
-                                ),
-                                ListTile(
-                                  selected: selectedDownloadSize ==
-                                      DownloadImageSizes.fullRes,
-                                  title: Text(
-                                    'Original Quality',
-                                    style: GoogleFonts.imFellEnglish(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
-                                    style: GoogleFonts.imFellEnglish(
-                                      fontSize: 12,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDownloadSize =
-                                          DownloadImageSizes.fullRes;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          CustomAppBar(
+                              currentScreen: ScreensEnum.gallery,
+                              googleFontsPending: googleFontsPending),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const Spacer(),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    modalIsOpen = false;
-                                  });
-                                },
-                                child: Text('Cancel',
-                                    style: GoogleFonts.imFellEnglish()),
-                              ),
-                              const Spacer(),
-                              ElevatedButton(
-                                onPressed: startDownload,
-                                child: Text(
-                                  'Download',
-                                  style: GoogleFonts.imFellEnglish(),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 250),
+                                  transitionBuilder: (child, animation) =>
+                                      ScaleTransition(
+                                    scale: animation,
+                                    child: child,
+                                  ),
+                                  child: selectedImages.isNotEmpty
+                                      ? IconButton(
+                                          key:
+                                              const ValueKey('download-images'),
+                                          onPressed: () {
+                                            setState(() {
+                                              qualitySelectorIsOpen = true;
+                                            });
+                                          },
+                                          icon: badges.Badge(
+                                            badgeAnimation: const badges
+                                                .BadgeAnimation.scale(
+                                              animationDuration:
+                                                  Duration(milliseconds: 250),
+                                            ),
+                                            badgeStyle: const badges.BadgeStyle(
+                                              // padding: EdgeInsets.all(3),
+                                              badgeColor: Constants.goldColor,
+                                            ),
+                                            position:
+                                                badges.BadgePosition.topEnd(
+                                              top: -15,
+                                              end: -10,
+                                            ),
+                                            badgeContent: Text(
+                                              selectedImages.length.toString(),
+                                            ),
+                                            child: const Icon(Icons.photo),
+                                          ))
+                                      : IconButton(
+                                          key: const ValueKey('download-album'),
+                                          onPressed: () {
+                                            setState(() {
+                                              qualitySelectorIsOpen = true;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.download),
+                                        ),
                                 ),
                               ),
-                              const Spacer(),
                             ],
                           )
                         ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            );
-          }),
+                  ),
+                ),
+                ImageSlideshow(
+                  initialImageIndex: currentImageIndex,
+                  isOpen: showSlideShow,
+                  album: album,
+                  imageSize: imageSize,
+                  onDismissed: () {
+                    setState(() {
+                      showSlideShow = false;
+                    });
+                    focusNode.requestFocus();
+                  },
+                ),
+                if (isLoading)
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    width: screenWidth,
+                    height: screenHeight,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                if (qualitySelectorIsOpen || downloadUrl != null)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        qualitySelectorIsOpen = false;
+                        downloadUrl = null;
+                      });
+                    },
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      width: screenWidth,
+                      height: screenHeight,
+                    ),
+                  ),
+                StackModal(
+                  isOpen: qualitySelectorIsOpen,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Downloaded Image Size',
+                          style: GoogleFonts.imFellEnglish(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 200,
+                        child: ListView(
+                          children: [
+                            ListTile(
+                              selected: selectedDownloadSize ==
+                                  DownloadImageSizes.medium,
+                              tileColor: Constants.grayColor,
+                              title: Text(
+                                'Medium Quality',
+                                style: GoogleFonts.imFellEnglish(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  selectedDownloadSize =
+                                      DownloadImageSizes.medium;
+                                });
+                              },
+                            ),
+                            ListTile(
+                              selected: selectedDownloadSize ==
+                                  DownloadImageSizes.extraLarge,
+                              title: Text(
+                                'High Quality',
+                                style: GoogleFonts.imFellEnglish(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  selectedDownloadSize =
+                                      DownloadImageSizes.extraLarge;
+                                });
+                              },
+                            ),
+                            ListTile(
+                              selected: selectedDownloadSize ==
+                                  DownloadImageSizes.fullRes,
+                              title: Text(
+                                'Original Quality',
+                                style: GoogleFonts.imFellEnglish(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Warning: Large file size, may take longer to download. Please be patient and ensure you have a stable internet connection.',
+                                style: GoogleFonts.imFellEnglish(
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  selectedDownloadSize =
+                                      DownloadImageSizes.fullRes;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                qualitySelectorIsOpen = false;
+                              });
+                            },
+                            child: Text('Cancel',
+                                style: GoogleFonts.imFellEnglish()),
+                          ),
+                          const Spacer(),
+                          ElevatedButton(
+                            onPressed: startDownload,
+                            child: Text(
+                              'Download',
+                              style: GoogleFonts.imFellEnglish(),
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                StackModal(
+                  isOpen: downloadUrl != null,
+                  child: Center(
+                    child: Container(
+                      height: 200,
+                      width: 200,
+                      child: Column(
+                        children: [
+                          Text(
+                            'Your download should start automatically, if it does not, please tap the button below to start the download.',
+                            style: GoogleFonts.imFellEnglish(
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              child: const Text('Download'),
+                              onLongPress: () {
+                                Clipboard.setData(
+                                    ClipboardData(text: downloadUrl!));
+                                const snackBar = SnackBar(
+                                  content:
+                                      Text('Download link copied to clipboard'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              },
+                              onPressed: () {
+                                web.window
+                                    .open(downloadUrl!, 'Download Images');
+                                setState(() {
+                                  downloadUrl = null;
+                                });
+                              },
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                downloadUrl = null;
+                              });
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
