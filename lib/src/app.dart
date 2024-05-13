@@ -6,6 +6,7 @@ import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
 import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
+import 'package:honey_and_thyme/src/payment/payment.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
 import '../utils/constants.dart';
@@ -111,6 +112,8 @@ class MyApp extends StatelessWidget {
                     return const BookingView();
                   case EditAlbum.route:
                     return EditAlbum(albumId: routeParts[1].split('=')[1]);
+                  case PaymentView.route:
+                    return const PaymentView();
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;

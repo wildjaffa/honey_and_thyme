@@ -8,14 +8,14 @@ import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
 class ApiService {
-  static String get url => 'api.honeyandthymephotography.com';
-  // kDebugMode ? 'localhost:6363' : 'api.honeyandthymephotography.com';
+  static String get url => // 'api.honeyandthymephotography.com';
+      kDebugMode ? 'localhost:6363' : 'api.honeyandthymephotography.com';
 
   static Uri getUri(String baseUrl,
       [String route = '', Map<String, dynamic>? queryParameters]) {
-    // if (kDebugMode) {
-    //   return Uri.http(baseUrl, route, queryParameters);
-    // }
+    if (kDebugMode) {
+      return Uri.http(baseUrl, route, queryParameters);
+    }
     return Uri.https(baseUrl, route, queryParameters);
   }
 

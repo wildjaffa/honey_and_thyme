@@ -508,7 +508,7 @@ class _AlbumViewState extends State<AlbumView> {
                 StackModal(
                   isOpen: downloadUrl != null,
                   child: Center(
-                    child: Container(
+                    child: SizedBox(
                       height: 200,
                       width: 200,
                       child: Column(

@@ -104,7 +104,7 @@
 
     <title>Honey And Thyme</title>
     <link rel="manifest" href="manifest.json" />
-
+    <script src="./payment.js" defer></script>
     <script>
       // The value below is injected by flutter build, do not touch.
       const serviceWorkerVersion = null;
@@ -144,5 +144,11 @@
         });
       });
     </script>
+
+    <script
+      src="https://www.paypal.com/sdk/js?client-id=ATkpmz2p9Pob14XKGHLR-BnHTivKAjTFpNOKIOIwfbPsm6x-rpB1H7lZcNYTar0HCIdNlGwiWBjnq27k&buyer-country=US&currency=USD&components=buttons&enable-funding=venmo"
+      data-sdk-integration-source="developer-studio"
+      defer
+    ></script>
   </body>
 </html>
