@@ -28,7 +28,7 @@ class PricingView extends StatelessWidget {
   final List<PricingEntryData> pricingEntries = [
     PricingEntryData(
       title: 'The Mini - \$50',
-      description: '5 minutes with unlimited edited images back. \n'
+      description: '15 minutes with unlimited edited images back. \n'
           'Up to 5 people. Message for pricing for additional people',
       fileName: 'TheMini.jpg',
       imageWidth: 400,

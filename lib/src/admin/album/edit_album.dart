@@ -159,6 +159,22 @@ class _EditAlbumState extends State<EditAlbum> {
     );
   }
 
+  Future<void> scanAlbum() async {
+    try {
+      final awaitedAlbum = await album;
+      final result = await AlbumService.scanAlbum(awaitedAlbum);
+      const snackBar = SnackBar(
+        content: Text('Album Queued for Scanning successfully'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      final snackBar = SnackBar(
+        content: Text('Error scanning album: $e'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   Future<void> deleteSelectedImages() async {
     try {
       final awaitedAlbum = await album;
@@ -278,6 +294,13 @@ class _EditAlbumState extends State<EditAlbum> {
                                 child: ImageUpload(
                                   album: album,
                                   onUploadComplete: refreshAlbum,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: scanAlbum,
+                                  child: const Text('Scan Album'),
                                 ),
                               ),
                               FutureBuilder(
