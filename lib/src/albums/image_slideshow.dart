@@ -54,8 +54,8 @@ class _ImageSlideshowState extends State<ImageSlideshow> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
     return KeyboardListener(
       onKeyEvent: (value) => {
         if (value.logicalKey == LogicalKeyboardKey.arrowRight)

@@ -58,8 +58,8 @@ class _PublicGalleryState extends State<PublicGallery> {
             );
           }
           final album = snapshot.data as Album;
-          final screenWidth = MediaQuery.of(context).size.width;
-          final screenHeight = MediaQuery.of(context).size.height;
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          final screenHeight = MediaQuery.sizeOf(context).height;
           var imageSize = ImageSizes.medium;
           if (screenWidth > 750) {
             imageSize = ImageSizes.large;

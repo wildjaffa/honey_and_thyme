@@ -59,7 +59,7 @@ class PricingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
+    var screenWidth = MediaQuery.sizeOf(context).width;
     var multiplier = 0.5;
     if (screenWidth > 600) {
       screenWidth = 600;

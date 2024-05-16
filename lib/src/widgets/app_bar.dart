@@ -21,7 +21,7 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final double fontSizeMultiplier = screenWidth >= 500 ? 1 : 0.75;
     return Column(children: [
       Container(
