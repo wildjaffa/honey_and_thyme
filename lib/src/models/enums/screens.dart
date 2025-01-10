@@ -4,4 +4,5 @@ enum ScreensEnum {
   home,
   gallery,
   contact,
+  minis,
 }

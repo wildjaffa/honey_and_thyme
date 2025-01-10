@@ -15,6 +15,12 @@ class AlbumService {
     }
   }
 
+  static Future<bool> scanAlbum(Album album) async {
+    final result = await ApiService.postRequest(
+        'albums/QueueScan', BoolResult.fromJson, album.toJson());
+    return result.result!;
+  }
+
   static Future<Album> fetchAlbumById(String albumId, String? password) async {
     Map<String, String>? queryParameters;
     if (password != null) {

@@ -192,7 +192,7 @@ class _AlbumViewState extends State<AlbumView> {
   }
 
   void scrollPastCoverImage(BuildContext context) {
-    scrollController.animateTo(MediaQuery.of(context).size.height - 200,
+    scrollController.animateTo(MediaQuery.sizeOf(context).height - 200,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
@@ -232,8 +232,8 @@ class _AlbumViewState extends State<AlbumView> {
               child: Text('No images found in this album'),
             );
           }
-          final screenWidth = MediaQuery.of(context).size.width;
-          final screenHeight = MediaQuery.of(context).size.height;
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          final screenHeight = MediaQuery.sizeOf(context).height;
           final coverPhotoId =
               album.coverImageId ?? album.images!.values!.first!.imageId!;
           var imageSize = ImageSizes.large;

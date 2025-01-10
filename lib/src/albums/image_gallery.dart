@@ -22,7 +22,7 @@ class ImageGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     var itemCount = album.images!.values?.length ?? 0;
     if (itemCount == 0) {
       return SliverList(

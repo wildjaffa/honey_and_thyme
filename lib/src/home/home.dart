@@ -252,7 +252,7 @@ class _DesktopViewState extends State<DesktopView>
 
   @override
   Widget build(BuildContext context) {
-    final contentWidth = MediaQuery.of(context).size.width;
+    final contentWidth = MediaQuery.sizeOf(context).width;
     double rowWidth = contentWidth - 150;
     double rowHeight = rowWidth / 2;
     if (contentWidth > 1050) {
