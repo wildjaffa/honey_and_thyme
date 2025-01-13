@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/admin/album/album_list.dart';
 import 'package:honey_and_thyme/src/admin/album/edit_album.dart';
+import 'package:honey_and_thyme/src/admin/photo_shoot/photo_shoot_list.dart';
+import 'package:honey_and_thyme/src/admin/product/product_list.dart';
 import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
 import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
-import 'package:honey_and_thyme/src/payment/payment.dart';
+import 'package:honey_and_thyme/src/payment/invoice.dart';
 import 'package:honey_and_thyme/src/minis/minis.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
@@ -18,6 +22,12 @@ import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
+  static const errorStyle = TextStyle(height: 0.1, fontSize: 8);
+  static final hintStyle = GoogleFonts.imFellEnglish(
+    color: Colors.black,
+    fontSize: 18,
+  );
+
   const MyApp({
     super.key,
     required this.settingsController,
@@ -68,6 +78,9 @@ class MyApp extends StatelessWidget {
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
           theme: ThemeData(
+            textTheme: GoogleFonts.imFellEnglishTextTheme(
+              Theme.of(context).textTheme,
+            ),
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: Constants.goldColor,
               selectionColor: Constants.goldColor.withOpacity(0.3),
@@ -78,8 +91,33 @@ class MyApp extends StatelessWidget {
               secondary: Constants.goldColor,
               // error:
             ),
-            inputDecorationTheme:
-                const InputDecorationTheme(border: InputBorder.none),
+            inputDecorationTheme: InputDecorationTheme(
+              errorStyle: errorStyle,
+              hintStyle: hintStyle,
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Constants.sageColor,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Constants.goldColor,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
           ),
           // darkTheme: ThemeData.dark(
 
@@ -113,10 +151,16 @@ class MyApp extends StatelessWidget {
                     return const BookingView();
                   case EditAlbum.route:
                     return EditAlbum(albumId: routeParts[1].split('=')[1]);
-                  case PaymentView.route:
-                    return const PaymentView();
                   case MinisView.route:
                     return const MinisView();
+                  case AlbumList.route:
+                    return const AlbumList();
+                  case ProductList.route:
+                    return const ProductList();
+                  case PhotoShootList.route:
+                    return const PhotoShootList();
+                  case Invoice.route:
+                    return Invoice(photoShootId: routeParts[1].split('=')[1]);
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;

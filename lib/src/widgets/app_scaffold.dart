@@ -14,8 +14,8 @@ class AppScaffold extends StatefulWidget {
   final bool showAppBar;
   const AppScaffold({
     super.key,
-    required this.child,
     required this.currentScreen,
+    required this.child,
     this.showAppBar = true,
   });
 

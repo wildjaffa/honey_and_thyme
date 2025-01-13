@@ -136,6 +136,11 @@ class _ContactFormState extends State<ContactForm> {
                             return null;
                           },
                           decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusColor: Colors.transparent,
+                            focusedBorder: InputBorder.none,
+                            hoverColor: Colors.transparent,
+                            enabledBorder: InputBorder.none,
                             counterText: '',
                             errorStyle:
                                 const TextStyle(height: 0.1, fontSize: 8),
@@ -180,6 +185,11 @@ class _ContactFormState extends State<ContactForm> {
                         maxLines: null,
                         maxLength: 1000,
                         decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusColor: Colors.transparent,
+                          focusedBorder: InputBorder.none,
+                          hoverColor: Colors.transparent,
+                          enabledBorder: InputBorder.none,
                           counterText: '',
                           errorStyle: const TextStyle(height: 0.1, fontSize: 8),
                           hintText: 'Message',

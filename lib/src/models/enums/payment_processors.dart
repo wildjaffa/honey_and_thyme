@@ -1,3 +1,4 @@
 enum PaymentProcessors {
   paypal,
+  external,
 }

@@ -107,7 +107,7 @@
     <script src="./payment.js" defer></script>
     <script>
       // The value below is injected by flutter build, do not touch.
-      const serviceWorkerVersion = null;
+      const serviceWorkerVersion = "{{flutter_service_worker_version}}";
     </script>
     <!-- This script adds the flutter initialization JS code -->
     <script src="flutter.js" defer></script>
@@ -129,8 +129,11 @@
     </div>
     <script>
       window.addEventListener("load", function (ev) {
+        {{flutter_js}}
+        {{flutter_build_config}}
+
         // Download main.dart.js
-        _flutter.loader.loadEntrypoint({
+        _flutter.loader.load({
           entrypointUrl: "main.dart.js",
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,

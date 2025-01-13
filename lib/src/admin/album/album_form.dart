@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/admin.dart';
+import 'package:honey_and_thyme/src/widgets/labeled_checkbox.dart';
 
 import '../../models/album.dart';
 import '../../services/album_service.dart';
@@ -148,22 +149,15 @@ class _AlbumFormState extends State<AlbumForm> {
                       }
                       widget.album.password = value;
                     }),
-                Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Is Public'),
-                    ),
-                    Checkbox(
-                      value: widget.album.isPublic,
-                      onChanged: (value) {
-                        widget.album.isPublic = value;
-                        setState(() {
-                          isPublic = value!;
-                        });
-                      },
-                    ),
-                  ],
+                LabeledCheckbox(
+                  value: widget.album.isPublic,
+                  onChanged: (value) {
+                    widget.album.isPublic = value;
+                    setState(() {
+                      isPublic = value!;
+                    });
+                  },
+                  label: 'Is Public',
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

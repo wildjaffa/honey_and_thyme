@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/admin/admin.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
 
 import '../../utils/constants.dart';
@@ -44,6 +45,9 @@ class CustomAppBar extends StatelessWidget {
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
+                    onLongPress: () {
+                      Navigator.pushNamed(context, AdminView.route);
+                    },
                     onTap: () {
                       Navigator.pushNamed(context, '/');
                     },
