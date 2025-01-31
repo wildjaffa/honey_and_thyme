@@ -41,8 +41,8 @@ class PasswordForm extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
                         padding: const EdgeInsets.only(
-                          left: 40,
-                          top: 20,
+                          left: 38,
+                          top: 15,
                           bottom: 20,
                         ),
                         color: Colors.white,
@@ -50,6 +50,10 @@ class PasswordForm extends StatelessWidget {
                         height: 60,
                         child: Center(
                           child: TextFormField(
+                            style: GoogleFonts.imFellEnglish(
+                              color: Colors.black,
+                              fontSize: 18,
+                            ),
                             onChanged: onPasswordChanged,
                             maxLength: 254,
                             validator: (value) {
@@ -60,6 +64,11 @@ class PasswordForm extends StatelessWidget {
                             },
                             onFieldSubmitted: (value) => onSubmitted(),
                             decoration: InputDecoration(
+                              border: InputBorder.none,
+                              focusColor: Colors.transparent,
+                              focusedBorder: InputBorder.none,
+                              hoverColor: Colors.transparent,
+                              enabledBorder: InputBorder.none,
                               counterText: '',
                               errorStyle:
                                   const TextStyle(height: 0.1, fontSize: 8),
