@@ -95,6 +95,15 @@ class _ImageSlideshowState extends State<ImageSlideshow> {
                 final image = widget.album.images!.values![itemIndex]!;
                 final smallImageUrl = ImageService.getImageUrl(
                     image.imageId!, widget.imageSize, widget.album.password);
+                if (itemIndex + 1 < widget.album.images!.values!.length) {
+                  final nextImage =
+                      widget.album.images!.values![itemIndex + 1]!;
+                  final nextSmallImageUrl = ImageService.getImageUrl(
+                      nextImage.imageId!,
+                      widget.imageSize,
+                      widget.album.password);
+                  precacheImage(NetworkImage(nextSmallImageUrl), context);
+                }
 
                 return Container(
                   width: screenWidth,

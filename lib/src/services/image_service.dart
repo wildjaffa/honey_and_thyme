@@ -51,8 +51,11 @@ class ImageService {
     return result;
   }
 
-  static Future<String> getImageDownloadUrl(List<String> imageIds,
-      DownloadImageSizes downloadSize, String? password) async {
+  static Future<bool> startImageDownloadZip(
+      List<String> imageIds,
+      DownloadImageSizes downloadSize,
+      String? password,
+      String connectionId) async {
     final DownloadRequestConfig config = DownloadRequestConfig(
       exportConfigId: 0,
       keepFolders: false,
@@ -65,12 +68,12 @@ class ImageService {
       imageIds: imageIds,
       config: config,
       password: password,
+      connectionId: connectionId,
     );
     final result = await ApiService.postRequest<DownloadRequestResponse>(
         'api/download/images',
         DownloadRequestResponse.fromJson,
         downloadImageRequest.toJson());
-    return '${Uri.base.origin}/${result.downloadUrl}';
-    // return ApiService.getUri(ApiService.url, result.downloadUrl!);
+    return result.startedSuccessfully == true;
   }
 }

@@ -24,6 +24,7 @@ dependencies:
   http: ^1.2.1
   http_parser: ^4.0.2
   shimmer: ^3.0.0
+  signalr_core: ^1.1.2
   transparent_image: ^2.0.1
   web: ^0.5.1
 

@@ -1,15 +1,15 @@
 class DownloadRequestResponse {
-  String? downloadUrl;
+  bool? startedSuccessfully;
 
-  DownloadRequestResponse({this.downloadUrl});
+  DownloadRequestResponse({this.startedSuccessfully});
 
   DownloadRequestResponse.fromJson(dynamic json) {
-    downloadUrl = json['DownloadUrl'];
+    startedSuccessfully = json['StartedSuccessfully'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['DownloadUrl'] = downloadUrl;
+    data['StartedSuccessfully'] = startedSuccessfully;
     return data;
   }
 }

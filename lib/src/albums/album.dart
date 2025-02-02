@@ -9,6 +9,7 @@ import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
+import 'package:signalr_core/signalr_core.dart' as signalR;
 import 'package:transparent_image/transparent_image.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:web/web.dart' as web;
@@ -17,6 +18,7 @@ import '../../utils/constants.dart';
 import '../models/album.dart';
 import '../models/enums/image_sizes.dart';
 import '../models/enums/screens.dart';
+import '../services/api_service.dart';
 import '../services/image_service.dart';
 import 'password_form.dart';
 
@@ -55,6 +57,8 @@ class _AlbumViewState extends State<AlbumView> {
   DownloadImageSizes selectedDownloadSize = DownloadImageSizes.medium;
   final focusNode = FocusNode();
   bool ignoreKey = false;
+  double? percentComplete;
+  signalR.HubConnection? hubConnection;
 
   Future<Album?> tryGetAlbum() async {
     final album =
@@ -108,13 +112,61 @@ class _AlbumViewState extends State<AlbumView> {
       qualitySelectorIsOpen = false;
       isLoading = true;
     });
+
+    final connection = signalR.HubConnectionBuilder()
+        .withUrl(
+          ApiService.getUri(ApiService.url, 'imageDownloadHub').toString(),
+        )
+        .build();
+    await connection.start();
+    final connectionId = connection.connectionId;
+    if (connectionId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      const snackBar = SnackBar(
+        content: Text(
+            'There was an error starting the download. Please try again later.'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    connection.on('ReceiveImageDownloadProgress', updateImageDownloadProgress);
+
     final album = await fetchAlbum;
-    final url = await ImageService.getImageDownloadUrl(
-        selected, selectedDownloadSize, album!.password);
+    final startedSuccessfully = await ImageService.startImageDownloadZip(
+        selected, selectedDownloadSize, album!.password, connectionId);
+    if (startedSuccessfully) {
+      hubConnection = connection;
+      return;
+    }
+    connection.stop();
+    setState(() {
+      isLoading = false;
+    });
+    const snackBar = SnackBar(
+      content: Text(
+          'There was an error starting the download. Please try again later.'),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void updateImageDownloadProgress(dynamic arguments) {
+    final double progressPercentage = arguments[0]["percentComplete"];
+    final url = arguments[0]["url"];
+    setState(() {
+      percentComplete = progressPercentage;
+    });
+    if (progressPercentage < 100) {
+      return;
+    }
     setState(() {
       isLoading = false;
       downloadUrl = url;
+      percentComplete = null;
     });
+    hubConnection?.stop();
     web.window.open(url, 'Download Images');
   }
 
@@ -385,8 +437,33 @@ class _AlbumViewState extends State<AlbumView> {
                     color: Colors.black.withOpacity(0.5),
                     width: screenWidth,
                     height: screenHeight,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
+                    child: Center(
+                      child: SizedBox(
+                        height: 200,
+                        width: .8 * screenWidth,
+                        child: Column(
+                          children: [
+                            const CircularProgressIndicator(),
+                            if (percentComplete != null) ...[
+                              const SizedBox(height: 20),
+                              LinearProgressIndicator(
+                                value: percentComplete! / 100,
+                                semanticsLabel: 'Preparing download',
+                                semanticsValue: '$percentComplete%',
+                              ),
+                              Text(
+                                'Preparing your images for download, please do not refresh your page or leave...',
+                                style: GoogleFonts.imFellEnglish(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 if (qualitySelectorIsOpen || downloadUrl != null)
