@@ -38,21 +38,21 @@ class ImageData implements Parsable {
 
   ImageData.fromJson(Map<String, dynamic> json) {
     id = json['\$id'];
-    imageId = json['ImageId'];
-    fileName = json['FileName'];
-    sortDate = DateTime.parse(json['SortDate']);
+    imageId = json['imageId'];
+    fileName = json['fileName'];
+    sortDate = DateTime.parse(json['sortDate']);
     metaData =
-        json['MetaData'] != null ? MetaData?.fromJson(json['MetaData']) : null;
+        json['metaData'] != null ? MetaData?.fromJson(json['metaData']) : null;
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['\$id'] = id;
-    data['ImageId'] = imageId;
-    data['FileName'] = fileName;
-    data['SortDate'] = sortDate?.toIso8601String();
-    data['MetaData'] = metaData!.toJson();
+    data['imageId'] = imageId;
+    data['fileName'] = fileName;
+    data['sortDate'] = sortDate?.toIso8601String();
+    data['metaData'] = metaData!.toJson();
     return data;
   }
 }

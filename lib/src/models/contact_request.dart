@@ -5,14 +5,14 @@ class ContactRequest {
   ContactRequest({this.email, this.message});
 
   ContactRequest.fromJson(Map<String, dynamic> json) {
-    email = json['Email'];
-    message = json['Message'];
+    email = json['email'];
+    message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['Email'] = email;
-    data['Message'] = message;
+    data['email'] = email;
+    data['message'] = message;
     return data;
   }
 }

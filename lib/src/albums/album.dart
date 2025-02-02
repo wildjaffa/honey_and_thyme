@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/albums/image_gallery.dart';
 import 'package:honey_and_thyme/src/albums/image_slideshow.dart';
 import 'package:honey_and_thyme/src/models/enums/download_image_sizes.dart';
-import 'package:honey_and_thyme/src/models/stack_modal.dart';
+import 'package:honey_and_thyme/src/widgets/stack_modal.dart';
 import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';

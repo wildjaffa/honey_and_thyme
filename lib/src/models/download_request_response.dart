@@ -4,12 +4,12 @@ class DownloadRequestResponse {
   DownloadRequestResponse({this.startedSuccessfully});
 
   DownloadRequestResponse.fromJson(dynamic json) {
-    startedSuccessfully = json['StartedSuccessfully'];
+    startedSuccessfully = json['startedSuccessfully'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['StartedSuccessfully'] = startedSuccessfully;
+    data['startedSuccessfully'] = startedSuccessfully;
     return data;
   }
 }

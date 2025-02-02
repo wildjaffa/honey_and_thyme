@@ -16,22 +16,22 @@ class DownloadRequestConfig {
   });
 
   DownloadRequestConfig.fromJson(dynamic json) {
-    exportConfigId = json['ExportConfigId'];
-    name = json['Name'];
-    type = json['Type'];
-    size = json['Size'];
-    keepFolders = json['KeepFolders'];
-    watermarkText = json['WatermarkText'];
+    exportConfigId = json['exportConfigId'];
+    name = json['name'];
+    type = json['type'];
+    size = json['size'];
+    keepFolders = json['keepFolders'];
+    watermarkText = json['watermarkText'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['ExportConfigId'] = exportConfigId;
-    data['Name'] = name;
-    data['Type'] = type;
-    data['Size'] = size;
-    data['KeepFolders'] = keepFolders;
-    data['WatermarkText'] = watermarkText;
+    data['exportConfigId'] = exportConfigId;
+    data['name'] = name;
+    data['type'] = type;
+    data['size'] = size;
+    data['keepFolders'] = keepFolders;
+    data['watermarkText'] = watermarkText;
     return data;
   }
 }
