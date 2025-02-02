@@ -15,20 +15,20 @@ class CreatePhotoShootPaymentRequest implements Parsable {
   });
 
   CreatePhotoShootPaymentRequest.fromJson(Map<String, dynamic> json) {
-    photoShootId = json['PhotoShootId'];
-    amount = json['Amount'];
+    photoShootId = json['photoShootId'];
+    amount = json['amount'];
     paymentProcessorEnum =
-        PaymentProcessors.values[json['PaymentProcessorEnum']];
-    description = json['Description'];
+        PaymentProcessors.values[json['paymentProcessorEnum']];
+    description = json['description'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['PhotoShootId'] = photoShootId;
-    data['Amount'] = amount;
-    data['PaymentProcessorEnum'] = paymentProcessorEnum?.index;
-    data['Description'] = description;
+    data['photoShootId'] = photoShootId;
+    data['amount'] = amount;
+    data['paymentProcessorEnum'] = paymentProcessorEnum?.index;
+    data['description'] = description;
     return data;
   }
 }

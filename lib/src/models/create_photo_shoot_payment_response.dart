@@ -17,21 +17,21 @@ class CreatePhotoShootPaymentResponse implements Parsable {
   });
 
   CreatePhotoShootPaymentResponse.fromJson(dynamic json) {
-    photoShootId = json['PhotoShootId'];
-    processorOrderId = json['ProcessorOrderId'];
-    processorEnum = PaymentProcessors.values[json['ProcessorEnum']];
-    isSuccess = json['IsSuccess'];
-    invoiceId = json['InvoiceId'];
+    photoShootId = json['photoShootId'];
+    processorOrderId = json['processorOrderId'];
+    processorEnum = PaymentProcessors.values[json['processorEnum']];
+    isSuccess = json['isSuccess'];
+    invoiceId = json['invoiceId'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['PhotoShootId'] = photoShootId;
-    data['ProcessorOrderId'] = processorOrderId;
-    data['ProcessorEnum'] = processorEnum?.index;
-    data['IsSuccess'] = isSuccess;
-    data['InvoiceId'] = invoiceId;
+    data['photoShootId'] = photoShootId;
+    data['processorOrderId'] = processorOrderId;
+    data['processorEnum'] = processorEnum?.index;
+    data['isSuccess'] = isSuccess;
+    data['invoiceId'] = invoiceId;
     return data;
   }
 }

@@ -18,21 +18,21 @@ class PhotoShootPaymentCaptureRequest implements Parsable {
   });
 
   PhotoShootPaymentCaptureRequest.fromJson(Map<String, dynamic> json) {
-    photoShootId = json['PhotoShootId'];
-    externalOrderId = json['ExternalOrderId'];
-    amountToBeCharged = json['AmountToBeCharged'];
-    paymentProcessor = PaymentProcessors.values[json['PaymentProcessor']];
-    invoiceId = json['InvoiceId'];
+    photoShootId = json['photoShootId'];
+    externalOrderId = json['externalOrderId'];
+    amountToBeCharged = json['amountToBeCharged'];
+    paymentProcessor = PaymentProcessors.values[json['paymentProcessor']];
+    invoiceId = json['invoiceId'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['PhotoShootId'] = photoShootId;
-    data['ExternalOrderId'] = externalOrderId;
-    data['AmountToBeCharged'] = amountToBeCharged;
-    data['PaymentProcessor'] = paymentProcessor?.index;
-    data['InvoiceId'] = invoiceId;
+    data['photoShootId'] = photoShootId;
+    data['externalOrderId'] = externalOrderId;
+    data['amountToBeCharged'] = amountToBeCharged;
+    data['paymentProcessor'] = paymentProcessor?.index;
+    data['invoiceId'] = invoiceId;
     return data;
   }
 }

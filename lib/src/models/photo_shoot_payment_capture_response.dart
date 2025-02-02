@@ -12,17 +12,17 @@ class PhotoShootPaymentCaptureResponse implements Parsable {
   });
 
   PhotoShootPaymentCaptureResponse.fromJson(dynamic json) {
-    isSuccess = json['IsSuccess'];
-    shouldTryAgain = json['ShouldTryAgain'];
-    photoShootId = json['PhotoShootId'];
+    isSuccess = json['isSuccess'];
+    shouldTryAgain = json['shouldTryAgain'];
+    photoShootId = json['photoShootId'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['IsSuccess'] = isSuccess;
-    data['ShouldTryAgain'] = shouldTryAgain;
-    data['PhotoShootId'] = photoShootId;
+    data['isSuccess'] = isSuccess;
+    data['shouldTryAgain'] = shouldTryAgain;
+    data['photoShootId'] = photoShootId;
     return data;
   }
 }

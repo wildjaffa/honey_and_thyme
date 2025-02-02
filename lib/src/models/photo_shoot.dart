@@ -65,37 +65,37 @@ class PhotoShoot implements Parsable {
   }
 
   PhotoShoot.fromJson(dynamic json) {
-    photoShootId = json['PhotoShootId'];
-    responsiblePartyName = json['ResponsiblePartyName'];
-    responsiblePartyEmailAddress = json['ResponsiblePartyEmailAddress'];
-    nameOfShoot = json['NameOfShoot'];
-    description = json['Description'];
-    dateTimeUtc = DateTime.parse(json['DateTimeUtc']);
-    price = json['Price'];
-    deposit = json['Deposit'];
-    discount = json['Discount'];
-    discountName = json['DiscountName'];
-    isConfirmed = json['IsConfirmed'];
-    paymentRemaining = json['PaymentRemaining'];
-    picturesDelivered = json['PicturesDelivered'];
+    photoShootId = json['photoShootId'];
+    responsiblePartyName = json['responsiblePartyName'];
+    responsiblePartyEmailAddress = json['responsiblePartyEmailAddress'];
+    nameOfShoot = json['nameOfShoot'];
+    description = json['description'];
+    dateTimeUtc = DateTime.parse(json['dateTimeUtc']);
+    price = json['price'];
+    deposit = json['deposit'];
+    discount = json['discount'];
+    discountName = json['discountName'];
+    isConfirmed = json['isConfirmed'];
+    paymentRemaining = json['paymentRemaining'];
+    picturesDelivered = json['picturesDelivered'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['PhotoShootId'] = photoShootId;
-    data['ResponsiblePartyName'] = responsiblePartyName;
-    data['ResponsiblePartyEmailAddress'] = responsiblePartyEmailAddress;
-    data['NameOfShoot'] = nameOfShoot;
-    data['Description'] = description;
-    data['DateTimeUtc'] = dateTimeUtc?.toIso8601String();
-    data['Price'] = price;
-    data['Deposit'] = deposit;
-    data['Discount'] = discount;
-    data['DiscountName'] = discountName;
-    data['IsConfirmed'] = isConfirmed;
-    data['PaymentRemaining'] = paymentRemaining;
-    data['PicturesDelivered'] = picturesDelivered;
+    data['photoShootId'] = photoShootId;
+    data['responsiblePartyName'] = responsiblePartyName;
+    data['responsiblePartyEmailAddress'] = responsiblePartyEmailAddress;
+    data['nameOfShoot'] = nameOfShoot;
+    data['description'] = description;
+    data['dateTimeUtc'] = dateTimeUtc?.toIso8601String();
+    data['price'] = price;
+    data['deposit'] = deposit;
+    data['discount'] = discount;
+    data['discountName'] = discountName;
+    data['isConfirmed'] = isConfirmed;
+    data['paymentRemaining'] = paymentRemaining;
+    data['picturesDelivered'] = picturesDelivered;
     return data;
   }
 }

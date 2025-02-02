@@ -44,22 +44,22 @@ class Product implements Parsable {
   }
 
   Product.fromJson(dynamic json) {
-    productId = json['ProductId'];
-    name = json['Name'];
-    description = json['Description'];
-    price = json['Price'];
-    deposit = json['Deposit'];
+    productId = json['productId'];
+    name = json['name'];
+    description = json['description'];
+    price = json['price'];
+    deposit = json['deposit'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     // data['\$id'] = id;
-    data['ProductId'] = productId;
-    data['Name'] = name;
-    data['Description'] = description;
-    data['Price'] = price;
-    data['Deposit'] = deposit;
+    data['productId'] = productId;
+    data['name'] = name;
+    data['description'] = description;
+    data['price'] = price;
+    data['deposit'] = deposit;
     return data;
   }
 }

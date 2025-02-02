@@ -47,26 +47,26 @@ class PaymentTransaction implements Parsable {
   });
 
   PaymentTransaction.fromJson(dynamic json) {
-    paymentTransactionId = json['PaymentTransactionId'];
-    photoShootId = json['PhotoShootId'];
-    dateTimeUtc = DateTime.parse(json['DateTimeUtc']);
-    amount = json['Amount'];
-    description = json['Description'];
+    paymentTransactionId = json['paymentTransactionId'];
+    photoShootId = json['photoShootId'];
+    dateTimeUtc = DateTime.parse(json['dateTimeUtc']);
+    amount = json['amount'];
+    description = json['description'];
     paymentProcessorType =
-        PaymentProcessors.values[json['PaymentProcessorType']];
-    externalId = json['ExternalId'];
+        PaymentProcessors.values[json['paymentProcessorType']];
+    externalId = json['externalId'];
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['PaymentTransactionId'] = paymentTransactionId;
-    data['PhotoShootId'] = photoShootId;
-    data['DateTimeUtc'] = dateTimeUtc?.toIso8601String();
-    data['Amount'] = amount;
-    data['Description'] = description;
-    data['PaymentProcessorType'] = paymentProcessorType?.index;
-    data['ExternalId'] = externalId;
+    data['paymentTransactionId'] = paymentTransactionId;
+    data['photoShootId'] = photoShootId;
+    data['dateTimeUtc'] = dateTimeUtc?.toIso8601String();
+    data['amount'] = amount;
+    data['description'] = description;
+    data['paymentProcessorType'] = paymentProcessorType?.index;
+    data['externalId'] = externalId;
     return data;
   }
 }
