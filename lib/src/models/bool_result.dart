@@ -4,12 +4,12 @@ class BoolResult {
   BoolResult({this.result});
 
   BoolResult.fromJson(dynamic json) {
-    result = json['Result'];
+    result = json['result'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['Result'] = result;
+    data['result'] = result;
     return data;
   }
 }

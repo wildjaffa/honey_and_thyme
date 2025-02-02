@@ -18,24 +18,24 @@ class BookingRequest {
   });
 
   BookingRequest.fromJson(Map<String, dynamic> json) {
-    name = json['Name'];
-    email = json['Email'];
-    numberOfPeople = json['NumberOfPeople'];
-    sessionLength = json['SessionLength'];
-    occasion = json['Occasion'];
-    location = json['Location'];
-    questions = json['Questions'];
+    name = json['name'];
+    email = json['email'];
+    numberOfPeople = json['numberOfPeople'];
+    sessionLength = json['sessionLength'];
+    occasion = json['occasion'];
+    location = json['location'];
+    questions = json['questions'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['Name'] = name;
-    data['Email'] = email;
-    data['NumberOfPeople'] = numberOfPeople;
-    data['SessionLength'] = sessionLength;
-    data['Occasion'] = occasion;
-    data['Location'] = location;
-    data['Questions'] = questions;
+    data['name'] = name;
+    data['email'] = email;
+    data['numberOfPeople'] = numberOfPeople;
+    data['sessionLength'] = sessionLength;
+    data['occasion'] = occasion;
+    data['location'] = location;
+    data['questions'] = questions;
     return data;
   }
 }

@@ -4,27 +4,31 @@ class DownloadImageRequest {
   List<String?>? imageIds;
   DownloadRequestConfig? config;
   String? password;
+  String? connectionId;
 
-  DownloadImageRequest({this.imageIds, this.config, this.password});
+  DownloadImageRequest(
+      {this.imageIds, this.config, this.password, this.connectionId});
 
   DownloadImageRequest.fromJson(dynamic json) {
-    if (json['ImageIds'] != null) {
+    if (json['imageIds'] != null) {
       imageIds = <String>[];
-      json['ImageIds'].forEach((v) {
+      json['imageIds'].forEach((v) {
         imageIds!.add(v);
       });
     }
     password = json['password'];
-    config = json['Config'] != null
-        ? DownloadRequestConfig?.fromJson(json['Config'])
+    connectionId = json['connectionId'];
+    config = json['config'] != null
+        ? DownloadRequestConfig?.fromJson(json['config'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['ImageIds'] = imageIds?.map((v) => v).toList();
-    data['Config'] = config!.toJson();
+    data['imageIds'] = imageIds?.map((v) => v).toList();
+    data['config'] = config!.toJson();
     data['password'] = password;
+    data['connectionId'] = connectionId;
     return data;
   }
 }

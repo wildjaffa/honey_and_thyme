@@ -5,10 +5,10 @@ class AddExistingImagesToAlbumRequest {
   AddExistingImagesToAlbumRequest({this.albumId, this.imageIds});
 
   AddExistingImagesToAlbumRequest.fromJson(Map<String, dynamic> json) {
-    albumId = json['AlbumId'];
-    if (json['ImageIds'] != null) {
+    albumId = json['albumId'];
+    if (json['imageIds'] != null) {
       imageIds = <String>[];
-      json['ImageIds'].forEach((v) {
+      json['imageIds'].forEach((v) {
         imageIds!.add(v);
       });
     }
@@ -16,8 +16,8 @@ class AddExistingImagesToAlbumRequest {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['AlbumId'] = albumId;
-    data['ImageIds'] = imageIds;
+    data['albumId'] = albumId;
+    data['imageIds'] = imageIds;
     return data;
   }
 }

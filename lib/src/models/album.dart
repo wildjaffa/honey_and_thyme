@@ -52,31 +52,31 @@ class Album implements Parsable {
 
   Album.fromJson(dynamic json) {
     id = json['\$id'];
-    albumId = json['AlbumId'];
-    name = json['Name'];
-    urlName = json['UrlName'];
-    description = json['Description'];
-    isPublic = json['IsPublic'];
-    password = json['Password'];
-    coverImageId = json['CoverImageId'];
-    isLocked = json['IsLocked'];
+    albumId = json['albumId'];
+    name = json['name'];
+    urlName = json['urlName'];
+    description = json['description'];
+    isPublic = json['isPublic'];
+    password = json['password'];
+    coverImageId = json['coverImageId'];
+    isLocked = json['isLocked'];
     images =
-        json['Images'] != null ? ImagesData?.fromJson(json['Images']) : null;
+        json['images'] != null ? ImagesData?.fromJson(json['images']) : null;
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     // data['\$id'] = id;
-    data['AlbumId'] = albumId;
-    data['Name'] = name;
-    data['UrlName'] = urlName;
-    data['Description'] = description;
-    data['IsPublic'] = isPublic;
-    data['Password'] = password;
-    data['CoverImageId'] = coverImageId;
-    data['IsLocked'] = isLocked;
-    data['Images'] = images?.toJson() ?? [];
+    data['albumId'] = albumId;
+    data['name'] = name;
+    data['urlName'] = urlName;
+    data['description'] = description;
+    data['isPublic'] = isPublic;
+    data['password'] = password;
+    data['coverImageId'] = coverImageId;
+    data['isLocked'] = isLocked;
+    data['images'] = images?.toJson() ?? [];
     return data;
   }
 }
