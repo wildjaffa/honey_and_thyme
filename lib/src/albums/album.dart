@@ -158,7 +158,7 @@ class _AlbumViewState extends State<AlbumView> {
     setState(() {
       percentComplete = progressPercentage;
     });
-    if (progressPercentage < 100) {
+    if (progressPercentage < 100 || url == null || url.isEmpty) {
       return;
     }
     setState(() {
