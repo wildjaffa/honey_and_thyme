@@ -39,6 +39,7 @@ class PhotoShoot implements Parsable {
   bool? isConfirmed;
   double? paymentRemaining;
   bool? picturesDelivered;
+  String? albumId;
 
   PhotoShoot({
     this.photoShootId,
@@ -54,6 +55,7 @@ class PhotoShoot implements Parsable {
     this.isConfirmed,
     this.paymentRemaining,
     this.picturesDelivered,
+    this.albumId,
   }) {
     price ??= 0.0;
     deposit ??= 0.0;
@@ -78,6 +80,7 @@ class PhotoShoot implements Parsable {
     isConfirmed = json['isConfirmed'];
     paymentRemaining = json['paymentRemaining'];
     picturesDelivered = json['picturesDelivered'];
+    albumId = json['albumId'];
   }
 
   @override
@@ -96,6 +99,7 @@ class PhotoShoot implements Parsable {
     data['isConfirmed'] = isConfirmed;
     data['paymentRemaining'] = paymentRemaining;
     data['picturesDelivered'] = picturesDelivered;
+    data['albumId'] = albumId;
     return data;
   }
 }

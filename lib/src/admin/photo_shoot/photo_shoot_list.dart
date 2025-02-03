@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
 import 'package:honey_and_thyme/src/admin/photo_shoot/photo_shoot_form.dart';
+import 'package:honey_and_thyme/src/models/album.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot_filter_request.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot_payment_capture_request.dart';
+import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/services/photo_shoot_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:uuid/uuid.dart';
@@ -37,6 +39,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
     excludeDeliveredShoots: true,
   );
   List<Product> products = [];
+  List<Album> albums = [];
   late Future<List<PhotoShoot>> photoShoots;
 
   @override
@@ -45,6 +48,9 @@ class _PhotoShootListState extends State<PhotoShootList> {
     photoShoots = PhotoShootService.fetchPhotoShoots(filters);
     ProductService.fetchProducts().then((value) {
       products = value;
+    });
+    AlbumService.fetchAlbums().then((value) {
+      albums = value;
     });
   }
 
@@ -71,6 +77,15 @@ class _PhotoShootListState extends State<PhotoShootList> {
         submitting = false;
       });
       final awaited = await photoShoots;
+
+      if (photoShoot.picturesDelivered == true) {
+        showSuccess(
+            context, 'Shoot saved successfully and marked as delivered');
+        editing = false;
+        photoShoot = PhotoShoot();
+        return;
+      }
+
       final updated = awaited.firstWhere(
           (element) => element.photoShootId == photoShoot.photoShootId);
 
@@ -230,6 +245,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
                   return PhotoShootForm(
                     products: products,
                     photoShoot: photoShoot,
+                    albums: albums,
                     onCancel: () {
                       setState(() {
                         editing = false;

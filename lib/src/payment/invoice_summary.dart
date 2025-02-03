@@ -29,13 +29,6 @@ class InvoiceSummary extends StatelessWidget {
                 fontSize: 30,
               ),
             ),
-            const Text(
-              'Deposit is non-refundable and will not be returned if the client misses for any reason. Balance is due the day of the shoot and must be paid in order to receive photos. If the client arrives late, they may be subject to a shorter photo shoot or rescheduling. Turn around time is typically two weeks but could be longer during busy seasons. Honey+Thyme reserves the right to use any and all photos for marketing purposes. By inquiring about our services or doing business with us, you are giving your consent to receive notifications and messages (e-mail or text) regarding our promotions or services.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
             const SizedBox(height: 8),
             SizedBox(
               width: 300,
