@@ -179,15 +179,25 @@ class _InvoiceState extends State<Invoice> {
             }
 
             if (status == InvoiceStatus.awaitingPaypal) {
-              return const SizedBox(
-                height: 300,
-                child: Center(
-                  child: Text(
-                    'Please complete your payment in the PayPal window.',
-                    style: TextStyle(fontSize: 20),
+              return LayoutBuilder(builder: (context, constraints) {
+                double width = 500;
+                if (constraints.maxWidth < 600) {
+                  width = constraints.maxWidth - 50;
+                }
+                return SizedBox(
+                  height: 300,
+                  child: Center(
+                    child: SizedBox(
+                      width: width,
+                      child: const Text(
+                        'Please complete your payment in the PayPal window.',
+                        style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
-                ),
-              );
+                );
+              });
             }
 
             final photoShoot = snapshot.data as PhotoShoot;
