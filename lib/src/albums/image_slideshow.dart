@@ -28,7 +28,7 @@ class ImageSlideshow extends StatefulWidget {
 }
 
 class _ImageSlideshowState extends State<ImageSlideshow> {
-  final carouselController = CarouselController();
+  final carouselController = CarouselSliderController();
 
   final focusNode = FocusNode();
 

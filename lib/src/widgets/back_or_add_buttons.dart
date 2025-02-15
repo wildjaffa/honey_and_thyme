@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class BackOrAddButtons extends StatelessWidget {
   final void Function()? onAdd;
-  final String addText;
+  final String? addText;
   final String backRoute;
   final Widget? endWidget;
 
   const BackOrAddButtons({
     super.key,
     this.onAdd,
-    required this.addText,
+    this.addText,
     required this.backRoute,
     this.endWidget,
   });
@@ -28,13 +28,14 @@ class BackOrAddButtons extends StatelessWidget {
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 45),
-          child: ElevatedButton(
-            onPressed: onAdd,
-            child: Text(addText),
+        if (addText != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 45),
+            child: ElevatedButton(
+              onPressed: onAdd,
+              child: Text(addText!),
+            ),
           ),
-        ),
         if (endWidget != null) endWidget!,
       ],
     );

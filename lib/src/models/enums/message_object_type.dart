@@ -1,0 +1,4 @@
+enum MessageObjectType {
+  photoShoot,
+  album,
+}

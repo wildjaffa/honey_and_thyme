@@ -22,7 +22,8 @@ class MetaData implements Parsable {
     imageId = json['imageId'];
     width = json['width'];
     height = json['height'];
-    aspectRatio = json['aspectRatio'];
+    // sometimes this comes back as a whole number and sometimes as a double
+    aspectRatio = double.parse(json['aspectRatio'].toString());
   }
 
   @override

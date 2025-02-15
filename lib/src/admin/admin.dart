@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/album/album_list.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
+import 'package:honey_and_thyme/src/admin/email_records/email_records_list.dart';
 import 'package:honey_and_thyme/src/admin/photo_shoot/photo_shoot_list.dart';
 import 'package:honey_and_thyme/src/admin/product/product_list.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
@@ -30,19 +31,22 @@ class _AdminViewState extends State<AdminView> {
                 height: 100,
               ),
               AdminNavigationButton(
-                onPressed: () => Navigator.pushNamed(context, AlbumList.route),
+                route: AlbumList.route,
                 text: 'Albums',
               ),
               AdminNavigationButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, PhotoShootList.route),
+                route: PhotoShootList.route,
                 text: 'Photo Shoots',
               ),
               AdminNavigationButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, ProductList.route),
+                route: ProductList.route,
                 text: 'Products',
               ),
+              AdminNavigationButton(
+                route: EmailRecordsList.route,
+                text: 'Email Records',
+              ),
+              const Text('Site Version: 1.0.2'),
             ],
           ),
         ),
@@ -52,11 +56,11 @@ class _AdminViewState extends State<AdminView> {
 }
 
 class AdminNavigationButton extends StatelessWidget {
-  final void Function() onPressed;
+  final String route;
   final String text;
   const AdminNavigationButton({
     super.key,
-    required this.onPressed,
+    required this.route,
     required this.text,
   });
 
@@ -65,7 +69,7 @@ class AdminNavigationButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: () => Navigator.pushNamed(context, route),
         child: Text(text),
       ),
     );

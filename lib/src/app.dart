@@ -16,6 +16,7 @@ import 'package:honey_and_thyme/src/pricing/pricing.dart';
 
 import '../utils/constants.dart';
 import 'admin/admin.dart';
+import 'admin/email_records/email_records_list.dart';
 import 'home/home.dart';
 
 import 'settings/settings_controller.dart';
@@ -161,6 +162,8 @@ class MyApp extends StatelessWidget {
                     return const PhotoShootList();
                   case Invoice.route:
                     return Invoice(photoShootId: routeParts[1].split('=')[1]);
+                  case EmailRecordsList.route:
+                    return const EmailRecordsList();
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;
