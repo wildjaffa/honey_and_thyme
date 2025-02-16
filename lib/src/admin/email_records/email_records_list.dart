@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/admin.dart';
 import 'package:honey_and_thyme/src/models/email_record.dart';
+import 'package:honey_and_thyme/src/models/enums/message_status.dart';
 import 'package:honey_and_thyme/src/services/email_records_service.dart';
 import 'package:honey_and_thyme/src/widgets/back_or_add_buttons.dart';
 import 'package:intl/intl.dart';
@@ -54,24 +55,71 @@ class _EmailRecordsListState extends State<EmailRecordsList> {
 
                   return ListView.separated(
                     padding: const EdgeInsets.all(8),
-                    itemCount: snapshot.data!.results!.length + 1,
+                    itemCount: snapshot.data!.results!.length + 2,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return BackOrAddButtons(
                           backRoute: AdminView.route,
                         );
                       }
+                      if (index == snapshot.data!.results!.length + 1) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back),
+                              onPressed: page == 0
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        page--;
+                                        emailRecords =
+                                            EmailRecordsService.fetchRecords(
+                                                page, pageSize, null, null);
+                                      });
+                                    },
+                            ),
+                            Text(
+                                'Page ${page + 1} of ${snapshot.data!.pageCount}'),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_forward),
+                              onPressed: page + 1 == snapshot.data!.pageCount
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        page++;
+                                        emailRecords =
+                                            EmailRecordsService.fetchRecords(
+                                                page, pageSize, null, null);
+                                      });
+                                    },
+                            ),
+                          ],
+                        );
+                      }
                       final email = snapshot.data!.results![index - 1];
                       return ListTile(
                         title: Text(email.subject!),
                         subtitle: Text(email.email!),
+                        leading: IconButton(
+                          icon: Icon(
+                            Icons.send,
+                            color: email.status == MessageStatus.sent
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                          onPressed: () {
+                            EmailRecordsService.reSendEmail(
+                                email.emailRecordId!);
+                          },
+                        ),
                         trailing: Text(
                           DateFormat.yMd()
                               .add_jm()
                               .format(email.dateSent!.toLocal()),
                           style: const TextStyle(fontSize: 18),
                         ),
-                        onTap: () {
+                        onLongPress: () {
                           final newWindow =
                               html.window.open("about:blank", "", "_blank");
                           newWindow!.window.document.write(email.htmlMessage!);

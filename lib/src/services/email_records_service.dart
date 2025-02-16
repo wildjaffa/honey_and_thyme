@@ -1,5 +1,6 @@
 import 'package:honey_and_thyme/src/models/email_record.dart';
 import 'package:honey_and_thyme/src/models/enums/message_object_type.dart';
+import 'package:honey_and_thyme/src/models/resend_email_request.dart';
 
 import 'api_service.dart';
 
@@ -37,8 +38,11 @@ class EmailRecordsService {
   }
 
   static Future<EmailRecord> reSendEmail(String id) async {
+    final resendEmailRequest = ResendEmailRequest(emailRecordId: id);
     final result = await ApiService.postRequest<EmailRecord>(
-        'api/emailRecords/resend', EmailRecord.fromJson, id);
+        'api/emailRecords/resend',
+        EmailRecord.fromJson,
+        resendEmailRequest.toJson());
     return result;
   }
 }
