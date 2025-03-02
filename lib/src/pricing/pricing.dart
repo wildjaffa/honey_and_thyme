@@ -27,14 +27,14 @@ class PricingView extends StatelessWidget {
   // need to know the end width we want
   final List<PricingEntryData> pricingEntries = [
     PricingEntryData(
-      title: 'The Mini - \$75',
+      title: 'The Mini - \$85',
       description: '15 minutes with unlimited edited images back. \n'
           'Up to 5 people. Message for pricing for additional people',
       fileName: 'TheMini.jpg',
       imageWidth: 400,
     ),
     PricingEntryData(
-      title: 'The Half - \$100',
+      title: 'The Half - \$115',
       description: '30 minutes with unlimited edited images back. '
           'Up to 5 people. Message for pricing for additional people',
       fileName: 'TheHalf.png',
