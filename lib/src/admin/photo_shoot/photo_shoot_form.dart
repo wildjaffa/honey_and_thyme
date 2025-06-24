@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/widgets/dollar_input_field.dart';
 import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
 import 'package:honey_and_thyme/utils/snackbar_utils.dart';
@@ -8,7 +9,6 @@ import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 
 import '../../models/album.dart';
 import '../../models/product.dart';
-import '../../widgets/labeled_checkbox.dart';
 
 class PhotoShootForm extends StatefulWidget {
   final PhotoShoot photoShoot;
@@ -124,14 +124,6 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                     ),
               ),
             ),
-            LabeledCheckbox(
-              label: 'Is Confirmed',
-              value: widget.photoShoot.isConfirmed,
-              onChanged: (value) {
-                widget.photoShoot.isConfirmed = value;
-                setState(() {});
-              },
-            ),
             const Text('Album'),
             DropdownButton<String>(
               value: widget.photoShoot.albumId,
@@ -150,13 +142,22 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                   )
                   .toList(),
             ),
-            LabeledCheckbox(
-              label: 'Pictures Delivered',
-              value: widget.photoShoot.picturesDelivered,
+            DropdownButton<PhotoShootStatus>(
+              value: widget.photoShoot.status,
               onChanged: (value) {
-                widget.photoShoot.picturesDelivered = value;
-                setState(() {});
+                if (value == null) return;
+                setState(() {
+                  widget.photoShoot.status = value;
+                });
               },
+              items: PhotoShootStatus.values
+                  .map(
+                    (status) => DropdownMenuItem(
+                      value: status,
+                      child: Text(status.name),
+                    ),
+                  )
+                  .toList(),
             ),
             if (widget.photoShoot.photoShootId != null)
               Text(

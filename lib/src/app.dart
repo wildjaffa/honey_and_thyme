@@ -10,6 +10,7 @@ import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
 import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
+import 'package:honey_and_thyme/src/contact/upcoming_appointments.dart';
 import 'package:honey_and_thyme/src/payment/invoice.dart';
 import 'package:honey_and_thyme/src/minis/minis.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
@@ -164,12 +165,12 @@ class MyApp extends StatelessWidget {
                     return Invoice(photoShootId: routeParts[1].split('=')[1]);
                   case EmailRecordsList.route:
                     return const EmailRecordsList();
+                  case UpcomingAppointments.route:
+                    return const UpcomingAppointments();
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;
-                    return Home(
-                      slowLoadImages: homePageLoaded,
-                    );
+                    return const UpcomingAppointments();
                 }
               },
             );

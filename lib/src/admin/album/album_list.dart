@@ -146,85 +146,86 @@ class _AlbumSummaryState extends State<AlbumSummary> {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-          onTap: () => Navigator.of(context).pushNamed(
-                '${EditAlbum.route}?albumId=${widget.album.albumId}',
-                arguments: widget.album,
-              ),
-          child: Row(
-            children: [
-              if (widget.album.coverImageId != null)
-                FutureBuilder(
-                  future: coverImage,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (snapshot.hasError ||
-                        snapshot.data?.metaData?.aspectRatio == null) {
-                      return const Icon(Icons.error);
-                    }
+        onTap: () => Navigator.of(context).pushNamed(
+          '${EditAlbum.route}?albumId=${widget.album.albumId}',
+          arguments: widget.album,
+        ),
+        child: Row(
+          children: [
+            if (widget.album.coverImageId != null)
+              FutureBuilder(
+                future: coverImage,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (snapshot.hasError ||
+                      snapshot.data?.metaData?.aspectRatio == null) {
+                    return const Icon(Icons.error);
+                  }
 
-                    return FadeInImageWithPlaceHolder(
-                      imageUrl: ImageService.getImageUrl(
-                          widget.album.coverImageId!,
-                          ImageSizes.medium,
-                          widget.album.password),
-                      size: ImageUtils.calculateImageSize(
-                          imageWidth: 50,
-                          imageHeight: 50,
-                          aspectRatio: snapshot.data!.metaData!.aspectRatio!),
-                    );
-                  },
-                ),
-              if (widget.album.coverImageId == null)
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                ),
-              SizedBox(
-                width: 190,
-                child: Column(
-                  children: [
-                    Text(
-                      widget.album.name!,
-                      style: const TextStyle(fontSize: 16),
-                      textAlign: TextAlign.left,
-                    ),
-                    Text(
-                      widget.album.description!,
-                      style: const TextStyle(fontSize: 12),
-                      textAlign: TextAlign.left,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                  return FadeInImageWithPlaceHolder(
+                    imageUrl: ImageService.getImageUrl(
+                        widget.album.coverImageId!,
+                        ImageSizes.medium,
+                        widget.album.password),
+                    size: ImageUtils.calculateImageSize(
+                        imageWidth: 50,
+                        imageHeight: 50,
+                        aspectRatio: snapshot.data!.metaData!.aspectRatio!),
+                  );
+                },
               ),
-              SizedBox(
-                width: 60,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 30,
-                      child: IconButton(
-                        onPressed:
-                            widget.album.isLocked == true ? unlockAlbum : null,
-                        icon: Icon(widget.album.isLocked == true
-                            ? Icons.lock
-                            : Icons.lock_open),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 30,
-                      child: IconButton(
-                        onPressed: copyShareData,
-                        icon: const Icon(Icons.share),
-                      ),
-                    )
-                  ],
-                ),
+            if (widget.album.coverImageId == null)
+              const SizedBox(
+                width: 50,
+                height: 50,
               ),
-            ],
-          )),
+            SizedBox(
+              width: 190,
+              child: Column(
+                children: [
+                  Text(
+                    widget.album.name!,
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.left,
+                  ),
+                  Text(
+                    widget.album.description!,
+                    style: const TextStyle(fontSize: 12),
+                    textAlign: TextAlign.left,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 60,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 30,
+                    child: IconButton(
+                      onPressed:
+                          widget.album.isLocked == true ? unlockAlbum : null,
+                      icon: Icon(widget.album.isLocked == true
+                          ? Icons.lock
+                          : Icons.lock_open),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 30,
+                    child: IconButton(
+                      onPressed: copyShareData,
+                      icon: const Icon(Icons.share),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

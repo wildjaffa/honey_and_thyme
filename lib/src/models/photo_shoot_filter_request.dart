@@ -1,16 +1,24 @@
 import 'package:honey_and_thyme/src/models/parsable.dart';
 
+enum PhotoShootBookStatusFilter {
+  all,
+  unbooked,
+  booked,
+}
+
 class PhotoShootFilterRequest implements Parsable {
   DateTime? startDate;
   DateTime? endDate;
   bool? excludePaidShoots;
   bool? excludeDeliveredShoots;
+  PhotoShootBookStatusFilter? bookStatusFilter;
 
   PhotoShootFilterRequest({
     this.startDate,
     this.endDate,
     this.excludePaidShoots,
     this.excludeDeliveredShoots,
+    this.bookStatusFilter = PhotoShootBookStatusFilter.booked,
   });
 
   @override

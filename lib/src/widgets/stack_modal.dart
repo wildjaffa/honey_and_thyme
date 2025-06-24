@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class StackModal extends StatelessWidget {
   final bool isOpen;
   final Widget child;
+  final double height;
+  final double width;
   const StackModal({
     super.key,
     required this.isOpen,
     required this.child,
+    this.height = 300,
+    this.width = 300,
   });
 
   @override
@@ -16,11 +20,11 @@ class StackModal extends StatelessWidget {
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 250),
       curve: Curves.decelerate,
-      top: isOpen ? (screenHeight - 300) / 2 : screenHeight,
-      left: (screenWidth - 300) / 2,
+      top: isOpen ? (screenHeight - height) / 2 : screenHeight,
+      left: (screenWidth - width) / 2,
       child: Container(
-        width: 300,
-        height: 300,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),

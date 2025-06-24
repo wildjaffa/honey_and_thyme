@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:honey_and_thyme/src/models/form_file.dart';
 import 'package:http/http.dart' as http;
+import 'package:signalr_core/signalr_core.dart' as signalR;
 import 'package:http/retry.dart';
 
 class ApiService {
@@ -121,5 +121,14 @@ class ApiService {
     return {
       'Authorization': 'Bearer ${idToken!}',
     };
+  }
+
+  static signalR.HubConnection initiateSignalRHubConnection(String route) {
+    final connection = signalR.HubConnectionBuilder()
+        .withUrl(
+          getUri(url, 'imageDownloadHub').toString(),
+        )
+        .build();
+    return connection;
   }
 }

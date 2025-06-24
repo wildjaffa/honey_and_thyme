@@ -12,10 +12,12 @@ class AppScaffold extends StatefulWidget {
   final Widget child;
   final ScreensEnum currentScreen;
   final bool showAppBar;
+  final Widget? floatingActionButton;
   const AppScaffold({
     super.key,
     required this.currentScreen,
     required this.child,
+    this.floatingActionButton,
     this.showAppBar = true,
   });
 
@@ -39,6 +41,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     final contentHeight = ScreenSizeUtils.contentHeight(context);
     final screenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
+      floatingActionButton: widget.floatingActionButton,
       backgroundColor: Constants.grayColor,
       body: Column(
         children: [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
 import 'package:honey_and_thyme/src/admin/photo_shoot/photo_shoot_form.dart';
 import 'package:honey_and_thyme/src/models/album.dart';
+import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot_filter_request.dart';
@@ -65,8 +66,6 @@ class _PhotoShootListState extends State<PhotoShootList> {
       });
 
       if (photoShoot.photoShootId == null) {
-        var uuid = const Uuid();
-        photoShoot.photoShootId = uuid.v4();
         await PhotoShootService.createPhotoShoot(photoShoot);
       } else {
         await PhotoShootService.updatePhotoShoot(photoShoot);
@@ -78,7 +77,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
       });
       final awaited = await photoShoots;
 
-      if (photoShoot.picturesDelivered == true) {
+      if (photoShoot.status == PhotoShootStatus.delivered) {
         showSuccess(
             context, 'Shoot saved successfully and marked as delivered');
         editing = false;
@@ -370,9 +369,10 @@ class _PhotoShootListState extends State<PhotoShootList> {
                     final shoot = snapshot.data![index - 1];
                     return ListTile(
                       leading: Icon(
-                        shoot.isConfirmed == true ? Icons.check_circle : null,
-                        color: shoot.isConfirmed == true &&
-                                (shoot.paymentRemaining ?? 0) <= 0
+                        shoot.status == PhotoShootStatus.confirmed
+                            ? Icons.check_circle
+                            : null,
+                        color: (shoot.paymentRemaining ?? 0) <= 0
                             ? Colors.green
                             : Colors.black,
                       ),

@@ -225,14 +225,14 @@ class _BookingViewState extends State<BookingView> {
                             children: [
                               ElevatedButton(
                                 style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
+                                  shape: WidgetStateProperty.all<
                                       RoundedRectangleBorder>(
                                     const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.zero,
                                     ),
                                   ),
                                   backgroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                      WidgetStateProperty.all<Color>(
                                           Constants.goldColor),
                                 ),
                                 onPressed: contactState != ContactState.sending
