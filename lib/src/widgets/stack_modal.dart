@@ -1,43 +1,71 @@
 import 'package:flutter/material.dart';
+import '../../utils/constants.dart';
 
 class StackModal extends StatelessWidget {
   final bool isOpen;
   final Widget child;
   final double height;
   final double width;
+  final VoidCallback? onDismiss;
+
   const StackModal({
     super.key,
     required this.isOpen,
     required this.child,
     this.height = 300,
     this.width = 300,
+    this.onDismiss,
   });
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.sizeOf(context).height;
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.decelerate,
-      top: isOpen ? (screenHeight - height) / 2 : screenHeight,
-      left: (screenWidth - width) / 2,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              spreadRadius: 5,
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+      child: isOpen
+          ? GestureDetector(
+              key: const ValueKey('modal'),
+              onTap: onDismiss,
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.5),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {}, // Prevent tap from bubbling up
+                    child: Container(
+                      width: width,
+                      height: height,
+                      decoration: BoxDecoration(
+                        color: Constants.grayColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          )
+                        ],
+                      ),
+                      child: child,
+                    ),
+                  ),
+                ),
+              ),
             )
-          ],
-        ),
-        child: child,
-      ),
+          : const SizedBox.shrink(key: ValueKey('empty')),
     );
   }
 }

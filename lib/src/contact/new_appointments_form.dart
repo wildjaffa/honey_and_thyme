@@ -45,7 +45,7 @@ class _NewAppointmentsFormState extends State<NewAppointmentsForm> {
           location: data.location,
           nameOfShoot: data.name,
           price: data.price,
-          deposit: data.price,
+          deposit: data.deposit,
           endDateTimeUtc:
               appointmentStartDate.add(data.appointmentDuration).toUtc(),
           description: data.description,

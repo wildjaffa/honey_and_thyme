@@ -12,6 +12,7 @@ import 'package:honey_and_thyme/src/widgets/stack_modal.dart';
 import 'package:intl/intl.dart';
 import 'package:signalr_core/signalr_core.dart' as signalR;
 
+import '../../utils/constants.dart';
 import '../models/photo_shoot.dart';
 import '../services/photo_shoot_service.dart';
 import 'book_appointment_form.dart';
@@ -91,43 +92,32 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
     return null;
   }
 
-  Future<void> bookAppointment() async {
-    final bookedAppointment =
-        await PhotoShootService.bookAppointment(bookAppointmentRequest);
-    if (bookedAppointment.responsiblePartyEmailAddress !=
-        bookAppointmentRequest.email) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                'Sorry, there was an issue booking your appointment. Please try again.')),
-      );
-      return;
-    }
-    setState(() {
-      bookAppointmentRequest = BookAppointmentRequest();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Appointment booked!')),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
     isAuthenticated = FirebaseAuth.instance.currentUser != null;
     fetchPhotoShoots();
-    hubConnection = ApiService.initiateSignalRHubConnection('bookingHub');
-    hubConnection.start();
-    hubConnection.on('PhotoShootBooked', (arguments) {
-      final photoShootId = arguments?[0] as String;
-      final photoShoot = getPhotoShootById(photoShootId);
-      if (photoShoot == null) {
-        return;
-      }
-      setState(() {
-        photoShoot.status = PhotoShootStatus.booked;
+    _initializeSignalRConnection();
+  }
+
+  Future<void> _initializeSignalRConnection() async {
+    try {
+      hubConnection = ApiService.initiateSignalRHubConnection('bookingHub');
+      hubConnection.on('PhotoShootBooked', (arguments) {
+        final photoShootId = arguments?[0] as String;
+        final photoShoot = getPhotoShootById(photoShootId);
+        if (photoShoot == null) {
+          return;
+        }
+        setState(() {
+          photoShoot.status = PhotoShootStatus.booked;
+        });
       });
-    });
+
+      await hubConnection.start();
+    } catch (e) {
+      // Connection failed, but we can still function without real-time updates
+    }
   }
 
   List<TableRow> getRows(columnCount) {
@@ -260,6 +250,8 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
           : null,
       currentScreen: ScreensEnum.contact,
       child: Stack(
+        alignment: Alignment.center,
+        fit: StackFit.expand,
         children: [
           FutureBuilder(
             future: photoShootFetch,
@@ -311,12 +303,58 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("Can't find a time that works for you?"),
-                        Text('Contact us to schedule an appointment.'),
-                        ElevatedButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, BookingView.route),
-                            child: Text('Contact Us')),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.only(top: 24, bottom: 24),
+                          decoration: BoxDecoration(
+                            color: Constants.pinkColor.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Constants.pinkColor.withValues(alpha: 0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              const Icon(
+                                Icons.schedule,
+                                size: 32,
+                                color: Constants.goldColor,
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                "Can't find a time that works for you?",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Contact us to schedule an appointment.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Constants.goldColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: () => Navigator.pushNamed(
+                                    context, BookingView.route),
+                                icon: const Icon(Icons.email),
+                                label: const Text('Contact Us'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         Table(
                           defaultColumnWidth: FixedColumnWidth(200),
                           columnWidths: columnWidths,
@@ -331,19 +369,21 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
             },
           ),
           StackModal(
-            height: 400,
-            width: 300,
+            height: MediaQuery.of(context).size.width > 600 ? 500 : 400,
+            width: MediaQuery.of(context).size.width > 600 ? 450 : 300,
             isOpen: bookAppointmentRequest.photoShootId != null,
+            onDismiss: () {
+              setState(() {
+                bookAppointmentRequest = BookAppointmentRequest();
+              });
+            },
             child: BookAppointmentForm(
               photoShoot:
                   getPhotoShootById(bookAppointmentRequest.photoShootId) ??
                       PhotoShoot(),
               onSubmit: (photoShoot) {
-                PhotoShootService.bookAppointment(bookAppointmentRequest)
-                    .then((value) {
-                  setState(() {
-                    bookAppointmentRequest = BookAppointmentRequest();
-                  });
+                setState(() {
+                  bookAppointmentRequest = BookAppointmentRequest();
                 });
               },
               onCancel: (photoShoot) {

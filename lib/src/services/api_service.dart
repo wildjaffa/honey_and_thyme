@@ -126,7 +126,7 @@ class ApiService {
   static signalR.HubConnection initiateSignalRHubConnection(String route) {
     final connection = signalR.HubConnectionBuilder()
         .withUrl(
-          getUri(url, 'imageDownloadHub').toString(),
+          getUri(url, route).toString(),
         )
         .build();
     return connection;

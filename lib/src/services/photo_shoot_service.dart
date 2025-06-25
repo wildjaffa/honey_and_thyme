@@ -1,4 +1,5 @@
 import 'package:honey_and_thyme/src/models/book_appointment_request.dart';
+import 'package:honey_and_thyme/src/models/book_appointment_response.dart';
 import 'package:honey_and_thyme/src/models/create_photo_shoot_payment_request.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot_filter_request.dart';
@@ -34,11 +35,11 @@ class PhotoShootService {
     return result.values as List<PhotoShoot>;
   }
 
-  static Future<PhotoShoot> bookAppointment(
+  static Future<BookAppointmentResponse> bookAppointment(
       BookAppointmentRequest request) async {
-    final result = await ApiService.postRequest<PhotoShoot>(
+    final result = await ApiService.postRequest<BookAppointmentResponse>(
         'api/PhotoShoot/book-appointment',
-        PhotoShoot.fromJson,
+        BookAppointmentResponse.fromJson,
         request.toJson());
     return result;
   }
