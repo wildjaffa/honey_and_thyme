@@ -369,7 +369,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
             },
           ),
           StackModal(
-            height: MediaQuery.of(context).size.width > 600 ? 500 : 400,
+            height: MediaQuery.of(context).size.width > 600 ? 525 : 400,
             width: MediaQuery.of(context).size.width > 600 ? 450 : 300,
             isOpen: bookAppointmentRequest.photoShootId != null,
             onDismiss: () {

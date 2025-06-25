@@ -18,6 +18,11 @@ class HoneyInputField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextStyle? style;
   final double? width;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final bool autofocus;
+
   const HoneyInputField({
     super.key,
     required this.initialValue,
@@ -29,6 +34,10 @@ class HoneyInputField extends StatelessWidget {
     this.inputFormatters,
     this.style,
     this.width,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.autofocus = false,
   });
 
   @override
@@ -52,6 +61,10 @@ class HoneyInputField extends StatelessWidget {
               validator: validator,
               keyboardType: keyboardType,
               inputFormatters: inputFormatters,
+              focusNode: focusNode,
+              textInputAction: textInputAction,
+              onFieldSubmitted: onFieldSubmitted,
+              autofocus: autofocus,
               decoration: InputDecoration(icon: startingIcon),
             ),
           ],

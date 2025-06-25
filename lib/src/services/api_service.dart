@@ -38,8 +38,8 @@ class ApiService {
     }
   }
 
-  static Future<T> postRequest<T>(
-      String route, T Function(dynamic json) parser, dynamic body) async {
+  static Future<T> postRequest<T>(String route,
+      T Function(Map<String, dynamic> json) parser, dynamic body) async {
     final uri = getUri(url, route);
     final headers = await _getHeaders();
     headers.addEntries({

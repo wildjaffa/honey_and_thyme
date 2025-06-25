@@ -7,8 +7,8 @@ import 'package:honey_and_thyme/utils/snackbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 
-import '../../models/album.dart';
 import '../../models/product.dart';
+import '../../widgets/album_dropdown_search.dart';
 
 class PhotoShootForm extends StatefulWidget {
   final PhotoShoot photoShoot;
@@ -17,7 +17,6 @@ class PhotoShootForm extends StatefulWidget {
   final void Function() onMarkPaid;
   final void Function() onDelete;
   final List<Product> products;
-  final List<Album> albums;
   const PhotoShootForm({
     super.key,
     required this.photoShoot,
@@ -26,7 +25,6 @@ class PhotoShootForm extends StatefulWidget {
     required this.products,
     required this.onMarkPaid,
     required this.onDelete,
-    required this.albums,
   });
 
   @override
@@ -125,22 +123,12 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
               ),
             ),
             const Text('Album'),
-            DropdownButton<String>(
-              value: widget.photoShoot.albumId,
-              onChanged: (value) {
+            AlbumDropdownSearch(
+              onAlbumSelected: (album) {
                 setState(() {
-                  widget.photoShoot.albumId = value;
+                  widget.photoShoot.albumId = album?.albumId;
                 });
               },
-              items: widget.albums
-                  .map(
-                    (album) => DropdownMenuItem(
-                      value: album.albumId,
-                      child:
-                          Text(album.name == null ? 'No Album' : album.name!),
-                    ),
-                  )
-                  .toList(),
             ),
             DropdownButton<PhotoShootStatus>(
               value: widget.photoShoot.status,

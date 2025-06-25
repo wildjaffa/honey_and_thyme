@@ -12,6 +12,8 @@ class PhotoShootFilterRequest implements Parsable {
   bool? excludePaidShoots;
   bool? excludeDeliveredShoots;
   PhotoShootBookStatusFilter? bookStatusFilter;
+  int? page;
+  int? pageSize;
 
   PhotoShootFilterRequest({
     this.startDate,
@@ -19,6 +21,8 @@ class PhotoShootFilterRequest implements Parsable {
     this.excludePaidShoots,
     this.excludeDeliveredShoots,
     this.bookStatusFilter = PhotoShootBookStatusFilter.booked,
+    this.page,
+    this.pageSize,
   });
 
   @override
@@ -28,6 +32,8 @@ class PhotoShootFilterRequest implements Parsable {
       'endDate': endDate?.toIso8601String(),
       'excludePaidShoots': excludePaidShoots,
       'excludeDeliveredShoots': excludeDeliveredShoots,
+      'page': page,
+      'pageSize': pageSize,
     };
   }
 
@@ -38,6 +44,8 @@ class PhotoShootFilterRequest implements Parsable {
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       excludePaidShoots: json['excludePaidShoots'],
       excludeDeliveredShoots: json['excludeDeliveredShoots'],
+      page: json['page'],
+      pageSize: json['pageSize'],
     );
   }
 }

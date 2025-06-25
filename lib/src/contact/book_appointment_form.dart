@@ -131,13 +131,10 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: _isSuccess ? _buildSuccessContent() : _buildFormContent(),
-        ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: _isSuccess ? _buildSuccessContent() : _buildFormContent(),
       ),
     );
   }
@@ -188,165 +185,177 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   }
 
   Widget _buildFormContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header
-        const Text(
-          'Booking Details',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          const Text(
+            'Booking Details',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-        // Photo shoot details section
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Constants.pinkColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.photoShoot.nameOfShoot ?? '',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (widget.photoShoot.description?.isNotEmpty == true) ...[
-                const SizedBox(height: 8),
-                Text(
-                  widget.photoShoot.description ?? '',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ],
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.location_on, size: 16),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      widget.photoShoot.location ?? '',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+          // Photo shoot details section
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Constants.pinkColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectableText(
+                  widget.photoShoot.nameOfShoot ?? '',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.calendar_today, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    DateFormat('dd/MM/yyyy')
-                        .add_jm()
-                        .format(widget.photoShoot.dateTimeUtc!.toLocal()),
+                ),
+                if (widget.photoShoot.description?.isNotEmpty == true) ...[
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    widget.photoShoot.description ?? '',
                     style: const TextStyle(fontSize: 14),
                   ),
                 ],
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 16),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: SelectableText(
+                        widget.photoShoot.location ?? '',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 16),
+                    const SizedBox(width: 4),
+                    SelectableText(
+                      DateFormat('dd/MM/yyyy')
+                          .add_jm()
+                          .format(widget.photoShoot.dateTimeUtc!.toLocal()),
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SelectableText(
+                      'Price: \$${widget.photoShoot.price.toString()}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SelectableText(
+                      'Deposit: \$${widget.photoShoot.deposit.toString()}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Contact details section
+          const Text(
+            'Contact Details',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          HoneyInputField(
+            width: double.infinity,
+            initialValue: '',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Name is required';
+              }
+              return null;
+            },
+            label: 'Name',
+            onChanged: (value) {
+              widget.photoShoot.responsiblePartyName = value;
+            },
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (value) {},
+            autofocus: true,
+          ),
+
+          const SizedBox(height: 16),
+
+          HoneyInputField(
+            width: double.infinity,
+            initialValue: '',
+            validator: (value) {
+              if (value == null || value.isEmpty || !value.contains('@')) {
+                return 'Email is required';
+              }
+              return null;
+            },
+            label: 'Email',
+            onChanged: (value) {
+              widget.photoShoot.responsiblePartyEmailAddress = value;
+            },
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (value) {
+              if (_formKey.currentState!.validate()) {
+                bookAppointment();
+              }
+            },
+          ),
+
+          const SizedBox(height: 32),
+
+          // Buttons section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              LoadingButton(
+                text: 'Submit',
+                isLoading: _isLoading,
+                onPressed: () {
+                  if (!_formKey.currentState!.validate()) {
+                    return;
+                  }
+                  bookAppointment();
+                },
               ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Price: \$${widget.photoShoot.price.toString()}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Deposit: \$${widget.photoShoot.deposit.toString()}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        widget.onCancel(widget.photoShoot);
+                      },
+                child: const Text('Cancel'),
               ),
             ],
           ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // Contact details section
-        const Text(
-          'Contact Details',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        HoneyInputField(
-          width: double.infinity,
-          initialValue: '',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Name is required';
-            }
-            return null;
-          },
-          label: 'Name',
-          onChanged: (value) {
-            widget.photoShoot.responsiblePartyName = value;
-          },
-        ),
-
-        const SizedBox(height: 16),
-
-        HoneyInputField(
-          width: double.infinity,
-          initialValue: '',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Email is required';
-            }
-            return null;
-          },
-          label: 'Email',
-          onChanged: (value) {
-            widget.photoShoot.responsiblePartyEmailAddress = value;
-          },
-        ),
-
-        const SizedBox(height: 32),
-
-        // Buttons section
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            LoadingButton(
-              text: 'Submit',
-              isLoading: _isLoading,
-              onPressed: () {
-                if (!_formKey.currentState!.validate()) {
-                  return;
-                }
-                bookAppointment();
-              },
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton(
-              onPressed: _isLoading
-                  ? null
-                  : () {
-                      widget.onCancel(widget.photoShoot);
-                    },
-              child: const Text('Cancel'),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

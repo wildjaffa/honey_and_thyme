@@ -10,7 +10,6 @@ import 'package:honey_and_thyme/src/models/photo_shoot_payment_capture_request.d
 import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/services/photo_shoot_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
-import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 import '../../../utils/snackbar_utils.dart';
@@ -41,7 +40,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
   );
   List<Product> products = [];
   List<Album> albums = [];
-  late Future<List<PhotoShoot>> photoShoots;
+  late Future<PaginatedPhotoShoots?> photoShoots;
 
   @override
   void initState() {
@@ -51,7 +50,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
       products = value;
     });
     AlbumService.fetchAlbums().then((value) {
-      albums = value;
+      albums = value?.results ?? [];
     });
   }
 
@@ -85,11 +84,11 @@ class _PhotoShootListState extends State<PhotoShootList> {
         return;
       }
 
-      final updated = awaited.firstWhere(
+      final updated = awaited?.results?.firstWhere(
           (element) => element.photoShootId == photoShoot.photoShootId);
 
       setState(() {
-        photoShoot = updated;
+        photoShoot = updated ?? PhotoShoot();
       });
       showSuccess(context, 'Shoot saved successfully');
     } catch (e) {
@@ -244,7 +243,6 @@ class _PhotoShootListState extends State<PhotoShootList> {
                   return PhotoShootForm(
                     products: products,
                     photoShoot: photoShoot,
-                    albums: albums,
                     onCancel: () {
                       setState(() {
                         editing = false;
@@ -259,7 +257,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
 
                 return ListView.separated(
                   padding: const EdgeInsets.all(8),
-                  itemCount: snapshot.data!.length + 1,
+                  itemCount: snapshot.data!.results!.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return BackOrAddButtons(
@@ -366,7 +364,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
                       );
                     }
 
-                    final shoot = snapshot.data![index - 1];
+                    final shoot = snapshot.data!.results![index - 1];
                     return ListTile(
                       leading: Icon(
                         shoot.status == PhotoShootStatus.confirmed

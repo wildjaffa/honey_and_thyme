@@ -11,6 +11,8 @@ import '../../services/image_service.dart';
 import '../../services/utils/image_utils.dart';
 import '../../widgets/app_scaffold.dart';
 import '../../widgets/fade_in_image_with_place_holder.dart';
+import '../../widgets/pagination_controls.dart';
+import '../../widgets/pagination_state.dart';
 import 'album_form.dart';
 import 'edit_album.dart';
 
@@ -23,9 +25,48 @@ class AlbumList extends StatefulWidget {
 }
 
 class _AlbumListState extends State<AlbumList> {
-  Future<List<Album>> albums = AlbumService.fetchAlbums();
-
+  final PaginationState _paginationState = PaginationState();
+  late Future<PaginatedAlbums?> albums;
   bool addingAlbum = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAlbums();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _loadAlbums() {
+    albums = AlbumService.fetchAlbums(
+      page: _paginationState.currentPage,
+      pageSize: _paginationState.pageSize,
+    );
+  }
+
+  void _nextPage() {
+    _paginationState.nextPage();
+    setState(() {
+      _loadAlbums();
+    });
+  }
+
+  void _previousPage() {
+    _paginationState.previousPage();
+    setState(() {
+      _loadAlbums();
+    });
+  }
+
+  void _refreshAlbums() {
+    _paginationState.reset();
+    setState(() {
+      _loadAlbums();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +82,7 @@ class _AlbumListState extends State<AlbumList> {
                       album: Album(),
                       onAlbumSaved: () => setState(() {
                         addingAlbum = false;
-                        albums = AlbumService.fetchAlbums();
+                        _refreshAlbums();
                       }),
                     )
                   : FutureBuilder(
@@ -54,28 +95,48 @@ class _AlbumListState extends State<AlbumList> {
                         if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         }
-                        return ListView.builder(
-                          itemCount: snapshot.data!.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: const Text('Create New Album'),
-                                  onPressed: () => setState(() {
-                                    addingAlbum = true;
-                                  }),
-                                ),
-                              );
-                            }
+                        if (snapshot.data == null) {
+                          return const Text('No albums found');
+                        }
 
-                            return AlbumSummary(
-                              album: snapshot.data![index - 1],
-                              refreshAlbum: () => setState(() {
-                                albums = AlbumService.fetchAlbums();
-                              }),
-                            );
-                          },
+                        final albumsData = snapshot.data!;
+
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount:
+                                    (albumsData.results?.length ?? 0) + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == 0) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                        child: const Text('Create New Album'),
+                                        onPressed: () => setState(() {
+                                          addingAlbum = true;
+                                        }),
+                                      ),
+                                    );
+                                  }
+
+                                  return AlbumSummary(
+                                    album: albumsData.results![index - 1],
+                                    refreshAlbum: _refreshAlbums,
+                                  );
+                                },
+                              ),
+                            ),
+                            // Pagination controls
+                            if (albumsData.results?.isNotEmpty == true)
+                              PaginationControls(
+                                currentPage: _paginationState.currentPage,
+                                totalPages: albumsData.pageCount ?? 1,
+                                onPreviousPage: _previousPage,
+                                onNextPage: _nextPage,
+                                isLoading: _paginationState.isLoading,
+                              ),
+                          ],
                         );
                       },
                     ),

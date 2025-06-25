@@ -9,6 +9,8 @@ import '../../services/photo_shoot_service.dart';
 import '../../services/product_service.dart';
 import '../../widgets/app_scaffold.dart';
 import '../../widgets/back_or_add_buttons.dart';
+import '../../widgets/pagination_controls.dart';
+import '../../widgets/pagination_state.dart';
 import '../admin.dart';
 import '../authenticate.dart';
 
@@ -20,7 +22,8 @@ class BookingsList extends StatefulWidget {
 }
 
 class _BookingsListState extends State<BookingsList> {
-  late Future<List<PhotoShoot>> photoShoots;
+  final PaginationState _paginationState = PaginationState();
+  late Future<PaginatedPhotoShoots?> photoShoots;
   List<Product> products = [];
   bool editing = false;
   bool submitting = false;
@@ -28,12 +31,39 @@ class _BookingsListState extends State<BookingsList> {
   @override
   void initState() {
     super.initState();
-    photoShoots = PhotoShootService.fetchPhotoShoots(PhotoShootFilterRequest(
-      startDate: DateTime.now().toUtc(),
-      bookStatusFilter: PhotoShootBookStatusFilter.unbooked,
-    ));
+    _loadPhotoShoots();
     ProductService.fetchProducts().then((value) {
       products = value;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _loadPhotoShoots() {
+    photoShoots = PhotoShootService.fetchPhotoShoots(
+      PhotoShootFilterRequest(
+        startDate: DateTime.now().toUtc(),
+        bookStatusFilter: PhotoShootBookStatusFilter.unbooked,
+        page: _paginationState.currentPage,
+        pageSize: _paginationState.pageSize,
+      ),
+    );
+  }
+
+  void _nextPage() {
+    _paginationState.nextPage();
+    setState(() {
+      _loadPhotoShoots();
+    });
+  }
+
+  void _previousPage() {
+    _paginationState.previousPage();
+    setState(() {
+      _loadPhotoShoots();
     });
   }
 
@@ -55,157 +85,53 @@ class _BookingsListState extends State<BookingsList> {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
+                if (snapshot.data == null) {
+                  return const Text('No bookings found');
+                }
 
-                // if (editing) {
-                //   return PhotoShootForm(
-                //     products: products,
-                //     photoShoot: photoShoot,
-                //     albums: albums,
-                //     onCancel: () {
-                //       setState(() {
-                //         editing = false;
-                //         photoShoot = PhotoShoot();
-                //       });
-                //     },
-                //     onSave: savePhotoShoot,
-                //     onDelete: confirmDelete,
-                //     onMarkPaid: confirmMarkPaid,
-                //   );
-                // }
+                final photoShootsData = snapshot.data!;
 
-                return ListView.separated(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: snapshot.data!.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return BackOrAddButtons(
-                        addText: 'Add Shoot',
-                        backRoute: AdminView.route,
-                        onAdd: () {
-                          setState(() {
-                            editing = true;
-                          });
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: (photoShootsData.results?.length ?? 0) + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return BackOrAddButtons(
+                              addText: 'Add Shoot',
+                              backRoute: AdminView.route,
+                              onAdd: () {
+                                setState(() {
+                                  editing = true;
+                                });
+                              },
+                            );
+                          }
+
+                          final shoot = photoShootsData.results![index - 1];
+                          return ListTile(
+                            title: Text(
+                                '${DateFormat.yMd().add_jm().format(shoot.dateTimeUtc!.toLocal())} - ${DateFormat.jm().format(shoot.endDateTimeUtc!.toLocal())}'),
+                            subtitle: Text(shoot.nameOfShoot!),
+                          );
                         },
-                        // endWidget: PopupMenuButton(
-                        //   child: const Icon(Icons.filter_alt),
-                        //   itemBuilder: (context) {
-                        //     return [
-                        //       PopupMenuItem(
-                        //         child: ListTile(
-                        //           title: Text(
-                        //               'Start Date: ${filters.startDate == null ? '' : DateFormat.yMd().add_jm().format(filters.startDate!.toLocal())}'),
-                        //           onTap: () {
-                        //             showDatePicker(
-                        //               context: context,
-                        //               initialDate:
-                        //                   filters.startDate ?? DateTime.now(),
-                        //               firstDate: DateTime(2020),
-                        //               lastDate: DateTime(2050),
-                        //             ).then((value) {
-                        //               setState(() {
-                        //                 filters.startDate = value;
-                        //                 photoShoots =
-                        //                     PhotoShootService.fetchPhotoShoots(
-                        //                   filters,
-                        //                 );
-                        //               });
-                        //               Navigator.pop(context);
-                        //             });
-                        //           },
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         child: ListTile(
-                        //           title: Text(
-                        //               'End Date: ${filters.endDate == null ? '' : DateFormat.yMd().add_jm().format(filters.endDate!.toLocal())}'),
-                        //           onTap: () {
-                        //             showDatePicker(
-                        //               context: context,
-                        //               initialDate:
-                        //                   filters.endDate ?? DateTime.now(),
-                        //               firstDate: DateTime(2020),
-                        //               lastDate: DateTime(2050),
-                        //             ).then((value) {
-                        //               setState(() {
-                        //                 filters.endDate = value;
-                        //                 photoShoots =
-                        //                     PhotoShootService.fetchPhotoShoots(
-                        //                   filters,
-                        //                 );
-                        //               });
-                        //               Navigator.pop(context);
-                        //             });
-                        //           },
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         child: ListTile(
-                        //           title: Text(
-                        //               'Exclude Paid Shoots: ${filters.excludePaidShoots == null ? '' : filters.excludePaidShoots.toString()}'),
-                        //           onTap: () {
-                        //             setState(() {
-                        //               filters.excludePaidShoots =
-                        //                   filters.excludePaidShoots == null
-                        //                       ? true
-                        //                       : !filters.excludePaidShoots!;
-                        //               photoShoots =
-                        //                   PhotoShootService.fetchPhotoShoots(
-                        //                 filters,
-                        //               );
-                        //             });
-                        //             Navigator.pop(context);
-                        //           },
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         child: ListTile(
-                        //           title: Text(
-                        //               'Exclude Delivered Shoots: ${filters.excludeDeliveredShoots}'),
-                        //           onTap: () {
-                        //             setState(() {
-                        //               filters.excludeDeliveredShoots =
-                        //                   filters.excludeDeliveredShoots == null
-                        //                       ? true
-                        //                       : !filters
-                        //                           .excludeDeliveredShoots!;
-                        //               photoShoots =
-                        //                   PhotoShootService.fetchPhotoShoots(
-                        //                       filters);
-                        //             });
-                        //             Navigator.pop(context);
-                        //           },
-                        //         ),
-                        //       ),
-                        //     ];
-                        //   },
-                        // ),
-                      );
-                    }
-
-                    final shoot = snapshot.data![index - 1];
-                    return ListTile(
-                      // leading: Icon(
-                      //   shoot.isConfirmed == true ? Icons.check_circle : null,
-                      //   color: shoot.isConfirmed == true &&
-                      //           (shoot.paymentRemaining ?? 0) <= 0
-                      //       ? Colors.green
-                      //       : Colors.black,
-                      // ),
-                      title: Text(
-                          '${DateFormat.yMd().add_jm().format(shoot.dateTimeUtc!.toLocal())} - ${DateFormat.jm().format(shoot.endDateTimeUtc!.toLocal())}'),
-                      subtitle: Text(shoot.nameOfShoot!),
-                      // trailing: Text(shoot.responsiblePartyName.toString()),
-                      // onTap: () {
-                      //   setState(() {
-                      //     editing = true;
-                      //     photoShoot = shoot;
-                      //   });
-                      // },
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const Divider();
-                  },
+                        separatorBuilder: (context, index) {
+                          return const Divider();
+                        },
+                      ),
+                    ),
+                    // Pagination controls
+                    if (photoShootsData.results?.isNotEmpty == true)
+                      PaginationControls(
+                        currentPage: _paginationState.currentPage,
+                        totalPages: photoShootsData.pageCount ?? 1,
+                        onPreviousPage: _previousPage,
+                        onNextPage: _nextPage,
+                        isLoading: _paginationState.isLoading,
+                      ),
+                  ],
                 );
               },
             ),

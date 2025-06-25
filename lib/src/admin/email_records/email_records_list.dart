@@ -4,6 +4,8 @@ import 'package:honey_and_thyme/src/models/email_record.dart';
 import 'package:honey_and_thyme/src/models/enums/message_status.dart';
 import 'package:honey_and_thyme/src/services/email_records_service.dart';
 import 'package:honey_and_thyme/src/widgets/back_or_add_buttons.dart';
+import 'package:honey_and_thyme/src/widgets/pagination_controls.dart';
+import 'package:honey_and_thyme/src/widgets/pagination_state.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/enums/screens.dart';
@@ -22,15 +24,37 @@ class EmailRecordsList extends StatefulWidget {
 }
 
 class _EmailRecordsListState extends State<EmailRecordsList> {
-  int page = 0;
-  int pageSize = 10;
-
+  final PaginationState _paginationState = PaginationState();
   late Future<PaginatedEmailRecords?> emailRecords;
 
   @override
   void initState() {
     super.initState();
-    emailRecords = EmailRecordsService.fetchRecords(page, pageSize, null, null);
+    _loadEmailRecords();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _loadEmailRecords() {
+    emailRecords = EmailRecordsService.fetchRecords(
+        _paginationState.currentPage, _paginationState.pageSize, null, null);
+  }
+
+  void _nextPage() {
+    _paginationState.nextPage();
+    setState(() {
+      _loadEmailRecords();
+    });
+  }
+
+  void _previousPage() {
+    _paginationState.previousPage();
+    setState(() {
+      _loadEmailRecords();
+    });
   }
 
   @override
@@ -63,38 +87,20 @@ class _EmailRecordsListState extends State<EmailRecordsList> {
                         );
                       }
                       if (index == snapshot.data!.results!.length + 1) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_back),
-                              onPressed: page == 0
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        page--;
-                                        emailRecords =
-                                            EmailRecordsService.fetchRecords(
-                                                page, pageSize, null, null);
-                                      });
-                                    },
-                            ),
-                            Text(
-                                'Page ${page + 1} of ${snapshot.data!.pageCount}'),
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: page + 1 == snapshot.data!.pageCount
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        page++;
-                                        emailRecords =
-                                            EmailRecordsService.fetchRecords(
-                                                page, pageSize, null, null);
-                                      });
-                                    },
-                            ),
-                          ],
+                        return PaginationControls(
+                          currentPage: _paginationState.currentPage,
+                          totalPages: snapshot.data!.pageCount ?? 1,
+                          onPreviousPage: _paginationState.currentPage == 0
+                              ? null
+                              : () {
+                                  _previousPage();
+                                },
+                          onNextPage: _paginationState.currentPage + 1 ==
+                                  (snapshot.data!.pageCount ?? 1)
+                              ? null
+                              : () {
+                                  _nextPage();
+                                },
                         );
                       }
                       final email = snapshot.data!.results![index - 1];

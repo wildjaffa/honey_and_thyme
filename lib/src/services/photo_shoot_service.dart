@@ -12,14 +12,16 @@ import '../models/photo_shoot_payment_capture_response.dart';
 import 'api_service.dart';
 
 class PhotoShootService {
-  static Future<List<PhotoShoot>> fetchPhotoShoots(
+  static Future<PaginatedPhotoShoots?> fetchPhotoShoots(
       PhotoShootFilterRequest? filters) async {
     try {
-      final result = await ApiService.postRequest<PhotoShoots>(
-          'api/PhotoShoot/list', PhotoShoots.fromJson, filters?.toJson() ?? {});
-      return result.values as List<PhotoShoot>;
+      final result = await ApiService.postRequest<PaginatedPhotoShoots>(
+          'api/PhotoShoot/list',
+          PaginatedPhotoShoots.fromJson,
+          filters?.toJson() ?? {});
+      return result;
     } catch (e) {
-      return [];
+      return null;
     }
   }
 

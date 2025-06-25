@@ -1,7 +1,35 @@
 import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/models/enums/photo_shoot_type.dart';
 
+import 'pagination_result.dart';
 import 'parsable.dart';
+
+class PaginatedPhotoShoots extends PaginationResult<PhotoShoot>
+    implements Parsable {
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['values'] = results?.map((v) => v.toJson()).toList();
+    data['pageIndex'] = pageIndex;
+    data['pageSize'] = pageSize;
+    data['pageCount'] = pageCount;
+    data['totalCount'] = totalCount;
+    return data;
+  }
+
+  PaginatedPhotoShoots.fromJson(Map<String, dynamic> json) {
+    if (json['results'] != null) {
+      results = <PhotoShoot>[];
+      json['results']['\$values'].forEach((v) {
+        results!.add(PhotoShoot.fromJson(v));
+      });
+    }
+    pageIndex = json['pageIndex'];
+    pageSize = json['pageSize'];
+    pageCount = json['pageCount'];
+    totalCount = json['totalCount'];
+  }
+}
 
 class PhotoShoots implements Parsable {
   String? id;
