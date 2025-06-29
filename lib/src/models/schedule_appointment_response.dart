@@ -1,23 +1,23 @@
 import 'photo_shoot.dart';
 
-class BookAppointmentResponse {
+class ScheduleAppointmentResponse {
   final bool success;
   final PhotoShoot? photoShoot;
   final BookingError? error;
 
-  const BookAppointmentResponse({
+  const ScheduleAppointmentResponse({
     required this.success,
     this.photoShoot,
     this.error,
   });
 
-  factory BookAppointmentResponse.fromJson(dynamic json) {
+  factory ScheduleAppointmentResponse.fromJson(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException(
           'Expected Map<String, dynamic>, got ${json.runtimeType}');
     }
 
-    return BookAppointmentResponse(
+    return ScheduleAppointmentResponse(
       success: json['success'] ?? false,
       photoShoot: json['photoShoot'] != null
           ? PhotoShoot.fromJson(json['photoShoot'])

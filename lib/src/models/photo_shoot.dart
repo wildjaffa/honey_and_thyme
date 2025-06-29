@@ -76,6 +76,7 @@ class PhotoShoot implements Parsable {
   PhotoShootType? photoShootType;
   PhotoShootStatus? status;
   String? albumId;
+  String? reservationCode;
 
   PhotoShoot({
     this.photoShootId,
@@ -94,6 +95,7 @@ class PhotoShoot implements Parsable {
     this.status,
     this.photoShootType,
     this.albumId,
+    this.reservationCode,
   }) {
     price ??= 0.0;
     deposit ??= 0.0;
@@ -121,6 +123,7 @@ class PhotoShoot implements Parsable {
     photoShootType = PhotoShootType.values[json['photoShootType']];
     status = PhotoShootStatus.values[json['status']];
     albumId = json['albumId'];
+    reservationCode = json['reservationCode'];
   }
 
   @override
@@ -142,6 +145,7 @@ class PhotoShoot implements Parsable {
     data['photoShootType'] = photoShootType?.index;
     data['status'] = status?.index;
     data['albumId'] = albumId;
+    data['reservationCode'] = reservationCode;
     return data;
   }
 }

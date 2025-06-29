@@ -1,17 +1,17 @@
 import 'package:honey_and_thyme/src/models/parsable.dart';
 
-class BookAppointmentRequest implements Parsable {
+class ScheduleAppointmentRequest implements Parsable {
   String? photoShootId;
   String? name;
   String? email;
 
-  BookAppointmentRequest({
+  ScheduleAppointmentRequest({
     this.photoShootId,
     this.name,
     this.email,
   });
 
-  BookAppointmentRequest.fromJson(Map<String, dynamic> json) {
+  ScheduleAppointmentRequest.fromJson(Map<String, dynamic> json) {
     photoShootId = json['photoShootId'];
     name = json['name'];
     email = json['email'];

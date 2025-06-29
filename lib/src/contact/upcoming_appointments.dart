@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/contact/new_appointments_form.dart';
-import 'package:honey_and_thyme/src/models/book_appointment_request.dart';
+import 'package:honey_and_thyme/src/models/schedule_appointment_request.dart';
 import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/services/api_service.dart';
@@ -10,12 +10,12 @@ import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:honey_and_thyme/src/widgets/stack_modal.dart';
 import 'package:intl/intl.dart';
-import 'package:signalr_core/signalr_core.dart' as signalR;
+import 'package:signalr_core/signalr_core.dart' as signal_r;
 
 import '../../utils/constants.dart';
 import '../models/photo_shoot.dart';
 import '../services/photo_shoot_service.dart';
-import 'book_appointment_form.dart';
+import 'schedule_appointment_form.dart';
 import 'booking.dart';
 
 class UpcomingAppointments extends StatefulWidget {
@@ -33,8 +33,9 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
   DateTime? firstDate;
   late bool isAuthenticated;
   bool addingAppointmentSlots = false;
-  BookAppointmentRequest bookAppointmentRequest = BookAppointmentRequest();
-  late signalR.HubConnection hubConnection;
+  ScheduleAppointmentRequest bookAppointmentRequest =
+      ScheduleAppointmentRequest();
+  late signal_r.HubConnection hubConnection;
 
   void fetchPhotoShoots() {
     photoShootFetch = PhotoShootService.fetchUpcomingAppointments(
@@ -374,21 +375,21 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
             isOpen: bookAppointmentRequest.photoShootId != null,
             onDismiss: () {
               setState(() {
-                bookAppointmentRequest = BookAppointmentRequest();
+                bookAppointmentRequest = ScheduleAppointmentRequest();
               });
             },
-            child: BookAppointmentForm(
+            child: ScheduleAppointmentForm(
               photoShoot:
                   getPhotoShootById(bookAppointmentRequest.photoShootId) ??
                       PhotoShoot(),
               onSubmit: (photoShoot) {
                 setState(() {
-                  bookAppointmentRequest = BookAppointmentRequest();
+                  bookAppointmentRequest = ScheduleAppointmentRequest();
                 });
               },
               onCancel: (photoShoot) {
                 setState(() {
-                  bookAppointmentRequest = BookAppointmentRequest();
+                  bookAppointmentRequest = ScheduleAppointmentRequest();
                 });
               },
             ),

@@ -1,5 +1,5 @@
-import 'package:honey_and_thyme/src/models/book_appointment_request.dart';
-import 'package:honey_and_thyme/src/models/book_appointment_response.dart';
+import 'package:honey_and_thyme/src/models/schedule_appointment_request.dart';
+import 'package:honey_and_thyme/src/models/schedule_appointment_response.dart';
 import 'package:honey_and_thyme/src/models/create_photo_shoot_payment_request.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot_filter_request.dart';
@@ -16,7 +16,7 @@ class PhotoShootService {
       PhotoShootFilterRequest? filters) async {
     try {
       final result = await ApiService.postRequest<PaginatedPhotoShoots>(
-          'api/PhotoShoot/list',
+          'api/PhotoShoot/paginated',
           PaginatedPhotoShoots.fromJson,
           filters?.toJson() ?? {});
       return result;
@@ -37,12 +37,20 @@ class PhotoShootService {
     return result.values as List<PhotoShoot>;
   }
 
-  static Future<BookAppointmentResponse> bookAppointment(
-      BookAppointmentRequest request) async {
-    final result = await ApiService.postRequest<BookAppointmentResponse>(
-        'api/PhotoShoot/book-appointment',
-        BookAppointmentResponse.fromJson,
+  static Future<ScheduleAppointmentResponse> scheduleAppointment(
+      ScheduleAppointmentRequest request) async {
+    final result = await ApiService.postRequest<ScheduleAppointmentResponse>(
+        'api/PhotoShoot/schedule-appointment',
+        ScheduleAppointmentResponse.fromJson,
         request.toJson());
+    return result;
+  }
+
+  static Future<PhotoShoot> fetchPhotoShootByReservationCode(
+      String reservationCode) async {
+    final result = await ApiService.getRequest<PhotoShoot>(
+        'api/PhotoShoot/by-reservation-code/$reservationCode',
+        PhotoShoot.fromJson);
     return result;
   }
 

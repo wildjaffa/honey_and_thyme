@@ -59,7 +59,6 @@ class _AlbumDropdownSearchState extends State<AlbumDropdownSearch> {
   }
 
   Future<void> _loadAlbums() async {
-    print('loadAlbums');
     if (_isLoading) return;
 
     setState(() {

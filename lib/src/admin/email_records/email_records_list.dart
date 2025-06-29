@@ -24,37 +24,26 @@ class EmailRecordsList extends StatefulWidget {
 }
 
 class _EmailRecordsListState extends State<EmailRecordsList> {
-  final PaginationState _paginationState = PaginationState();
-  late Future<PaginatedEmailRecords?> emailRecords;
+  late PaginationState<PaginatedEmailRecords> _paginationState;
 
   @override
   void initState() {
     super.initState();
-    _loadEmailRecords();
+    _paginationState = PaginationState<PaginatedEmailRecords>(
+      dataFetchCallback: _fetchEmailRecords,
+    );
+    _paginationState.loadInitialData();
   }
 
   @override
   void dispose() {
+    _paginationState.dispose();
     super.dispose();
   }
 
-  void _loadEmailRecords() {
-    emailRecords = EmailRecordsService.fetchRecords(
-        _paginationState.currentPage, _paginationState.pageSize, null, null);
-  }
-
-  void _nextPage() {
-    _paginationState.nextPage();
-    setState(() {
-      _loadEmailRecords();
-    });
-  }
-
-  void _previousPage() {
-    _paginationState.previousPage();
-    setState(() {
-      _loadEmailRecords();
-    });
+  Future<PaginatedEmailRecords?> _fetchEmailRecords(
+      int page, int pageSize) async {
+    return await EmailRecordsService.fetchRecords(page, pageSize, null, null);
   }
 
   @override
@@ -67,74 +56,78 @@ class _EmailRecordsListState extends State<EmailRecordsList> {
             final width = constraints.maxWidth;
             return SizedBox(
               width: width * 0.8,
-              child: FutureBuilder(
-                future: emailRecords,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+              child: ListenableBuilder(
+                listenable: _paginationState,
+                builder: (context, child) {
+                  if (_paginationState.isLoading) {
                     return const CircularProgressIndicator();
                   }
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                  if (_paginationState.error != null) {
+                    return Text('Error: ${_paginationState.error}');
+                  }
+                  if (_paginationState.data == null) {
+                    return const Text('No email records found');
                   }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: snapshot.data!.results!.length + 2,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return BackOrAddButtons(
-                          backRoute: AdminView.route,
-                        );
-                      }
-                      if (index == snapshot.data!.results!.length + 1) {
-                        return PaginationControls(
-                          currentPage: _paginationState.currentPage,
-                          totalPages: snapshot.data!.pageCount ?? 1,
-                          onPreviousPage: _paginationState.currentPage == 0
-                              ? null
-                              : () {
-                                  _previousPage();
+                  final emailRecordsData = _paginationState.data!;
+
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: emailRecordsData.results!.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return BackOrAddButtons(
+                                backRoute: AdminView.route,
+                              );
+                            }
+                            final email = emailRecordsData.results![index - 1];
+                            return ListTile(
+                              title: Text(email.subject!),
+                              subtitle: Text(email.email!),
+                              leading: IconButton(
+                                icon: Icon(
+                                  Icons.send,
+                                  color: email.status == MessageStatus.sent
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                                onPressed: () {
+                                  EmailRecordsService.reSendEmail(
+                                      email.emailRecordId!);
                                 },
-                          onNextPage: _paginationState.currentPage + 1 ==
-                                  (snapshot.data!.pageCount ?? 1)
-                              ? null
-                              : () {
-                                  _nextPage();
-                                },
-                        );
-                      }
-                      final email = snapshot.data!.results![index - 1];
-                      return ListTile(
-                        title: Text(email.subject!),
-                        subtitle: Text(email.email!),
-                        leading: IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: email.status == MessageStatus.sent
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                          onPressed: () {
-                            EmailRecordsService.reSendEmail(
-                                email.emailRecordId!);
+                              ),
+                              trailing: Text(
+                                DateFormat.yMd()
+                                    .add_jm()
+                                    .format(email.dateSent!.toLocal()),
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              onLongPress: () {
+                                final newWindow = html.window
+                                    .open("about:blank", "", "_blank");
+                                newWindow!.window.document
+                                    .write(email.htmlMessage!);
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
                           },
                         ),
-                        trailing: Text(
-                          DateFormat.yMd()
-                              .add_jm()
-                              .format(email.dateSent!.toLocal()),
-                          style: const TextStyle(fontSize: 18),
+                      ),
+                      // Pagination controls
+                      if (emailRecordsData.results?.isNotEmpty == true)
+                        PaginationControls<PaginatedEmailRecords>(
+                          paginationState: _paginationState,
+                          onUpdate: (paginationState) {
+                            _fetchEmailRecords(paginationState.pageIndex,
+                                paginationState.pageSize);
+                          },
                         ),
-                        onLongPress: () {
-                          final newWindow =
-                              html.window.open("about:blank", "", "_blank");
-                          newWindow!.window.document.write(email.htmlMessage!);
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
+                    ],
                   );
                 },
               ),

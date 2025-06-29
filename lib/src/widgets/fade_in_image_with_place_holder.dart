@@ -33,7 +33,7 @@ class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
     end: BoxDecoration(
       gradient: LinearGradient(
         colors: [
-          Colors.black.withOpacity(0.8),
+          Colors.black.withValues(alpha: 0.8),
           Colors.transparent,
         ],
         begin: Alignment.bottomCenter,
@@ -115,7 +115,7 @@ class _FadeInImageWithPlaceHolderState extends State<FadeInImageWithPlaceHolder>
                     color: widget.isSelected == true
                         ? Constants.goldColor
                         : Constants.pinkColor
-                            .withOpacity(_selectorHovering ? 1 : 0.5),
+                            .withValues(alpha: _selectorHovering ? 1 : 0.5),
                   ),
                   onPressed: widget.onSelected,
                 ),

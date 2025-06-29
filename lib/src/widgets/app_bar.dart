@@ -27,7 +27,7 @@ class CustomAppBar extends StatelessWidget {
     return Column(children: [
       Container(
         decoration: BoxDecoration(
-          color: Constants.grayColor.withOpacity(0.9),
+          color: Constants.grayColor.withValues(alpha: 0.9),
           boxShadow: const [
             BoxShadow(
                 color: Colors.grey,
@@ -56,7 +56,7 @@ class CustomAppBar extends StatelessWidget {
                       style: TextStyle(
                           shadows: [
                             Shadow(
-                              color: Colors.black.withOpacity(0.35),
+                              color: Colors.black.withValues(alpha: 0.35),
                               blurRadius: 7,
                               offset: const Offset(0, 0),
                             )
@@ -182,8 +182,8 @@ class _NavItemState extends State<NavItem> {
                 shadows: [
                   Shadow(
                     color: widget.isSelected
-                        ? Constants.goldColor.withOpacity(.35)
-                        : Colors.black.withOpacity(.35),
+                        ? Constants.goldColor.withValues(alpha: .35)
+                        : Colors.black.withValues(alpha: .35),
                     blurRadius: 7,
                     offset: const Offset(0, 0),
                   ),

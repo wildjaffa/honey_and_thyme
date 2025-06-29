@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:honey_and_thyme/src/admin/admin.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
 
 import '../../models/album.dart';
@@ -10,6 +11,7 @@ import '../../services/album_service.dart';
 import '../../services/image_service.dart';
 import '../../services/utils/image_utils.dart';
 import '../../widgets/app_scaffold.dart';
+import '../../widgets/back_or_add_buttons.dart';
 import '../../widgets/fade_in_image_with_place_holder.dart';
 import '../../widgets/pagination_controls.dart';
 import '../../widgets/pagination_state.dart';
@@ -25,47 +27,33 @@ class AlbumList extends StatefulWidget {
 }
 
 class _AlbumListState extends State<AlbumList> {
-  final PaginationState _paginationState = PaginationState();
-  late Future<PaginatedAlbums?> albums;
+  late PaginationState<PaginatedAlbums> _paginationState;
   bool addingAlbum = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAlbums();
+    _paginationState = PaginationState<PaginatedAlbums>(
+      dataFetchCallback: _fetchAlbums,
+    );
+    _paginationState.loadInitialData();
   }
 
   @override
   void dispose() {
+    _paginationState.dispose();
     super.dispose();
   }
 
-  void _loadAlbums() {
-    albums = AlbumService.fetchAlbums(
-      page: _paginationState.currentPage,
-      pageSize: _paginationState.pageSize,
+  Future<PaginatedAlbums?> _fetchAlbums(int page, int pageSize) async {
+    return AlbumService.fetchAlbums(
+      page: page,
+      pageSize: pageSize,
     );
-  }
-
-  void _nextPage() {
-    _paginationState.nextPage();
-    setState(() {
-      _loadAlbums();
-    });
-  }
-
-  void _previousPage() {
-    _paginationState.previousPage();
-    setState(() {
-      _loadAlbums();
-    });
   }
 
   void _refreshAlbums() {
     _paginationState.reset();
-    setState(() {
-      _loadAlbums();
-    });
   }
 
   @override
@@ -85,21 +73,20 @@ class _AlbumListState extends State<AlbumList> {
                         _refreshAlbums();
                       }),
                     )
-                  : FutureBuilder(
-                      future: albums,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                  : ListenableBuilder(
+                      listenable: _paginationState,
+                      builder: (context, child) {
+                        if (_paginationState.isLoading) {
                           return const CircularProgressIndicator();
                         }
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                        if (_paginationState.error != null) {
+                          return Text('Error: ${_paginationState.error}');
                         }
-                        if (snapshot.data == null) {
+                        if (_paginationState.data == null) {
                           return const Text('No albums found');
                         }
 
-                        final albumsData = snapshot.data!;
+                        final albumsData = _paginationState.data!;
 
                         return Column(
                           children: [
@@ -109,14 +96,12 @@ class _AlbumListState extends State<AlbumList> {
                                     (albumsData.results?.length ?? 0) + 1,
                                 itemBuilder: (context, index) {
                                   if (index == 0) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ElevatedButton(
-                                        child: const Text('Create New Album'),
-                                        onPressed: () => setState(() {
-                                          addingAlbum = true;
-                                        }),
-                                      ),
+                                    return BackOrAddButtons(
+                                      backRoute: AdminView.route,
+                                      addText: 'Create New Album',
+                                      onAdd: () => setState(() {
+                                        addingAlbum = true;
+                                      }),
                                     );
                                   }
 
@@ -129,12 +114,12 @@ class _AlbumListState extends State<AlbumList> {
                             ),
                             // Pagination controls
                             if (albumsData.results?.isNotEmpty == true)
-                              PaginationControls(
-                                currentPage: _paginationState.currentPage,
-                                totalPages: albumsData.pageCount ?? 1,
-                                onPreviousPage: _previousPage,
-                                onNextPage: _nextPage,
-                                isLoading: _paginationState.isLoading,
+                              PaginationControls<PaginatedAlbums>(
+                                paginationState: _paginationState,
+                                onUpdate: (paginationState) {
+                                  _fetchAlbums(paginationState.pageIndex,
+                                      paginationState.pageSize);
+                                },
                               ),
                           ],
                         );

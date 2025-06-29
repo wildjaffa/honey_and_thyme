@@ -160,7 +160,7 @@ class _EditAlbumState extends State<EditAlbum> {
   Future<void> scanAlbum() async {
     try {
       final awaitedAlbum = await album;
-      final result = await AlbumService.scanAlbum(awaitedAlbum);
+      final _ = await AlbumService.scanAlbum(awaitedAlbum);
       const snackBar = SnackBar(
         content: Text('Album Queued for Scanning successfully'),
       );

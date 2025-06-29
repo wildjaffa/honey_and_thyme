@@ -39,7 +39,7 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
 
   void copyShareData() {
     final url =
-        '${Uri.base.origin}/#/invoice?id=${widget.photoShoot.photoShootId}';
+        '${Uri.base.origin}/#/invoice?id=${widget.photoShoot.reservationCode}';
     var text = 'You can pay for your upcoming photo shoot at $url';
 
     Clipboard.setData(ClipboardData(text: text));

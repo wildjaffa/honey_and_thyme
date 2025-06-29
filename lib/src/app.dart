@@ -162,7 +162,8 @@ class MyApp extends StatelessWidget {
                   case PhotoShootList.route:
                     return const PhotoShootList();
                   case Invoice.route:
-                    return Invoice(photoShootId: routeParts[1].split('=')[1]);
+                    return Invoice(
+                        reservationCode: routeParts[1].split('=')[1]);
                   case EmailRecordsList.route:
                     return const EmailRecordsList();
                   case UpcomingAppointments.route:
@@ -170,7 +171,7 @@ class MyApp extends StatelessWidget {
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;
-                    return const UpcomingAppointments();
+                    return Home(slowLoadImages: homePageLoaded);
                 }
               },
             );

@@ -1,5 +1,7 @@
 import 'package:honey_and_thyme/src/models/parsable.dart';
 
+import 'enums/photo_shoot_status.dart';
+
 enum PhotoShootBookStatusFilter {
   all,
   unbooked,
@@ -9,19 +11,15 @@ enum PhotoShootBookStatusFilter {
 class PhotoShootFilterRequest implements Parsable {
   DateTime? startDate;
   DateTime? endDate;
-  bool? excludePaidShoots;
-  bool? excludeDeliveredShoots;
-  PhotoShootBookStatusFilter? bookStatusFilter;
-  int? page;
+  List<PhotoShootStatus> statuses = [];
+  int? pageIndex;
   int? pageSize;
 
   PhotoShootFilterRequest({
     this.startDate,
     this.endDate,
-    this.excludePaidShoots,
-    this.excludeDeliveredShoots,
-    this.bookStatusFilter = PhotoShootBookStatusFilter.booked,
-    this.page,
+    this.statuses = const [],
+    this.pageIndex,
     this.pageSize,
   });
 
@@ -30,9 +28,8 @@ class PhotoShootFilterRequest implements Parsable {
     return {
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
-      'excludePaidShoots': excludePaidShoots,
-      'excludeDeliveredShoots': excludeDeliveredShoots,
-      'page': page,
+      'statuses': statuses.map((status) => status.name).toList(),
+      'pageIndex': pageIndex,
       'pageSize': pageSize,
     };
   }
@@ -42,9 +39,12 @@ class PhotoShootFilterRequest implements Parsable {
       startDate:
           json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-      excludePaidShoots: json['excludePaidShoots'],
-      excludeDeliveredShoots: json['excludeDeliveredShoots'],
-      page: json['page'],
+      statuses: json['statuses']
+          .map((status) => PhotoShootStatus.values.firstWhere(
+                (e) => e.name == status,
+              ))
+          .toList(),
+      pageIndex: json['pageIndex'],
       pageSize: json['pageSize'],
     );
   }
