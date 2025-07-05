@@ -10,6 +10,7 @@ import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:signalr_core/signalr_core.dart' as signalR;
+
 import 'package:transparent_image/transparent_image.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:web/web.dart' as web;
@@ -113,11 +114,8 @@ class _AlbumViewState extends State<AlbumView> {
       isLoading = true;
     });
 
-    final connection = signalR.HubConnectionBuilder()
-        .withUrl(
-          ApiService.getUri(ApiService.url, 'imageDownloadHub').toString(),
-        )
-        .build();
+    final connection =
+        ApiService.initiateSignalRHubConnection('imageDownloadHub');
     await connection.start();
     final connectionId = connection.connectionId;
     if (connectionId == null) {

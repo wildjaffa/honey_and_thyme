@@ -12,16 +12,18 @@ import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:honey_and_thyme/src/widgets/dollar_input_field.dart';
 
 import '../../utils/constants.dart';
+import '../contact/upcoming_appointments.dart';
 import '../models/enums/payment_processors.dart';
 import '../models/photo_shoot.dart';
 import '../models/photo_shoot_payment_capture_request.dart';
 import '../widgets/app_footer.dart';
+import 'package:honey_and_thyme/src/contact/contact.dart';
 
 class Invoice extends StatefulWidget {
-  final String photoShootId;
+  final String reservationCode;
   const Invoice({
     super.key,
-    required this.photoShootId,
+    required this.reservationCode,
   });
 
   static const String route = '/invoice';
@@ -32,7 +34,8 @@ class Invoice extends StatefulWidget {
 
 class _InvoiceState extends State<Invoice> {
   late Future<PhotoShoot> photoShoot =
-      PhotoShootService.fetchPhotoShoot(widget.photoShootId);
+      PhotoShootService.fetchPhotoShootByReservationCode(
+          widget.reservationCode);
 
   final inputStyle = GoogleFonts.imFellEnglish(
     color: Colors.black,
@@ -88,7 +91,7 @@ class _InvoiceState extends State<Invoice> {
       amountToBeCharged: amountToBePaid,
       externalOrderId: orderId,
       paymentProcessor: PaymentProcessors.paypal,
-      photoShootId: widget.photoShootId,
+      reservationCode: widget.reservationCode,
       invoiceId: order!.invoiceId,
     );
     final response = await PhotoShootService.capturePhotoShootPayment(request);
@@ -110,7 +113,8 @@ class _InvoiceState extends State<Invoice> {
     }
 
     setState(() {
-      photoShoot = PhotoShootService.fetchPhotoShoot(widget.photoShootId);
+      photoShoot = PhotoShootService.fetchPhotoShootByReservationCode(
+          widget.reservationCode);
       status = InvoiceStatus.success;
     });
   }
@@ -130,7 +134,7 @@ class _InvoiceState extends State<Invoice> {
     final shoot = await photoShoot;
     final createRequest = CreatePhotoShootPaymentRequest(
       amount: amountToBePaid,
-      photoShootId: widget.photoShootId,
+      reservationCode: shoot.reservationCode,
       description: shoot.nameOfShoot,
       paymentProcessorEnum: PaymentProcessors.paypal,
     );
@@ -174,8 +178,74 @@ class _InvoiceState extends State<Invoice> {
               );
             }
             if (snapshot.hasError) {
-              return const Text(
-                  'There was an issue loading the invoice, please try again later.');
+              return SizedBox(
+                height: 400,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: Constants.goldColor,
+                        size: 60,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Unable to Load Invoice',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Text(
+                          'Your reservation may have expired or the link may be invalid. Please try booking another appointment or contact us if you believe this is a mistake.',
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () => Navigator.pushNamed(
+                                context, UpcomingAppointments.route),
+                            icon: const Icon(Icons.schedule),
+                            label: const Text('Book Appointment'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Constants.goldColor,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          ElevatedButton.icon(
+                            onPressed: () =>
+                                Navigator.pushNamed(context, ContactView.route),
+                            icon: const Icon(Icons.email),
+                            label: const Text('Contact Us'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Constants.pinkColor,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             if (status == InvoiceStatus.awaitingPaypal) {

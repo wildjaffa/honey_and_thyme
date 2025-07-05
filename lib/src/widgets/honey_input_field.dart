@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:honey_and_thyme/utils/constants.dart';
 
 class HoneyInputField extends StatelessWidget {
   static const errorStyle = TextStyle(height: 0.1, fontSize: 8);
@@ -18,6 +17,17 @@ class HoneyInputField extends StatelessWidget {
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final TextStyle? style;
+  final double? width;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final bool autofocus;
+  final int? maxLines;
+  final int? minLines;
+  final bool expands;
+  final bool enabled;
+  final String? hintText;
+
   const HoneyInputField({
     super.key,
     required this.initialValue,
@@ -28,30 +38,54 @@ class HoneyInputField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.inputFormatters,
     this.style,
+    this.width,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.autofocus = false,
+    this.maxLines,
+    this.minLines,
+    this.expands = false,
+    this.enabled = true,
+    this.hintText,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              label,
+      child: SizedBox(
+        width: width,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                label,
+              ),
             ),
-          ),
-          TextFormField(
-            style: style,
-            initialValue: initialValue,
-            onChanged: onChanged,
-            validator: validator,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            decoration: InputDecoration(icon: startingIcon),
-          ),
-        ],
+            TextFormField(
+              enabled: enabled,
+              style: style,
+              initialValue: initialValue,
+              onChanged: onChanged,
+              validator: validator,
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
+              focusNode: focusNode,
+              textInputAction: textInputAction,
+              onFieldSubmitted: onFieldSubmitted,
+              autofocus: autofocus,
+              maxLines: maxLines,
+              minLines: minLines,
+              expands: expands,
+              decoration: InputDecoration(
+                icon: startingIcon,
+                hintText: hintText,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:honey_and_thyme/src/services/image_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 
 import '../../models/album.dart';
+import '../../widgets/album_dropdown_search.dart';
 import 'image_upload.dart';
 
 class EditAlbum extends StatefulWidget {
@@ -26,8 +27,7 @@ class EditAlbum extends StatefulWidget {
 
 class _EditAlbumState extends State<EditAlbum> {
   late Future<Album> album = AlbumService.fetchAlbumById(widget.albumId, null);
-  late Future<List<Album>> albums = AlbumService.fetchAlbums();
-  String? selectedOtherAlbum;
+  Album? selectedOtherAlbum;
 
   bool editing = false;
 
@@ -82,14 +82,12 @@ class _EditAlbumState extends State<EditAlbum> {
       if (selectedOtherAlbum == null) {
         return;
       }
-      final otherAlbum = (await albums)
-          .firstWhere((element) => element.albumId == selectedOtherAlbum);
       final result = await AlbumService.addImagesToAlbum(
-          selectedOtherAlbum!, selectedImages);
+          selectedOtherAlbum!.albumId!, selectedImages);
       SnackBar snackBar;
       if (result) {
         snackBar = SnackBar(
-          content: Text('Images added to ${otherAlbum.name}'),
+          content: Text('Images added to ${selectedOtherAlbum!.name}'),
         );
       } else {
         snackBar = const SnackBar(
@@ -162,7 +160,7 @@ class _EditAlbumState extends State<EditAlbum> {
   Future<void> scanAlbum() async {
     try {
       final awaitedAlbum = await album;
-      final result = await AlbumService.scanAlbum(awaitedAlbum);
+      final _ = await AlbumService.scanAlbum(awaitedAlbum);
       const snackBar = SnackBar(
         content: Text('Album Queued for Scanning successfully'),
       );
@@ -303,34 +301,17 @@ class _EditAlbumState extends State<EditAlbum> {
                                   child: const Text('Scan Album'),
                                 ),
                               ),
-                              FutureBuilder(
-                                  future: albums,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return DropdownButton<String>(
-                                      hint: const Text("Other Album"),
-                                      value: selectedOtherAlbum,
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          selectedOtherAlbum = value;
-                                        });
-                                      },
-                                      items: snapshot.data!
-                                          .where(
-                                              (a) => a.albumId != album.albumId)
-                                          .map((a) => DropdownMenuItem<String>(
-                                                value: a.albumId,
-                                                child: Text(a.name!),
-                                              ))
-                                          .toList(),
-                                    );
-                                  }),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: AlbumDropdownSearch(
+                                  width: 300,
+                                  onAlbumSelected: (album) {
+                                    setState(() {
+                                      selectedOtherAlbum = album;
+                                    });
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                           if (album.isLocked == true)

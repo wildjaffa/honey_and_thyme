@@ -5,13 +5,20 @@ import '../models/add_existing_images_to_album_request.dart';
 import '../models/album.dart';
 
 class AlbumService {
-  static Future<List<Album>> fetchAlbums() async {
+  static Future<PaginatedAlbums?> fetchAlbums(
+      {int page = 0, int pageSize = 10, String? search}) async {
     try {
-      final result =
-          await ApiService.getRequest<Albums>('albums/all', Albums.fromJson);
-      return result.values as List<Album>;
+      final queryParameters = {
+        'pageSize': pageSize.toString(),
+        'pageIndex': page.toString(),
+        'search': search ?? '',
+      };
+      final result = await ApiService.getRequest<PaginatedAlbums>(
+          'albums/paginated', PaginatedAlbums.fromJson,
+          queryParameters: queryParameters);
+      return result;
     } catch (e) {
-      return [];
+      return null;
     }
   }
 

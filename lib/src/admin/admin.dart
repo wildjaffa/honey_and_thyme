@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/album/album_list.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
+import 'package:honey_and_thyme/src/admin/calendar_settings.dart';
 import 'package:honey_and_thyme/src/admin/email_records/email_records_list.dart';
 import 'package:honey_and_thyme/src/admin/photo_shoot/photo_shoot_list.dart';
 import 'package:honey_and_thyme/src/admin/product/product_list.dart';
 import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
+
+import '../contact/upcoming_appointments.dart';
 
 class AdminView extends StatefulWidget {
   const AdminView({
@@ -24,7 +27,7 @@ class _AdminViewState extends State<AdminView> {
     return AppScaffold(
       currentScreen: ScreensEnum.admin,
       child: Authenticate(
-        child: Center(
+        child: SingleChildScrollView(
           child: Column(
             children: [
               const SizedBox(
@@ -46,7 +49,17 @@ class _AdminViewState extends State<AdminView> {
                 route: EmailRecordsList.route,
                 text: 'Email Records',
               ),
-              const Text('Site Version: 1.0.2'),
+              AdminNavigationButton(
+                route: UpcomingAppointments.route,
+                text: 'Upcoming Appointments',
+              ),
+              const SizedBox(height: 32),
+              const SizedBox(
+                width: 300,
+                child: CalendarSettingsSelection(),
+              ),
+              const SizedBox(height: 32),
+              const Text('Site Version: 1.1.1'),
             ],
           ),
         ),

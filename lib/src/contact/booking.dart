@@ -5,9 +5,12 @@ import 'package:honey_and_thyme/src/models/enums/screens.dart';
 import 'package:honey_and_thyme/src/services/contact_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
+import 'package:honey_and_thyme/src/widgets/loading_button.dart';
 
 import '../../utils/constants.dart';
 import '../models/booking_request.dart';
+import '../widgets/honey_dropdown_field.dart';
+import '../widgets/honey_input_field.dart';
 
 class BookingView extends StatefulWidget {
   const BookingView({super.key});
@@ -119,147 +122,118 @@ class _BookingViewState extends State<BookingView> {
                   ),
                 ),
               if (contactState != ContactState.sent)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 40.0, top: 20),
-                      child: Text(
-                        'Please enter the details of your booking request below.',
-                        style: GoogleFonts.imFellEnglish(
-                          fontSize: 18,
-                          color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.only(left: 50.0, top: 20),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Please enter the details of your booking request below.',
+                          style: GoogleFonts.imFellEnglish(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                    ),
-                    FormField(
-                      label: 'Name',
-                      hintText: 'Enter Your Name',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.name = value;
-                      }),
-                      value: bookingRequest.name,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                    ),
-                    FormField(
-                      label: 'Email',
-                      hintText: 'Enter Your Email',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.email = value;
-                      }),
-                      value: bookingRequest.email,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                    ),
-                    FormField(
-                      label: 'Number of Guests',
-                      hintText: 'Enter Number of Guests',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.numberOfPeople = int.tryParse(value!);
-                      }),
-                      value: bookingRequest.numberOfPeople?.toString(),
-                      formWidth: formWidth,
-                      keyboardType: TextInputType.number,
-                      enabled: contactState != ContactState.sending,
-                    ),
-                    FormField(
-                      label: 'Session Length',
-                      hintText: 'Select Session Length',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.sessionLength = value;
-                      }),
-                      value: bookingRequest.sessionLength,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                      options: const [
-                        'Mini',
-                        'Half',
-                        'Full',
-                        'Double',
-                        'Other'
-                      ],
-                    ),
-                    FormField(
-                      label: 'Occasion',
-                      hintText:
-                          'e.g. Birthday, Anniversary, couples/family etc.',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.occasion = value;
-                      }),
-                      value: bookingRequest.occasion,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                    ),
-                    FormField(
-                      label: 'Location Preferences',
-                      hintText:
-                          'e.g. Indoor, Outdoor, Specific Location, Aesthetic etc',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.location = value;
-                      }),
-                      value: bookingRequest.occasion,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                    ),
-                    FormField(
-                      label: 'Other Info Or Questions',
-                      hintText: 'Enter Other Info Or Questions (Optional)',
-                      onChanged: (value) => setState(() {
-                        bookingRequest.questions = value;
-                      }),
-                      keyboardType: TextInputType.multiline,
-                      value: bookingRequest.questions,
-                      formWidth: formWidth,
-                      enabled: contactState != ContactState.sending,
-                      required: false,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0, bottom: 50),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          width: formWidth + 40,
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Name',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.name = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                        ),
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Email',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.email = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                        ),
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Number of Guests',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.numberOfPeople = int.tryParse(value);
+                          }),
+                          keyboardType: TextInputType.number,
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                        ),
+                        HoneyDropdownField(
+                          value: bookingRequest.sessionLength,
+                          label: 'Session Length',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.sessionLength = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                          items: const [
+                            'Mini',
+                            'Half',
+                            'Full',
+                            'Double',
+                            'Other'
+                          ],
+                        ),
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Occasion',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.occasion = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                          hintText:
+                              'e.g. Birthday, Anniversary, couples/family etc.',
+                        ),
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Location Preferences',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.location = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                          hintText:
+                              'e.g. Indoor, Outdoor, Specific Location, Aesthetic etc',
+                        ),
+                        HoneyInputField(
+                          initialValue: '',
+                          label: 'Other Info Or Questions',
+                          onChanged: (value) => setState(() {
+                            bookingRequest.questions = value;
+                          }),
+                          enabled: contactState != ContactState.sending,
+                          width: formWidth,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 8,
+                          minLines: 5,
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: formWidth,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero,
-                                    ),
-                                  ),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Constants.goldColor),
-                                ),
-                                onPressed: contactState != ContactState.sending
-                                    ? onSubmit
-                                    : null,
-                                child: contactState == ContactState.sending
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        'Send',
-                                        style: GoogleFonts.imFellEnglish(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                        ),
-                                      ),
+                              LoadingButton(
+                                text: 'Send',
+                                onPressed: onSubmit,
+                                isLoading: contactState == ContactState.sending,
                               ),
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               const AppFooter(),
             ],

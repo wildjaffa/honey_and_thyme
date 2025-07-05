@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/widgets/dollar_input_field.dart';
+import 'package:honey_and_thyme/src/widgets/honey_dropdown_field.dart';
 import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
 import 'package:honey_and_thyme/utils/snackbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:honey_and_thyme/src/models/photo_shoot.dart';
 
-import '../../models/album.dart';
 import '../../models/product.dart';
-import '../../widgets/labeled_checkbox.dart';
+import '../../widgets/album_dropdown_search.dart';
 
 class PhotoShootForm extends StatefulWidget {
   final PhotoShoot photoShoot;
@@ -17,7 +18,6 @@ class PhotoShootForm extends StatefulWidget {
   final void Function() onMarkPaid;
   final void Function() onDelete;
   final List<Product> products;
-  final List<Album> albums;
   const PhotoShootForm({
     super.key,
     required this.photoShoot,
@@ -26,7 +26,6 @@ class PhotoShootForm extends StatefulWidget {
     required this.products,
     required this.onMarkPaid,
     required this.onDelete,
-    required this.albums,
   });
 
   @override
@@ -41,7 +40,7 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
 
   void copyShareData() {
     final url =
-        '${Uri.base.origin}/#/invoice?id=${widget.photoShoot.photoShootId}';
+        '${Uri.base.origin}/#/invoice?id=${widget.photoShoot.reservationCode}';
     var text = 'You can pay for your upcoming photo shoot at $url';
 
     Clipboard.setData(ClipboardData(text: text));
@@ -124,38 +123,24 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                     ),
               ),
             ),
-            LabeledCheckbox(
-              label: 'Is Confirmed',
-              value: widget.photoShoot.isConfirmed,
-              onChanged: (value) {
-                widget.photoShoot.isConfirmed = value;
-                setState(() {});
-              },
-            ),
             const Text('Album'),
-            DropdownButton<String>(
-              value: widget.photoShoot.albumId,
-              onChanged: (value) {
+            AlbumDropdownSearch(
+              onAlbumSelected: (album) {
                 setState(() {
-                  widget.photoShoot.albumId = value;
+                  widget.photoShoot.albumId = album?.albumId;
                 });
               },
-              items: widget.albums
-                  .map(
-                    (album) => DropdownMenuItem(
-                      value: album.albumId,
-                      child:
-                          Text(album.name == null ? 'No Album' : album.name!),
-                    ),
-                  )
-                  .toList(),
             ),
-            LabeledCheckbox(
-              label: 'Pictures Delivered',
-              value: widget.photoShoot.picturesDelivered,
+            HoneyDropdownField(
+              label: 'Status',
+              value: widget.photoShoot.status?.name,
+              items: PhotoShootStatus.values.map((e) => e.name).toList(),
               onChanged: (value) {
-                widget.photoShoot.picturesDelivered = value;
-                setState(() {});
+                if (value == null) return;
+                setState(() {
+                  widget.photoShoot.status = PhotoShootStatus.values
+                      .firstWhere((e) => e.name == value);
+                });
               },
             ),
             if (widget.photoShoot.photoShootId != null)

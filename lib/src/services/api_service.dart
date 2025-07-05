@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:honey_and_thyme/src/models/form_file.dart';
 import 'package:http/http.dart' as http;
+import 'package:signalr_core/signalr_core.dart' as signal_r;
 import 'package:http/retry.dart';
 
 class ApiService {
@@ -38,8 +38,8 @@ class ApiService {
     }
   }
 
-  static Future<T> postRequest<T>(
-      String route, T Function(dynamic json) parser, dynamic body) async {
+  static Future<T> postRequest<T>(String route,
+      T Function(Map<String, dynamic> json) parser, dynamic body) async {
     final uri = getUri(url, route);
     final headers = await _getHeaders();
     headers.addEntries({
@@ -121,5 +121,14 @@ class ApiService {
     return {
       'Authorization': 'Bearer ${idToken!}',
     };
+  }
+
+  static signal_r.HubConnection initiateSignalRHubConnection(String route) {
+    final connection = signal_r.HubConnectionBuilder()
+        .withUrl(
+          getUri(url, route).toString(),
+        )
+        .build();
+    return connection;
   }
 }

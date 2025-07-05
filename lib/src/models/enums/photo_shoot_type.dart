@@ -1,0 +1,4 @@
+enum PhotoShootType {
+  customBooking,
+  calendarBooking,
+}

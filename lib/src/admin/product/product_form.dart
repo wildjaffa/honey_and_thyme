@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/widgets/dollar_input_field.dart';
 import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
 
-import '../../../utils/validations.dart';
 import '../../models/product.dart';
 
 class ProductForm extends StatelessWidget {

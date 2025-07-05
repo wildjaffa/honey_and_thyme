@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'localization/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honey_and_thyme/src/admin/album/album_list.dart';
@@ -10,6 +10,7 @@ import 'package:honey_and_thyme/src/albums/album.dart';
 import 'package:honey_and_thyme/src/albums/gallery.dart';
 import 'package:honey_and_thyme/src/contact/booking.dart';
 import 'package:honey_and_thyme/src/contact/contact.dart';
+import 'package:honey_and_thyme/src/contact/upcoming_appointments.dart';
 import 'package:honey_and_thyme/src/payment/invoice.dart';
 import 'package:honey_and_thyme/src/minis/minis.dart';
 import 'package:honey_and_thyme/src/pricing/pricing.dart';
@@ -25,8 +26,8 @@ import 'settings/settings_controller.dart';
 class MyApp extends StatelessWidget {
   static const errorStyle = TextStyle(height: 0.1, fontSize: 8);
   static final hintStyle = GoogleFonts.imFellEnglish(
-    color: Colors.black,
-    fontSize: 18,
+    color: Constants.sageColor,
+    fontSize: 16,
   );
 
   const MyApp({
@@ -118,6 +119,31 @@ class MyApp extends StatelessWidget {
                   Radius.circular(10),
                 ),
               ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Constants.pinkColor),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Constants.pinkColor, width: 2.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 12.0,
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                textStyle: GoogleFonts.imFellEnglish(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+                backgroundColor: Constants.goldColor,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+              ),
             ),
           ),
           // darkTheme: ThemeData.dark(
@@ -161,15 +187,16 @@ class MyApp extends StatelessWidget {
                   case PhotoShootList.route:
                     return const PhotoShootList();
                   case Invoice.route:
-                    return Invoice(photoShootId: routeParts[1].split('=')[1]);
+                    return Invoice(
+                        reservationCode: routeParts[1].split('=')[1]);
                   case EmailRecordsList.route:
                     return const EmailRecordsList();
+                  case UpcomingAppointments.route:
+                    return const UpcomingAppointments();
                   default:
                     final homePageLoaded = settingsController.homePageLoaded;
                     settingsController.homePageLoaded = true;
-                    return Home(
-                      slowLoadImages: homePageLoaded,
-                    );
+                    return Home(slowLoadImages: homePageLoaded);
                 }
               },
             );
