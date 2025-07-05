@@ -131,16 +131,13 @@ class _PhotoShootListState extends State<PhotoShootList> {
       if (photoShoot.status == PhotoShootStatus.delivered) {
         showSuccess(
             context, 'Shoot saved successfully and marked as delivered');
-        editing = false;
         photoShoot = PhotoShoot();
         return;
       }
 
-      final updated = awaited?.results?.firstWhere(
-          (element) => element.photoShootId == photoShoot.photoShootId);
-
       setState(() {
-        photoShoot = updated ?? PhotoShoot();
+        photoShoot = PhotoShoot();
+        editing = false;
       });
       showSuccess(context, 'Shoot saved successfully');
     } catch (e) {
@@ -187,7 +184,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
         amount: photoShoot.paymentRemaining!,
         description: 'Admin Payment',
         paymentProcessorEnum: PaymentProcessors.external,
-        photoShootId: photoShoot.photoShootId!,
+        reservationCode: photoShoot.reservationCode!,
       );
 
       final createOrderResponse =
@@ -197,7 +194,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
         amountToBeCharged: photoShoot.paymentRemaining!,
         externalOrderId: photoShoot.photoShootId!,
         paymentProcessor: PaymentProcessors.external,
-        photoShootId: photoShoot.photoShootId!,
+        reservationCode: photoShoot.reservationCode!,
         invoiceId: createOrderResponse.invoiceId,
       );
       await PhotoShootService.capturePhotoShootPayment(captureOrderRequest);
@@ -410,7 +407,7 @@ class _PhotoShootListState extends State<PhotoShootList> {
                     Expanded(
                       child: ListView.separated(
                         padding: const EdgeInsets.all(8),
-                        itemCount: photoShootsData?.results?.length ?? 0 + 1,
+                        itemCount: (photoShootsData?.results?.length ?? 0) + 1,
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return BackOrAddButtons(
@@ -771,8 +768,6 @@ class _FilterPopoverButtonState extends State<FilterPopoverButton> {
         return 'Paid';
       case PhotoShootStatus.delivered:
         return 'Delivered';
-      case PhotoShootStatus.cancelled:
-        return 'Cancelled';
       case PhotoShootStatus.deleted:
         return 'Deleted';
     }

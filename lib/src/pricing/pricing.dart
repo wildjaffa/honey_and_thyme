@@ -222,13 +222,11 @@ class PricingEntry extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                    width: 115,
-                    child: ElevatedButton(
-                        onPressed: () =>
-                            {Navigator.pushNamed(context, BookingView.route)},
-                        child: const Text('Book Now'))),
+                padding: const EdgeInsets.only(top: 10.0),
+                child: ElevatedButton(
+                    onPressed: () =>
+                        {Navigator.pushNamed(context, BookingView.route)},
+                    child: const Text('Book Now')),
               ),
             ],
           ),

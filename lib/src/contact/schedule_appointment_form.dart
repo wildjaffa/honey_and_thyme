@@ -286,7 +286,7 @@ class _ScheduleAppointmentFormState extends State<ScheduleAppointmentForm> {
                       const Icon(Icons.calendar_today, size: 16),
                       const SizedBox(width: 4),
                       SelectableText(
-                        DateFormat('dd/MM/yyyy')
+                        DateFormat('MM/dd/yyyy')
                             .add_jm()
                             .format(widget.photoShoot.dateTimeUtc!.toLocal()),
                         style: const TextStyle(fontSize: 14),

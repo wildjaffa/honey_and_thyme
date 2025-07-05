@@ -91,7 +91,7 @@ class _InvoiceState extends State<Invoice> {
       amountToBeCharged: amountToBePaid,
       externalOrderId: orderId,
       paymentProcessor: PaymentProcessors.paypal,
-      photoShootId: widget.reservationCode,
+      reservationCode: widget.reservationCode,
       invoiceId: order!.invoiceId,
     );
     final response = await PhotoShootService.capturePhotoShootPayment(request);
@@ -134,7 +134,7 @@ class _InvoiceState extends State<Invoice> {
     final shoot = await photoShoot;
     final createRequest = CreatePhotoShootPaymentRequest(
       amount: amountToBePaid,
-      photoShootId: shoot.photoShootId,
+      reservationCode: shoot.reservationCode,
       description: shoot.nameOfShoot,
       paymentProcessorEnum: PaymentProcessors.paypal,
     );

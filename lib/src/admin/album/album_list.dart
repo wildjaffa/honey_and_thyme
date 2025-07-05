@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'package:honey_and_thyme/src/admin/admin.dart';
 import 'package:honey_and_thyme/src/admin/authenticate.dart';
 
@@ -13,6 +14,7 @@ import '../../services/utils/image_utils.dart';
 import '../../widgets/app_scaffold.dart';
 import '../../widgets/back_or_add_buttons.dart';
 import '../../widgets/fade_in_image_with_place_holder.dart';
+import '../../widgets/honey_input_field.dart';
 import '../../widgets/pagination_controls.dart';
 import '../../widgets/pagination_state.dart';
 import 'album_form.dart';
@@ -29,6 +31,8 @@ class AlbumList extends StatefulWidget {
 class _AlbumListState extends State<AlbumList> {
   late PaginationState<PaginatedAlbums> _paginationState;
   bool addingAlbum = false;
+  String _searchQuery = '';
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -41,6 +45,7 @@ class _AlbumListState extends State<AlbumList> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _paginationState.dispose();
     super.dispose();
   }
@@ -49,11 +54,22 @@ class _AlbumListState extends State<AlbumList> {
     return AlbumService.fetchAlbums(
       page: page,
       pageSize: pageSize,
+      search: _searchQuery.isNotEmpty ? _searchQuery : null,
     );
   }
 
   void _refreshAlbums() {
     _paginationState.reset();
+  }
+
+  void _onSearchChanged(String query) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _searchQuery = query;
+        _paginationState.reset();
+      });
+    });
   }
 
   @override
@@ -90,6 +106,17 @@ class _AlbumListState extends State<AlbumList> {
 
                         return Column(
                           children: [
+                            // Search bar
+                            HoneyInputField(
+                              initialValue: _searchQuery,
+                              label: 'Search Albums',
+                              hintText: 'Search by album name',
+                              onChanged: _onSearchChanged,
+                              startingIcon: const Icon(Icons.search),
+                              width: 300,
+                              autofocus: true,
+                            ),
+                            const SizedBox(height: 16),
                             Expanded(
                               child: ListView.builder(
                                 itemCount:

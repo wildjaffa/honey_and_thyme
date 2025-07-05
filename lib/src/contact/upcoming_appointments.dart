@@ -33,7 +33,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
   DateTime? firstDate;
   late bool isAuthenticated;
   bool addingAppointmentSlots = false;
-  ScheduleAppointmentRequest bookAppointmentRequest =
+  ScheduleAppointmentRequest scheduleAppointmentRequest =
       ScheduleAppointmentRequest();
   late signal_r.HubConnection hubConnection;
 
@@ -104,7 +104,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
   Future<void> _initializeSignalRConnection() async {
     try {
       hubConnection = ApiService.initiateSignalRHubConnection('bookingHub');
-      hubConnection.on('PhotoShootBooked', (arguments) {
+      hubConnection.on('PhotoShootScheduled', (arguments) {
         final photoShootId = arguments?[0] as String;
         final photoShoot = getPhotoShootById(photoShootId);
         if (photoShoot == null) {
@@ -112,6 +112,17 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
         }
         setState(() {
           photoShoot.status = PhotoShootStatus.booked;
+        });
+      });
+
+      hubConnection.on('PhotoShootUnscheduled', (arguments) {
+        final photoShootId = arguments?[0] as String;
+        final photoShoot = getPhotoShootById(photoShootId);
+        if (photoShoot == null) {
+          return;
+        }
+        setState(() {
+          photoShoot.status = PhotoShootStatus.unbooked;
         });
       });
 
@@ -213,7 +224,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                           ? null
                           : () {
                               setState(() {
-                                bookAppointmentRequest.photoShootId =
+                                scheduleAppointmentRequest.photoShootId =
                                     photoShoot.photoShootId;
                               });
                             },
@@ -261,7 +272,42 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline,
+                          color: Colors.red, size: 48),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Oops! Something went wrong.',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'We couldn\'t load the upcoming appointments. Please try again later.',
+                        style: TextStyle(fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            fetchPhotoShoots();
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Try Again'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               if (addingAppointmentSlots) {
@@ -278,8 +324,38 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
               }
 
               if (photoShootsByDate.isEmpty) {
-                return const Center(
-                  child: Text('No upcoming appointments'),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.event_busy,
+                          color: Constants.goldColor, size: 48),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'No upcoming appointments',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'There are currently no available appointment slots. Please check back soon or contact us to schedule an appointment.',
+                        style: TextStyle(fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, BookingView.route),
+                        icon: const Icon(Icons.email),
+                        label: const Text('Contact Us'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }
               return LayoutBuilder(builder: (context, constraints) {
@@ -372,24 +448,24 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
           StackModal(
             height: MediaQuery.of(context).size.width > 600 ? 525 : 400,
             width: MediaQuery.of(context).size.width > 600 ? 450 : 300,
-            isOpen: bookAppointmentRequest.photoShootId != null,
+            isOpen: scheduleAppointmentRequest.photoShootId != null,
             onDismiss: () {
               setState(() {
-                bookAppointmentRequest = ScheduleAppointmentRequest();
+                scheduleAppointmentRequest = ScheduleAppointmentRequest();
               });
             },
             child: ScheduleAppointmentForm(
               photoShoot:
-                  getPhotoShootById(bookAppointmentRequest.photoShootId) ??
+                  getPhotoShootById(scheduleAppointmentRequest.photoShootId) ??
                       PhotoShoot(),
               onSubmit: (photoShoot) {
                 setState(() {
-                  bookAppointmentRequest = ScheduleAppointmentRequest();
+                  scheduleAppointmentRequest = ScheduleAppointmentRequest();
                 });
               },
               onCancel: (photoShoot) {
                 setState(() {
-                  bookAppointmentRequest = ScheduleAppointmentRequest();
+                  scheduleAppointmentRequest = ScheduleAppointmentRequest();
                 });
               },
             ),

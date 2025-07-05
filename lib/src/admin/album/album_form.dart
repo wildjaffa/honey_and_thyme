@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/admin.dart';
+import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
 import 'package:honey_and_thyme/src/widgets/labeled_checkbox.dart';
 
 import '../../models/album.dart';
@@ -109,11 +110,9 @@ class _AlbumFormState extends State<AlbumForm> {
             key: albumFormKey,
             child: Column(
               children: [
-                TextFormField(
+                HoneyInputField(
                   initialValue: widget.album.name,
-                  decoration: const InputDecoration(
-                    labelText: 'Album Name',
-                  ),
+                  label: 'Album Name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an album name';
@@ -122,11 +121,9 @@ class _AlbumFormState extends State<AlbumForm> {
                   },
                   onChanged: (value) => widget.album.name = value,
                 ),
-                TextFormField(
+                HoneyInputField(
                   initialValue: widget.album.description,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
-                  ),
+                  label: 'Description',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a description';
@@ -135,11 +132,9 @@ class _AlbumFormState extends State<AlbumForm> {
                   },
                   onChanged: (value) => widget.album.description = value,
                 ),
-                TextFormField(
+                HoneyInputField(
                     initialValue: widget.album.password,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
+                    label: 'Password',
                     validator: (value) {
                       return null;
                     },

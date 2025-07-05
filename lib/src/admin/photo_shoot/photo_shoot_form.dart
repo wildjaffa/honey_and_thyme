@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:honey_and_thyme/src/models/enums/photo_shoot_status.dart';
 import 'package:honey_and_thyme/src/widgets/dollar_input_field.dart';
+import 'package:honey_and_thyme/src/widgets/honey_dropdown_field.dart';
 import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
 import 'package:honey_and_thyme/utils/snackbar_utils.dart';
 import 'package:intl/intl.dart';
@@ -130,22 +131,17 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                 });
               },
             ),
-            DropdownButton<PhotoShootStatus>(
-              value: widget.photoShoot.status,
+            HoneyDropdownField(
+              label: 'Status',
+              value: widget.photoShoot.status?.name,
+              items: PhotoShootStatus.values.map((e) => e.name).toList(),
               onChanged: (value) {
                 if (value == null) return;
                 setState(() {
-                  widget.photoShoot.status = value;
+                  widget.photoShoot.status = PhotoShootStatus.values
+                      .firstWhere((e) => e.name == value);
                 });
               },
-              items: PhotoShootStatus.values
-                  .map(
-                    (status) => DropdownMenuItem(
-                      value: status,
-                      child: Text(status.name),
-                    ),
-                  )
-                  .toList(),
             ),
             if (widget.photoShoot.photoShootId != null)
               Text(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:honey_and_thyme/src/widgets/honey_input_field.dart';
+import 'package:honey_and_thyme/src/widgets/loading_button.dart';
 
 import '../../utils/constants.dart';
 import '../services/contact_service.dart';
@@ -91,12 +93,12 @@ class _ContactFormState extends State<ContactForm> {
                   ),
                 ),
               ),
-            if (contactState != ContactState.sent)
+            if (contactState != ContactState.sent) ...[
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 50, top: 40, bottom: 10),
+                    padding: const EdgeInsets.only(top: 40, bottom: 10),
                     child: Text('Contact:',
                         style: GoogleFonts.imFellEnglish(
                           color: Colors.black,
@@ -106,148 +108,46 @@ class _ContactFormState extends State<ContactForm> {
                   const Expanded(child: SizedBox()),
                 ],
               ),
-            if (contactState != ContactState.sent)
+              HoneyInputField(
+                initialValue: contactEmail,
+                label: 'Email',
+                onChanged: (value) {
+                  contactEmail = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty || !value.contains('@')) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+              ),
+              HoneyInputField(
+                initialValue: contactMessage,
+                label: 'Message',
+                onChanged: (value) {
+                  contactMessage = value;
+                },
+                maxLines: 8,
+                minLines: 5,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a message';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0, bottom: 20),
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        top: 20,
-                        bottom: 20,
-                      ),
-                      color: Colors.white,
-                      width: widget.formWidth - 20,
-                      height: 60,
-                      child: Center(
-                        child: TextFormField(
-                          enabled: contactState != ContactState.sending,
-                          onChanged: (value) {
-                            contactEmail = value;
-                          },
-                          maxLength: 254,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                !value.contains('@')) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            focusColor: Colors.transparent,
-                            focusedBorder: InputBorder.none,
-                            hoverColor: Colors.transparent,
-                            enabledBorder: InputBorder.none,
-                            counterText: '',
-                            errorStyle:
-                                const TextStyle(height: 0.1, fontSize: 8),
-                            hintText: 'Email',
-                            hintStyle: GoogleFonts.imFellEnglish(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  LoadingButton(
+                    text: 'Send',
+                    onPressed: onSubmit,
+                    isLoading: contactState == ContactState.sending,
                   ),
                 ],
               ),
-            if (contactState != ContactState.sent)
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        top: 20,
-                        bottom: 20,
-                      ),
-                      color: Colors.white,
-                      width: widget.formWidth - 20,
-                      height: 200,
-                      child: TextFormField(
-                        enabled: contactState != ContactState.sending,
-                        onChanged: (value) {
-                          contactMessage = value;
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a message';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        maxLength: 1000,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusColor: Colors.transparent,
-                          focusedBorder: InputBorder.none,
-                          hoverColor: Colors.transparent,
-                          enabledBorder: InputBorder.none,
-                          counterText: '',
-                          errorStyle: const TextStyle(height: 0.1, fontSize: 8),
-                          hintText: 'Message',
-                          hintStyle: GoogleFonts.imFellEnglish(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            if (contactState != ContactState.sent)
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, bottom: 50),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    width: widget.formWidth + 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            backgroundColor: WidgetStateProperty.all<Color>(
-                                Constants.goldColor),
-                          ),
-                          onPressed: contactState != ContactState.sending
-                              ? onSubmit
-                              : null,
-                          child: contactState == ContactState.sending
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Text(
-                                  'Send',
-                                  style: GoogleFonts.imFellEnglish(
-                                    fontSize: 18,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            ],
           ],
         ),
       ),

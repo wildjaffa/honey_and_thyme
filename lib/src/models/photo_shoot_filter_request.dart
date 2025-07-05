@@ -28,7 +28,7 @@ class PhotoShootFilterRequest implements Parsable {
     return {
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
-      'statuses': statuses.map((status) => status.name).toList(),
+      'statuses': statuses.map((status) => status.index).toList(),
       'pageIndex': pageIndex,
       'pageSize': pageSize,
     };

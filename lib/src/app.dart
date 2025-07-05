@@ -26,8 +26,8 @@ import 'settings/settings_controller.dart';
 class MyApp extends StatelessWidget {
   static const errorStyle = TextStyle(height: 0.1, fontSize: 8);
   static final hintStyle = GoogleFonts.imFellEnglish(
-    color: Colors.black,
-    fontSize: 18,
+    color: Constants.sageColor,
+    fontSize: 16,
   );
 
   const MyApp({
@@ -117,6 +117,31 @@ class MyApp extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Constants.pinkColor),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Constants.pinkColor, width: 2.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 12.0,
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                textStyle: GoogleFonts.imFellEnglish(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+                backgroundColor: Constants.goldColor,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
                 ),
               ),
             ),

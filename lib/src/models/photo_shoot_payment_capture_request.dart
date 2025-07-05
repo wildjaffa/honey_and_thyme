@@ -3,14 +3,14 @@ import 'package:honey_and_thyme/src/models/parsable.dart';
 import 'enums/payment_processors.dart';
 
 class PhotoShootPaymentCaptureRequest implements Parsable {
-  String? photoShootId;
+  String? reservationCode;
   String? externalOrderId;
   double? amountToBeCharged;
   PaymentProcessors? paymentProcessor;
   String? invoiceId;
 
   PhotoShootPaymentCaptureRequest({
-    this.photoShootId,
+    this.reservationCode,
     this.externalOrderId,
     this.amountToBeCharged,
     this.paymentProcessor,
@@ -18,7 +18,7 @@ class PhotoShootPaymentCaptureRequest implements Parsable {
   });
 
   PhotoShootPaymentCaptureRequest.fromJson(Map<String, dynamic> json) {
-    photoShootId = json['photoShootId'];
+    reservationCode = json['reservationCode'];
     externalOrderId = json['externalOrderId'];
     amountToBeCharged = json['amountToBeCharged'];
     paymentProcessor = PaymentProcessors.values[json['paymentProcessor']];
@@ -28,7 +28,7 @@ class PhotoShootPaymentCaptureRequest implements Parsable {
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['photoShootId'] = photoShootId;
+    data['reservationCode'] = reservationCode;
     data['externalOrderId'] = externalOrderId;
     data['amountToBeCharged'] = amountToBeCharged;
     data['paymentProcessor'] = paymentProcessor?.index;

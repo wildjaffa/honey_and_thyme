@@ -5,6 +5,5 @@ enum PhotoShootStatus {
   confirmed,
   paid,
   delivered,
-  cancelled,
   deleted,
 }
