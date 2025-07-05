@@ -35,6 +35,78 @@ The application will be available at `http://localhost:8080`
 - **Zip file downloads**: Proper headers for file downloads
 - **Health checks**: Built-in health monitoring
 
+## Docker Build Strategy
+
+This project uses a two-stage build approach for optimal performance and smaller image sizes.
+
+## Build Process
+
+### 1. Flutter Build Stage (GitHub Actions)
+
+- Uses the [Flutter Action](https://github.com/marketplace/actions/flutter-action) to set up Flutter environment
+- Leverages GitHub Actions cache for faster dependency resolution
+- Builds the Flutter web app with `flutter build web --release`
+- Runs asset versioning script
+
+### 2. Docker Image Stage
+
+- Uses a lightweight `nginx:alpine` base image
+- Copies only the pre-built web assets from `build/web/`
+- Includes custom nginx configuration
+- Results in a much smaller and faster image
+
+## Dockerfiles
+
+### `Dockerfile.lightweight` (Current)
+
+- **Size**: ~50MB (nginx:alpine + web assets)
+- **Build Time**: ~30 seconds
+- **Approach**: Copy pre-built assets only
+
+### `Dockerfile.original` (Legacy)
+
+- **Size**: ~1.5GB (includes Flutter SDK, dependencies, build tools)
+- **Build Time**: ~5-10 minutes
+- **Approach**: Build Flutter inside Docker container
+
+## Performance Comparison
+
+| Metric           | Original     | Lightweight |
+| ---------------- | ------------ | ----------- |
+| Build Time       | 5-10 minutes | 30 seconds  |
+| Image Size       | ~1.5GB       | ~50MB       |
+| Cache Efficiency | Low          | High        |
+| CI/CD Minutes    | High         | Low         |
+
+## Benefits of New Approach
+
+1. **Faster Builds**: No need to install Flutter inside Docker
+2. **Smaller Images**: Only includes runtime dependencies
+3. **Better Caching**: GitHub Actions caches Flutter dependencies
+4. **Cost Effective**: Uses fewer CI/CD minutes
+5. **Security**: Smaller attack surface with minimal base image
+
+## Workflow
+
+The build process follows this sequence:
+
+1. **Checkout**: Clone repository
+2. **Setup Flutter**: Use Flutter Action with caching
+3. **Get Dependencies**: `flutter pub get` (cached)
+4. **Build Web App**: `flutter build web --release`
+5. **Version Assets**: Run versioning script
+6. **Build Docker**: Create lightweight nginx image
+7. **Push Image**: Upload to GitHub Container Registry
+
+## Image Tags
+
+Images are tagged with:
+
+- `latest` - Latest main branch build
+- `main` - Main branch builds
+- `pr-{number}` - Pull request builds
+- `sha-{commit}` - Commit-specific builds
+
 ## GitHub Actions
 
 ### Automatic Build and Push
@@ -53,15 +125,6 @@ The project includes GitHub Actions workflows that automatically:
    - Manual deployment workflow
    - Supports staging and production environments
    - Can be triggered manually or on releases
-
-### Image Tags
-
-Images are tagged with:
-
-- `latest` - Latest build from main branch
-- `main` - Latest build from main branch
-- `main-{sha}` - Specific commit builds
-- `pr-{number}` - Pull request builds
 
 ### Usage
 

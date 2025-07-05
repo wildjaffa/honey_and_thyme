@@ -1,0 +1,14 @@
+# Lightweight Docker image for Flutter web app
+FROM nginx:alpine
+
+# Copy the pre-built Flutter web app to nginx's html directory
+COPY build/web /usr/share/nginx/html
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"] 
