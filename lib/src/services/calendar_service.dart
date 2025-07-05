@@ -90,7 +90,7 @@ class CalendarService {
       await _googleSignIn.disconnect();
       await ApiService.postRequest<void>(
         '/calendar/sign-out',
-        (json) => null,
+        (json) {},
         {},
       );
     } catch (e) {
