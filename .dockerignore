@@ -1,5 +1,6 @@
 # Flutter build outputs
 build/
+!build/web/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
