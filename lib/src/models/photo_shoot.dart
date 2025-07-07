@@ -93,7 +93,7 @@ class PhotoShoot implements Parsable {
     this.discountName,
     this.paymentRemaining,
     this.status,
-    this.photoShootType,
+    this.photoShootType = PhotoShootType.customBooking,
     this.albumId,
     this.reservationCode,
   }) {
