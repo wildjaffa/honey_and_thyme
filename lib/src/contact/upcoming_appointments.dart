@@ -10,7 +10,7 @@ import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
 import 'package:honey_and_thyme/src/widgets/stack_modal.dart';
 import 'package:intl/intl.dart';
-import 'package:signalr_core/signalr_core.dart' as signal_r;
+import 'package:signalr_netcore/hub_connection.dart' as signal_r;
 
 import '../../utils/constants.dart';
 import '../models/photo_shoot.dart';

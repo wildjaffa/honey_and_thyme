@@ -126,7 +126,6 @@ class _PhotoShootListState extends State<PhotoShootList> {
         _refreshPhotoShoots();
         submitting = false;
       });
-      final awaited = _paginationState.data;
 
       if (photoShoot.status == PhotoShootStatus.delivered) {
         showSuccess(

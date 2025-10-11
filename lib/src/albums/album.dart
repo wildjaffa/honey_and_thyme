@@ -9,7 +9,7 @@ import 'package:honey_and_thyme/src/services/album_service.dart';
 import 'package:honey_and_thyme/src/widgets/app_bar.dart';
 import 'package:honey_and_thyme/src/widgets/app_footer.dart';
 import 'package:honey_and_thyme/src/widgets/app_scaffold.dart';
-import 'package:signalr_core/signalr_core.dart' as signalR;
+import 'package:signalr_netcore/signalr_client.dart' as signal_r;
 
 import 'package:transparent_image/transparent_image.dart';
 import 'package:badges/badges.dart' as badges;
@@ -59,7 +59,7 @@ class _AlbumViewState extends State<AlbumView> {
   final focusNode = FocusNode();
   bool ignoreKey = false;
   double? percentComplete;
-  signalR.HubConnection? hubConnection;
+  signal_r.HubConnection? hubConnection;
 
   Future<Album?> tryGetAlbum() async {
     final album =
