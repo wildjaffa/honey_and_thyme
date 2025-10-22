@@ -14,6 +14,7 @@ class AppFooter extends StatelessWidget {
           image: AssetImage('assets/images/logo.png'),
           width: 300,
           height: footerHeight,
+          filterQuality: FilterQuality.high,
         ),
       ),
     );

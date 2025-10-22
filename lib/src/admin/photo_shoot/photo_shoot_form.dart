@@ -35,6 +35,18 @@ class PhotoShootForm extends StatefulWidget {
 class _PhotoShootFormState extends State<PhotoShootForm> {
   final photoShootFormKey = GlobalKey<FormState>();
   bool showAdditionalFields = false;
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final priceController = TextEditingController();
+  final depositController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.photoShoot.status == null) {
+      widget.photoShoot.status = PhotoShootStatus.booked;
+    }
+  }
 
   Product? product;
 
@@ -131,44 +143,30 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                 });
               },
             ),
-            HoneyDropdownField(
-              label: 'Status',
-              value: widget.photoShoot.status?.name,
-              items: PhotoShootStatus.values.map((e) => e.name).toList(),
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() {
-                  widget.photoShoot.status = PhotoShootStatus.values
-                      .firstWhere((e) => e.name == value);
-                });
-              },
-            ),
             if (widget.photoShoot.photoShootId != null)
               Text(
                 'Balance: \$${widget.photoShoot.paymentRemaining! < 0 ? 0 : widget.photoShoot.paymentRemaining}',
               ),
             if (widget.photoShoot.photoShootId == null) ...[
-              const Text('Product'),
-              DropdownButton<Product>(
-                value: product,
+              HoneyDropdownField(
+                label: 'Product',
+                value: product?.name,
+                items: widget.products
+                    .map((e) => e.name)
+                    .toList(), // widget.products,
                 onChanged: (value) {
                   if (value == null) return;
-                  widget.photoShoot.nameOfShoot = value.name!;
-                  widget.photoShoot.price = value.price!;
-                  widget.photoShoot.deposit = value.deposit!;
-                  widget.photoShoot.description = value.description!;
+                  final selectedProduct =
+                      widget.products.firstWhere((e) => e.name == value);
                   setState(() {
-                    product = value;
+                    widget.photoShoot.nameOfShoot = selectedProduct.name!;
+                    widget.photoShoot.price = selectedProduct.price!;
+                    widget.photoShoot.deposit = selectedProduct.deposit!;
+                    widget.photoShoot.description =
+                        selectedProduct.description!;
+                    product = selectedProduct;
                   });
                 },
-                items: widget.products
-                    .map(
-                      (product) => DropdownMenuItem(
-                        value: product,
-                        child: Text(product.name!),
-                      ),
-                    )
-                    .toList(),
               ),
             ],
             IconButton(
@@ -181,6 +179,7 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
             ),
             if (showAdditionalFields) ...[
               HoneyInputField(
+                key: ValueKey('nameOfShoot${widget.photoShoot.nameOfShoot}'),
                 initialValue: widget.photoShoot.nameOfShoot,
                 label: 'Name of Shoot',
                 onChanged: (value) => widget.photoShoot.nameOfShoot = value,
@@ -192,16 +191,19 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                 },
               ),
               HoneyInputField(
+                key: ValueKey('description${widget.photoShoot.description}'),
                 initialValue: widget.photoShoot.description,
                 label: 'Description',
                 onChanged: (value) => widget.photoShoot.description = value,
               ),
               DollarInputField(
+                key: ValueKey('price${widget.photoShoot.price}'),
                 initialValue: widget.photoShoot.price,
                 label: 'Price',
                 onChanged: (value) => widget.photoShoot.price = value,
               ),
               DollarInputField(
+                key: ValueKey('deposit${widget.photoShoot.deposit}'),
                 initialValue: widget.photoShoot.deposit,
                 label: 'Deposit',
                 onChanged: (value) => widget.photoShoot.deposit = value,
@@ -215,6 +217,18 @@ class _PhotoShootFormState extends State<PhotoShootForm> {
                 initialValue: widget.photoShoot.discountName,
                 label: 'Discount Name',
                 onChanged: (value) => widget.photoShoot.discountName = value,
+              ),
+              HoneyDropdownField(
+                label: 'Status',
+                value: widget.photoShoot.status?.name,
+                items: PhotoShootStatus.values.map((e) => e.name).toList(),
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    widget.photoShoot.status = PhotoShootStatus.values
+                        .firstWhere((e) => e.name == value);
+                  });
+                },
               ),
             ],
             const SizedBox(height: 10),

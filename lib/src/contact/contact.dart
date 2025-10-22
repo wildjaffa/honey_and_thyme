@@ -98,6 +98,7 @@ class ExternalLinkIcon extends StatelessWidget {
           width: 50,
           child: Image(
             image: AssetImage(assetPath),
+            filterQuality: FilterQuality.high,
           ),
         ),
       ),
