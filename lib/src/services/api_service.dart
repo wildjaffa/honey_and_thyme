@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:honey_and_thyme/src/models/form_file.dart';
 import 'package:http/http.dart' as http;
-import 'package:signalr_core/signalr_core.dart' as signal_r;
+import 'package:signalr_netcore/signalr_client.dart';
 import 'package:http/retry.dart';
 
 class ApiService {
@@ -123,8 +123,8 @@ class ApiService {
     };
   }
 
-  static signal_r.HubConnection initiateSignalRHubConnection(String route) {
-    final connection = signal_r.HubConnectionBuilder()
+  static HubConnection initiateSignalRHubConnection(String route) {
+    final connection = HubConnectionBuilder()
         .withUrl(
           getUri(url, route).toString(),
         )

@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:honey_and_thyme/src/admin/admin.dart';
 import 'package:honey_and_thyme/src/models/email_record.dart';
@@ -109,7 +111,7 @@ class _EmailRecordsListState extends State<EmailRecordsList> {
                                 final newWindow = html.window
                                     .open("about:blank", "", "_blank");
                                 newWindow!.window.document
-                                    .write(email.htmlMessage!);
+                                    .write(email.htmlMessage! as JSAny);
                               },
                             );
                           },

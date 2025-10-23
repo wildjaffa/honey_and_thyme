@@ -7,19 +7,31 @@
     {
       "name": "honey_and_thyme",
       "request": "launch",
-      "type": "dart"
+      "type": "dart",
+      "args": [
+        "--web-port",
+        "36087"
+      ]
     },
     {
       "name": "honey_and_thyme (profile mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "profile"
+      "flutterMode": "profile",
+      "args": [
+        "--web-port",
+        "36087"
+      ]
     },
     {
       "name": "honey_and_thyme (release mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release"
+      "flutterMode": "release",
+      "args": [
+        "--web-port",
+        "36087"
+      ]
     }
   ]
 }

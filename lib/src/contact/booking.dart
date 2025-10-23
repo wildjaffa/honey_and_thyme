@@ -324,7 +324,7 @@ class FormField extends StatelessWidget {
                     ),
                   )
                 : DropdownButtonFormField<String>(
-                    value: value,
+                    initialValue: value,
                     hint: Text(
                       hintText,
                       style: GoogleFonts.imFellEnglish(

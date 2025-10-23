@@ -6,7 +6,7 @@ class LoginForm extends StatelessWidget {
   final void Function() onSignIn;
   const LoginForm({super.key, required this.onSignIn});
 
-  signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
     googleProvider
