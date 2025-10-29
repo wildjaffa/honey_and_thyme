@@ -14,7 +14,7 @@
 @font-face {
   font-family: "MarchRough";
   /* set name */
-  src: local("MarchRough"), url(../src/assets/March-Rough.ttf);
+  src: local("MarchRough"), url(../src/assets/fonts/March-Rough.ttf);
   /* url of the font */
 }
 

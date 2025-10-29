@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from "react-router";
 import App from './App.tsx'
 import Header from './lib/components/Header.tsx';
+import Footer from './lib/components/Footer.tsx';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ createRoot(root).render(
       <BrowserRouter>
         <Header currentScreen="gallery" googleFontsLoaded={true} />
         <App />
+        <Footer />
       </BrowserRouter>
     </StrictMode>
   </QueryClientProvider>

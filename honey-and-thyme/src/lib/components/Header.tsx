@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import '../../assets/March-Rough.ttf';
+import '../../assets/fonts/March-Rough.ttf';
 
 type ScreenKey = 'pricing' | 'gallery' | 'contact' | string;
 
-type HeaderProps = {
+interface HeaderProps {
     currentScreen: ScreenKey;
     /** When true the Google fonts (or other fonts) have finished loading and nav may be shown */
     googleFontsLoaded: boolean;
@@ -13,7 +13,7 @@ type HeaderProps = {
  * Header component translated from Flutter `CustomAppBar` (app_bar.dart).
  * Uses Tailwind CSS for layout and styling.
  */
-export default function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
+function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
     const [isWide, setIsWide] = useState<boolean>(() => window.innerWidth >= 500);
 
     useEffect(() => {
@@ -146,7 +146,6 @@ function NavItem({
                 className={textColor}
                 style={{
                     fontSize,
-                    textShadow: `0 0 7px ${isSelected ? '#bb964e59' : 'rgba(0,0,0,0.35)'}`,
                 }}
             >
                 {title}
@@ -160,4 +159,6 @@ function NavItem({
         </div>
     );
 }
+
+export default Header;
 
