@@ -9,7 +9,10 @@ import Header from './lib/components/Header.tsx';
 
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root');
+if (!root) throw new Error("Failed to find the root element");
+
+createRoot(root).render(
   <QueryClientProvider client={queryClient}>
     <StrictMode>
       <BrowserRouter>
