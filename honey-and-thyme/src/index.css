@@ -24,6 +24,12 @@
   font-style: normal;
 }
 
+.im-fell-english {
+  font-family: "IM Fell English", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .march-rough {
   font-family: "MarchRough", serif;
   font-weight: 400;
@@ -32,4 +38,17 @@
 
 :root {
   background-color: var(--color-honey-gray);
+}
+
+.shimmer {
+  background-color: var(--color-gray-200);
+  display: inline-block;
+  mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/350% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    mask-position: left
+  }
 }

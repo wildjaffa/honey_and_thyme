@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../../assets/fonts/March-Rough.ttf';
-
-type ScreenKey = 'pricing' | 'gallery' | 'contact' | string;
+import { NavLink, useNavigate } from 'react-router';
 
 interface HeaderProps {
-    currentScreen: ScreenKey;
     /** When true the Google fonts (or other fonts) have finished loading and nav may be shown */
     googleFontsLoaded: boolean;
 };
@@ -12,9 +10,12 @@ interface HeaderProps {
 /**
  * Header component translated from Flutter `CustomAppBar` (app_bar.dart).
  * Uses Tailwind CSS for layout and styling.
+ *
+ * Uses `NavLink` from react-router-dom for accessible active state handling.
  */
-function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
+function Header({ googleFontsLoaded }: HeaderProps) {
     const [isWide, setIsWide] = useState<boolean>(() => window.innerWidth >= 500);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const onResize = () => setIsWide(window.innerWidth >= 500);
@@ -27,9 +28,9 @@ function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
     const startLongPress = useCallback(() => {
         // 600ms threshold for a long press
         longPressTimer.current = window.setTimeout(() => {
-            window.location.assign('/admin');
+            navigate('/admin');
         }, 600);
-    }, []);
+    }, [navigate]);
     const clearLongPress = useCallback(() => {
         if (longPressTimer.current) {
             clearTimeout(longPressTimer.current);
@@ -37,14 +38,10 @@ function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
         }
     }, []);
 
-    const navigate = useCallback((to: string) => {
-        window.location.assign(to);
-    }, []);
-
     const fontSizeClass = isWide ? 'text-[60px]' : 'text-[40px]';
 
     return (
-        <div className="flex flex-col bg-honey-gray">
+        <div className="flex flex-col bg-honey-gray top-0 sticky z-10">
             <div className="w-full bg-gray bg-opacity-90 shadow-md" style={{ boxShadow: '0 0 10px rgba(128,128,128,0.6)' }}>
                 <div className="h-[150px] flex flex-col">
                     <div className="h-[100px] flex items-center justify-center">
@@ -80,21 +77,18 @@ function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
                                         <NavItem
                                             title="Pricing"
                                             route="/pricing"
-                                            isSelected={currentScreen === 'pricing'}
                                             fontSizeMultiplier={isWide ? 1 : 0.75}
                                         />
                                         <div className="flex-1" />
                                         <NavItem
                                             title="Gallery"
                                             route="/gallery"
-                                            isSelected={currentScreen === 'gallery'}
                                             fontSizeMultiplier={isWide ? 1 : 0.75}
                                         />
                                         <div className="flex-1" />
                                         <NavItem
                                             title="Contact"
                                             route="/contact"
-                                            isSelected={currentScreen === 'contact'}
                                             fontSizeMultiplier={isWide ? 1 : 0.75}
                                         />
                                         <div className="flex-1" />
@@ -117,46 +111,24 @@ function Header({ currentScreen, googleFontsLoaded }: HeaderProps) {
 function NavItem({
     title,
     route,
-    isSelected,
     fontSizeMultiplier,
 }: {
     title: string;
     route: string;
-    isSelected: boolean;
     fontSizeMultiplier: number;
 }) {
-    const [hovering, setHovering] = useState(false);
     const fontSize = `${24 * fontSizeMultiplier}px`;
-    const textColor = isSelected || hovering ? 'text-honey-gold' : 'text-black';
 
     return (
-        <div
-            className="flex items-center cursor-pointer select-none im-fell-english-sc-regular gap-1.5"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
-            onClick={() => window.location.assign(route)}
+        <NavLink
+            to={route}
+            className={({ isActive }: { isActive: boolean }) => `flex items-center cursor-pointer select-none im-fell-english-sc-regular gap-1.5 ${isActive ? 'text-honey-gold' : 'text-black'}`}
         >
-            <span
-                className={`${hovering ? 'text-honey-gold' : 'text-black'}`}
-                style={{ fontSize }}
-            >
-                •
-            </span>
-            <span
-                className={textColor}
-                style={{
-                    fontSize,
-                }}
-            >
-                {title}
-            </span>
-            <span
-                className={`${hovering ? 'text-honey-gold' : 'text-black'}`}
-                style={{ fontSize }}
-            >
-                •
-            </span>
-        </div>
+            {/* bullets and title inherit color from the parent */}
+            <span style={{ fontSize }}>•</span>
+            <span style={{ fontSize }}>{title}</span>
+            <span style={{ fontSize }}>•</span>
+        </NavLink>
     );
 }
 
