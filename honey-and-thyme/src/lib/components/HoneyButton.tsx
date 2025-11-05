@@ -1,12 +1,44 @@
+import HoneyCircularLoader from "./HoneyCircularLoader";
 
 interface HoneyButtonProps {
-    /** Button label */
-    label?: string;
-    onClick?: () => void;
+  /** Button label */
+  label?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  isSubmit?: boolean;
+  isLoading?: boolean;
+  children?: React.ReactNode;
 }
 
-function HoneyButton({ label, onClick }: HoneyButtonProps) {
-    return <button className="px-4 py-2 im-fell-english bg-honey-gold text-black shadow-sm hover:shadow-md hover:cursor-pointer transition-colors" onClick={onClick}>{label || "Honey Button"}</button>;
+function HoneyButton({
+  label,
+  onClick,
+  disabled,
+  isSubmit,
+  isLoading,
+  children,
+}: HoneyButtonProps) {
+  return (
+    <button
+      type={isSubmit ? "submit" : "button"}
+      className="im-fell-english bg-honey-gold relative flex min-w-20 items-center justify-center px-4 py-1 text-black shadow-sm transition-colors hover:cursor-pointer hover:shadow-md"
+      onClick={onClick}
+      disabled={isLoading || disabled}
+    >
+      {/* keep the label/children in the flow to preserve button width; hide visually when loading */}
+      <span className={isLoading ? "invisible" : "visible"}>
+        {children || label || "Honey Button"}
+      </span>
+
+      {/* absolute-centered loader so it doesn't affect layout */}
+      {isLoading && (
+        <HoneyCircularLoader
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white"
+          size="small"
+        />
+      )}
+    </button>
+  );
 }
 
 export default HoneyButton;

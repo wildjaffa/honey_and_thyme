@@ -1,8 +1,6 @@
 import { useState } from "react";
 import useImageUrl from "../hooks/useImageUrl";
 import type { ImageModel } from "../types/api";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import HoneyIconButton from "./HoneyIconButton";
 
 interface HoneyImageProps {
   image: ImageModel;
@@ -10,7 +8,7 @@ interface HoneyImageProps {
   alt?: string;
   className?: string;
   onTapped?: () => void;
-  onSelected?: (imageId: string) => void;
+  onSelected?: () => void;
   isSelected?: boolean;
   imageQuality: number;
 }
@@ -35,6 +33,7 @@ function HoneyFadeInImage({
   alt = "",
 }: HoneyImageProps) {
   const [loaded, setLoaded] = useState(false);
+  const [hoveringSelector, setHoveringSelector] = useState(false);
 
   const url = useImageUrl(image.imageId, imageQuality);
 
@@ -72,16 +71,37 @@ function HoneyFadeInImage({
       {/* Selector icon (top-right) */}
       {typeof isSelected !== "undefined" && (
         <div className="absolute top-2 right-2">
-          <HoneyIconButton
-            icon={faCircleCheck}
-            onClick={() => {
-              if (onSelected && image.imageId) {
-                onSelected(image.imageId);
-              }
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelected?.();
             }}
-            isSelected={isSelected}
-            ariaLabel={isSelected ? "Deselect image" : "Select image"}
-          />
+            onMouseEnter={() => setHoveringSelector(true)}
+            onMouseLeave={() => setHoveringSelector(false)}
+            aria-label={isSelected ? "Deselect image" : "Select image"}
+            className="rounded-full p-1 focus:outline-none"
+            style={{
+              // Make the button background slightly visible so icon is clickable on any image
+              background: "rgba(0,0,0,0.0)",
+            }}
+          >
+            {/* Inline SVG check-circle; color changes when selected or hover */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="26"
+              height="26"
+              fill={
+                isSelected
+                  ? "#D4AF37" // gold-ish
+                  : hoveringSelector
+                    ? "#ec4899" // pink-500
+                    : "rgba(236,72,153,0.5)"
+              }
+            >
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 14.2-4.2-4.2 1.4-1.4L11 13.4l5.8-5.8 1.4 1.4L11 16.2z" />
+            </svg>
+          </button>
         </div>
       )}
     </div>

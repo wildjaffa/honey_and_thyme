@@ -2,14 +2,12 @@
 
 /* Your existing font faces and classes below */
 
-
 @theme {
   --color-honey-gray: #d3d3d3;
   --color-honey-gold: #bb964e;
   --color-honey-sage: #90a4a5;
   --color-honey-pink: #eadcd6;
 }
-
 
 @font-face {
   font-family: "MarchRough";
@@ -20,19 +18,16 @@
 
 .im-fell-english-sc-regular {
   font-family: "IM Fell English SC", serif;
-  font-weight: 400;
   font-style: normal;
 }
 
 .im-fell-english {
   font-family: "IM Fell English", serif;
-  font-weight: 400;
   font-style: normal;
 }
 
 .march-rough {
   font-family: "MarchRough", serif;
-  font-weight: 400;
   font-style: normal;
 }
 
@@ -49,6 +44,6 @@
 
 @keyframes shimmer {
   100% {
-    mask-position: left
+    mask-position: left;
   }
 }
