@@ -6,7 +6,9 @@ import { useHeader } from "../hooks/useHeader";
 function HoneyHeader() {
   const [isWide, setIsWide] = useState<boolean>(() => window.innerWidth >= 500);
   const navigate = useNavigate();
-  const { toolbarItems } = useHeader();
+  const { toolbarItems, hideUntilScroll } = useHeader();
+  const [scrolled, setScrolled] = useState(false);
+  const [hideHeaderClasses, setHideHeaderClasses] = useState("sticky left-0");
 
   useEffect(() => {
     const onResize = () => setIsWide(window.innerWidth >= 500);
@@ -14,6 +16,28 @@ function HoneyHeader() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!hideUntilScroll) {
+      setHideHeaderClasses("sticky");
+      return;
+    }
+    let classes = "fixed ";
+    if (scrolled) {
+      classes += "opacity-100 pointer-events-auto";
+    } else {
+      classes += "opacity-0 pointer-events-none";
+    }
+    setHideHeaderClasses(classes);
+  }, [scrolled, hideUntilScroll]);
   // Long-press handling for admin navigation (press/hold on the title).
   const longPressTimer = useRef<number | null>(null);
   const startLongPress = useCallback(() => {
@@ -32,7 +56,10 @@ function HoneyHeader() {
   const fontSizeClass = isWide ? "text-[60px]" : "text-[40px]";
 
   return (
-    <div className="bg-honey-gray sticky top-0 z-10 flex flex-col">
+    // Make header fixed so it doesn't take vertical space and can overlay the cover image.
+    <header
+      className={`bg-honey-gray top-0 left-0 z-10 flex w-full flex-col transition-opacity duration-300 ${hideHeaderClasses}`}
+    >
       <div
         className="bg-gray bg-opacity-90 w-full"
         style={{ boxShadow: "0 0 10px rgba(128,128,128,0.6)" }}
@@ -104,7 +131,7 @@ function HoneyHeader() {
           </div>
         )}
       </div>
-    </div>
+    </header>
   );
 }
 

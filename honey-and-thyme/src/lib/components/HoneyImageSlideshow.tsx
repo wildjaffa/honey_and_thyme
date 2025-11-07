@@ -1,6 +1,4 @@
 import type { ImageModel } from "../types/api";
-// import useKeyboardNavigation from '../hooks/useKeyboardNavigation';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faArrowRight,
@@ -10,14 +8,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard, A11y, Virtual } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
 import HoneyImage from "./HoneImage";
-import "./ImageSlideshow.css";
+import "../styles/HoneyImageSlideshow.css";
 import { useRef } from "react";
+import HoneyIconButton from "./HoneyIconButton";
 
 export interface ImageSlideshowProps {
   isOpen: boolean;
   images: ImageModel[];
   currentIndex: number;
   onClose: () => void;
+  password?: string;
 }
 
 export function HoneyImageSlideshow({
@@ -25,19 +25,22 @@ export function HoneyImageSlideshow({
   images,
   currentIndex,
   onClose,
+  password,
 }: ImageSlideshowProps) {
   const swiperRef = useRef<SwiperType>(null);
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 h-full w-full bg-black/80">
-      <button
-        aria-label="Close slideshow"
-        onClick={onClose}
-        className="absolute top-4 right-4 z-60 cursor-pointer text-2xl text-white"
-      >
-        <FontAwesomeIcon className="text-honey-gold" icon={faXmark} />
-      </button>
+      <div className="absolute top-4 right-4 z-60">
+        <HoneyIconButton
+          icon={faXmark}
+          onClick={onClose}
+          opacityOnHover={false}
+          isSelected
+        />
+      </div>
+
       <Swiper
         initialSlide={currentIndex}
         modules={[Navigation, Keyboard, A11y, Virtual]}
@@ -53,31 +56,25 @@ export function HoneyImageSlideshow({
         {images.map((image, index) => (
           <SwiperSlide key={image.imageId} virtualIndex={index}>
             <div className="flex h-screen items-center justify-center object-contain align-middle">
-              <HoneyImage image={image} imageQuality={1} />
+              <HoneyImage image={image} imageQuality={1} password={password} />
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-      <button
-        id="prev-button"
-        aria-label="Previous Slide"
-        className="absolute top-1/2 left-4 z-60 cursor-pointer text-4xl text-white disabled:opacity-50"
-      >
-        <FontAwesomeIcon
-          className="text-honey-gold text-2xl"
+      <div id="prev-button" className="absolute top-1/2 left-4 z-60">
+        <HoneyIconButton
           icon={faArrowLeft}
+          ariaLabel="Previous Slide"
+          isSelected
         />
-      </button>
-      <button
-        id="next-button"
-        aria-label="Next Slide"
-        className="absolute top-1/2 right-4 z-60 cursor-pointer text-4xl text-white disabled:opacity-50"
-      >
-        <FontAwesomeIcon
-          className="text-honey-gold text-2xl"
+      </div>
+      <div id="next-button" className="absolute top-1/2 right-4 z-60">
+        <HoneyIconButton
           icon={faArrowRight}
+          ariaLabel="Next Slide"
+          isSelected
         />
-      </button>
+      </div>
     </div>
   );
 }

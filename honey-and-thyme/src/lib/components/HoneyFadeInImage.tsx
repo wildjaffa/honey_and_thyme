@@ -13,6 +13,7 @@ interface HoneyImageProps {
   onSelected?: (imageId: string) => void;
   isSelected?: boolean;
   imageQuality: number;
+  password?: string;
 }
 
 /**
@@ -33,10 +34,11 @@ function HoneyFadeInImage({
   onTapped,
   className = "",
   alt = "",
+  password,
 }: HoneyImageProps) {
   const [loaded, setLoaded] = useState(false);
 
-  const url = useImageUrl(image.imageId, imageQuality);
+  const url = useImageUrl(image.imageId, imageQuality, password);
 
   const containerStyle: React.CSSProperties = {
     width: `${pixelWidth}px`,
@@ -62,12 +64,14 @@ function HoneyFadeInImage({
         onLoad={() => setLoaded(true)}
         className={`h-full w-full object-cover transition-opacity duration-1000 ease-out ${
           loaded ? "opacity-100" : "opacity-0"
-        }`}
+        } ${onTapped ? "cursor-pointer" : ""}`}
         style={{ display: "block" }}
       />
 
       {/* Gradient overlay that appears on hover */}
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+      {onTapped && (
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+      )}
 
       {/* Selector icon (top-right) */}
       {typeof isSelected !== "undefined" && (
@@ -81,6 +85,7 @@ function HoneyFadeInImage({
             }}
             isSelected={isSelected}
             ariaLabel={isSelected ? "Deselect image" : "Select image"}
+            opacityOnHover
           />
         </div>
       )}

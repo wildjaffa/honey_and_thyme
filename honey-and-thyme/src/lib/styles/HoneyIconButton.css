@@ -1,0 +1,55 @@
+span.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple 400ms ease-out;
+  background-color: gray;
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Icon cross-fade animations for HoneyIconButton */
+.icon-fade-in {
+  /* animate in, then revert to the element's declared classes (so Tailwind opacity classes apply) */
+  animation: honey-icon-fade-in 220ms ease;
+  will-change: opacity, transform;
+}
+
+.icon-fade-out {
+  /* animate out and keep the hidden state until the element is removed */
+  animation: honey-icon-fade-out 220ms ease forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes honey-icon-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes honey-icon-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
