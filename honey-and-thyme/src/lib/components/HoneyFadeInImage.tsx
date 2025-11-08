@@ -77,6 +77,7 @@ function HoneyFadeInImage({
       {typeof isSelected !== "undefined" && (
         <div className="absolute top-2 right-2">
           <HoneyIconButton
+            title={isSelected ? "Deselect image" : "Select image"}
             icon={faCircleCheck}
             onClick={() => {
               if (onSelected && image.imageId) {

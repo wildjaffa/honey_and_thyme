@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 interface HoneyInputProps {
   id?: string;
   label: string;
@@ -17,9 +19,11 @@ function HoneyInput({
   required = false,
   placeholder = "",
 }: HoneyInputProps) {
+  const autoId = useId();
+  if(!id) id = autoId;
   return (
     <div className="mb-4">
-      <label className="im-fell-english mb-1 block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="im-fell-english mb-1 block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-xs text-red-500">*</span>}
       </label>
       {type === "textarea" ? (
@@ -30,6 +34,7 @@ function HoneyInput({
           className="border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-full rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none"
           required={required}
           placeholder={placeholder}
+          name={label}
         />
       ) : (
         <input
@@ -40,6 +45,7 @@ function HoneyInput({
           className="border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-full rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none"
           required={required}
           placeholder={placeholder}
+          name={label}
         />
       )}
     </div>

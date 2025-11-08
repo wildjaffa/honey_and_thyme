@@ -35,6 +35,10 @@
   background-color: var(--color-honey-gray);
 }
 
+:root:has(.no-doc-scroll) {
+    overflow:hidden;
+}
+
 .shimmer {
   background-color: var(--color-gray-200);
   display: inline-block;

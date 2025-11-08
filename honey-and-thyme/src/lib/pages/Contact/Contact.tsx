@@ -55,6 +55,7 @@ function ContactForm() {
           onChange={(value) => setField("email", value)}
           required
           type="email"
+          placeholder="user@example.com"
         />
         <HoneyInput
           label="Message"
@@ -62,6 +63,7 @@ function ContactForm() {
           onChange={(value) => setField("message", value)}
           required
           type="textarea"
+          placeholder="Please fill in message"
         />
 
         <div className="flex items-center justify-end space-x-4">

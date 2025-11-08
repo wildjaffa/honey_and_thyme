@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
+import * as signalR from "@microsoft/signalr";
 import HoneyIconButton from "./HoneyIconButton";
-import type { AlbumModel } from "../types/api";
+import type {
+  AlbumModel,
+  DownloadRequest,
+  DownloadResponse,
+} from "../types/api";
 import HoneyQualitySelector from "./HoneyQualitySelector";
 import HoneyPageLoader from "./HoneyPageLoader";
 import { faCircleDown, faImages } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
+import HoneyModal from "./HoneyModal";
+
+interface DownloadProgressData {
+  percentComplete: number;
+  url?: string;
+}
 
 interface HoneyDownloadButtonProps {
   album: AlbumModel;
@@ -17,85 +29,124 @@ function HoneyDownloadButton({
   selectedImages,
   password,
 }: HoneyDownloadButtonProps) {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const [isQualitySelectorOpen, setIsQualitySelectorOpen] =
     React.useState(false);
   const [downloadState, setDownloadState] = React.useState<{
     isLoading: boolean;
     progress: number;
-    error?: string;
   }>({
     isLoading: false,
     progress: 0,
   });
-  const [ws, setWs] = React.useState<WebSocket | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | undefined>(undefined);
+  const [connection, setConnection] =
+    React.useState<signalR.HubConnection | null>(null);
 
   React.useEffect(() => {
     return () => {
-      if (ws) {
-        ws.close();
+      if (connection) {
+        connection.stop();
       }
     };
-  }, [ws]);
+  }, [connection]);
+
+  const openDownloadInNewTab = (url: string) => {
+    window.open(url, "_blank");
+  };
 
   const initiateDownload = React.useCallback(
-    (quality: number) => {
+    async (quality: number) => {
+      setIsQualitySelectorOpen(false);
       setDownloadState({ isLoading: true, progress: 0 });
 
-      // Create WebSocket connection
-      const websocket = new WebSocket(
-        `${import.meta.env.VITE_WS_URL}/api/downloads/progress`,
-      );
-      setWs(websocket);
+      // Create SignalR connection
+      const newConnection = new signalR.HubConnectionBuilder()
+        .withUrl(`${apiUrl}/imageDownloadHub`, {
+          withCredentials: true,
+        })
+        .build();
 
-      websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+      try {
+        await newConnection.start();
+        setConnection(newConnection);
 
-        switch (message.type) {
-          case "progress":
-            if (message.progress !== undefined) {
-              setDownloadState((prev) => ({
-                ...prev,
-                progress: message.progress,
-              }));
-            }
-            break;
-          case "complete":
-            if (message.url) {
-              setDownloadState({ isLoading: false, progress: 100 });
-              window.location.href = message.url;
-              websocket.close();
-            }
-            break;
-          case "error":
-            setDownloadState({
-              isLoading: false,
-              progress: 0,
-              error: message.error,
-            });
-            websocket.close();
-            break;
+        const connectionId = newConnection.connectionId;
+        if (!connectionId) {
+          setDownloadState({
+            isLoading: false,
+            progress: 0,
+          });
+          return;
         }
-      };
 
-      websocket.onopen = () => {
-        const payload = {
-          albumId: album.albumId,
+        // Set up progress handler
+        newConnection.on(
+          "ReceiveImageDownloadProgress",
+          (data: DownloadProgressData) => {
+            const { percentComplete, url } = data;
+
+            setDownloadState((prev) => ({
+              ...prev,
+              progress: percentComplete,
+            }));
+
+            if (percentComplete === 100 && url) {
+              setDownloadState({ isLoading: false, progress: 100 });
+              setDownloadUrl(url);
+              openDownloadInNewTab(url);
+              newConnection.stop();
+            }
+          },
+        );
+        const imageIds =
+          selectedImages.length > 0
+            ? selectedImages
+            : album.images
+                ?.filter((img) => img.imageId != undefined)
+                .map((img) => img.imageId ?? "");
+        // Start the download
+        const size = quality as 0 | 1 | 2 | 3 | 4;
+        const downloadRequest: DownloadRequest = {
+          imageIds: imageIds ?? [],
+          config: {
+            size,
+            exportConfigId: 0,
+            keepFolders: false,
+            name: "Download",
+            watermarkText: null,
+            type: 0,
+          },
           password,
-          quality,
-          imageIds: selectedImages.length > 0 ? selectedImages : undefined,
+          connectionId,
         };
-        websocket.send(JSON.stringify(payload));
-      };
+        const startedSuccessfully = (await fetch(
+          `${apiUrl}/api/download/images`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(downloadRequest),
+          },
+        ).then((res) => res.json())) as DownloadResponse;
 
-      websocket.onerror = () => {
+        if (!startedSuccessfully || !startedSuccessfully.startedSuccessfully) {
+          throw new Error("Failed to start download");
+        }
+      } catch (error) {
+        console.error("Download initiation error:", error);
+        newConnection.stop();
         setDownloadState({
           isLoading: false,
           progress: 0,
-          error: "Connection error occurred",
         });
-      };
+        toast.error(
+          "There was an error starting the download. Please try again later.",
+        );
+      }
     },
-    [album.albumId, password, selectedImages],
+    [password, selectedImages, album, apiUrl],
   );
 
   const openQualitySelector = React.useCallback(() => {
@@ -110,6 +161,7 @@ function HoneyDownloadButton({
   return (
     <>
       <HoneyIconButton
+        title={`Download ${selectedImages.length > 0 ? `${selectedImages} images` : "album"}`}
         icon={icon}
         nonSelectedColor="black"
         opacityOnHover={false}
@@ -131,6 +183,20 @@ function HoneyDownloadButton({
           }...`}
           progress={downloadState.progress}
         />
+      )}
+      {downloadUrl && (
+        <HoneyModal
+          submitText="Download"
+          onClose={() => {
+            setDownloadUrl(undefined);
+          }}
+          onSubmit={() => openDownloadInNewTab(downloadUrl)}
+        >
+          <div className="im-fell-english">
+            Your download should start automatically, if it does not, please tap
+            the button below to start the download.
+          </div>
+        </HoneyModal>
       )}
     </>
   );

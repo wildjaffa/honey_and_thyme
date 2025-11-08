@@ -7,7 +7,7 @@ import {
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard, A11y, Virtual } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
-import HoneyImage from "./HoneImage";
+import HoneyImage from "./HoneyImage";
 import "../styles/HoneyImageSlideshow.css";
 import { useRef } from "react";
 import HoneyIconButton from "./HoneyIconButton";
@@ -34,6 +34,7 @@ export function HoneyImageSlideshow({
     <div className="fixed inset-0 z-50 h-full w-full bg-black/80">
       <div className="absolute top-4 right-4 z-60">
         <HoneyIconButton
+          title="Close Slideshow"
           icon={faXmark}
           onClick={onClose}
           opacityOnHover={false}
@@ -63,6 +64,7 @@ export function HoneyImageSlideshow({
       </Swiper>
       <div id="prev-button" className="absolute top-1/2 left-4 z-60">
         <HoneyIconButton
+          title="Previous Slide"
           icon={faArrowLeft}
           ariaLabel="Previous Slide"
           isSelected
@@ -70,6 +72,7 @@ export function HoneyImageSlideshow({
       </div>
       <div id="next-button" className="absolute top-1/2 right-4 z-60">
         <HoneyIconButton
+          title="Next Slide"
           icon={faArrowRight}
           ariaLabel="Next Slide"
           isSelected

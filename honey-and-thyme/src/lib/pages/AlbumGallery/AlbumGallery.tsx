@@ -137,6 +137,7 @@ function AlbumGallery() {
           </div>
           <div className="absolute right-8 bottom-8 animate-bounce rounded-full p-1">
             <HoneyIconButton
+              title="Scroll to album"
               icon={faArrowDown}
               onClick={scrollPastCoverImage}
               size="large"
@@ -146,7 +147,7 @@ function AlbumGallery() {
           </div>
         </div>
       </div>
-      <div className="min-h-screen">
+      <div className="min-h-screen pt-2">
         <HoneyGallery
           album={album}
           isLoading={isLoading}

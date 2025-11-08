@@ -19,6 +19,7 @@ interface HoneyButtonProps {
   nonSelectedColor?: string;
   opacityOnHover?: boolean;
   badge?: number;
+  title: string;
 }
 
 function HoneyIconButton({
@@ -34,6 +35,7 @@ function HoneyIconButton({
   nonSelectedColor = "honey-pink",
   opacityOnHover = true,
   badge,
+  title,
 }: HoneyButtonProps) {
   const [prevIcon, setPrevIcon] = useState<IconProp | null>(null);
   const prevIconRef = useRef<IconProp | null>(null);
@@ -56,9 +58,10 @@ function HoneyIconButton({
   ) => {
     const btn = event.currentTarget;
     const circle = document.createElement("span");
-    const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+    const diameter = Math.max(btn.clientWidth, btn.clientHeight) / 2;
 
-    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.width = `${diameter}px`;
+    circle.style.height = `${diameter}px`;
     circle.style.left = `50%`;
     circle.style.top = `50%`;
     circle.classList.add("ripple");
@@ -73,6 +76,7 @@ function HoneyIconButton({
 
   return (
     <button
+      title={title}
       disabled={disabled || isLoading}
       type={isSubmit ? "submit" : "button"}
       onClick={(e) => {
@@ -122,7 +126,7 @@ function HoneyIconButton({
 
               <FontAwesomeIcon
                 key={String(icon)}
-                className={`icon-fade-in ${
+                className={`${prevIcon ? "icon-fade-in" : ""} ${
                   isSelected
                     ? `text-${selectedColor} opacity-100`
                     : `text-${nonSelectedColor}`

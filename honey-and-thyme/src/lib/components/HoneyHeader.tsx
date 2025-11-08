@@ -9,6 +9,7 @@ function HoneyHeader() {
   const { toolbarItems, hideUntilScroll } = useHeader();
   const [scrolled, setScrolled] = useState(false);
   const [hideHeaderClasses, setHideHeaderClasses] = useState("sticky left-0");
+  const [navigatedToAdmin, setNavigatedToAdmin] = useState(false);
 
   useEffect(() => {
     const onResize = () => setIsWide(window.innerWidth >= 500);
@@ -43,6 +44,7 @@ function HoneyHeader() {
   const startLongPress = useCallback(() => {
     // 600ms threshold for a long press
     longPressTimer.current = window.setTimeout(() => {
+      setNavigatedToAdmin(true);
       navigate("/admin");
     }, 600);
   }, [navigate]);
@@ -69,12 +71,17 @@ function HoneyHeader() {
             <div
               role="button"
               tabIndex={0}
-              onClick={() => navigate("/")}
+              // onClick={() => navigate("/")}
               onPointerDown={startLongPress}
               onPointerUp={() => {
-                clearLongPress();
+                if(!navigatedToAdmin) {
+                  navigate("/")
+                  clearLongPress();
+                }
+                setNavigatedToAdmin(false);
               }}
               onPointerLeave={() => {
+                setNavigatedToAdmin(false);
                 clearLongPress();
               }}
               onKeyDown={(e) => {

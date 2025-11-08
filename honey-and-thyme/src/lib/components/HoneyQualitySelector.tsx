@@ -1,8 +1,6 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import ImageSize from "../enums/imageSize";
-import HoneyIconButton from "./HoneyIconButton";
 import { useState } from "react";
-import HoneyButton from "./HoneyButton";
+import HoneyModal from "./HoneyModal";
 
 interface ImageQualityOption {
   value: number;
@@ -52,53 +50,28 @@ function HoneyQualitySelector({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <dialog
-        open
-        className="bg-honey-gray im-fell-english relative w-full max-w-md rounded-lg p-6"
-      >
-        <div className="absolute top-4 right-4">
-          <HoneyIconButton
-            icon={faXmark}
-            onClick={onClose}
-            nonSelectedColor="black"
-          />
-        </div>
-        <h2 className="mb-4 text-xl font-semibold">
-          {selectedImagesCount
-            ? `Download ${selectedImagesCount} Images`
-            : "Download Album"}
-        </h2>
-        <p className="mb-6 text-gray-600">Select download quality:</p>
-        <div className="space-y-4">
-          {QUALITY_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              className={`hover:border-honey-gold hover:bg-honey-gold/5 w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left ${selectedQuality === option.value ? "border-honey-gold bg-honey-gold/5" : ""}`}
-              onClick={() => {
-                setSelectedQuality(option.value);
-              }}
-            >
-              <div className="font-medium">{option.label}</div>
-              <div className="text-sm text-gray-600">{option.description}</div>
-            </button>
-          ))}
-        </div>
-        <div className="mt-6 flex justify-center space-x-3">
-          <HoneyButton onClick={onClose}> Cancel</HoneyButton>
-          <HoneyButton
+    <HoneyModal onClose={onClose} onSubmit={() => onSelect(selectedQuality)}>
+      <h2 className="mb-4 text-xl font-semibold">
+        {selectedImagesCount
+          ? `Download ${selectedImagesCount} Images`
+          : "Download Album"}
+      </h2>
+      <p className="mb-6 text-gray-600">Select download quality:</p>
+      <div className="space-y-4">
+        {QUALITY_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            className={`hover:border-honey-gold hover:bg-honey-gold/5 w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left ${selectedQuality === option.value ? "border-honey-gold bg-honey-gold/5" : ""}`}
             onClick={() => {
-              if (selectedQuality !== null) {
-                onSelect(selectedQuality);
-              }
-              onClose();
+              setSelectedQuality(option.value);
             }}
           >
-            Download
-          </HoneyButton>
-        </div>
-      </dialog>
-    </div>
+            <div className="font-medium">{option.label}</div>
+            <div className="text-sm text-gray-600">{option.description}</div>
+          </button>
+        ))}
+      </div>
+    </HoneyModal>
   );
 }
 
