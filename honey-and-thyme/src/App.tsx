@@ -13,13 +13,7 @@ import { QueryClient } from "@tanstack/query-core";
 import { ToastContainer } from "react-toastify";
 import AvailableAppointments from "./lib/pages/AvailableAppointments/AvailableAppointments.tsx";
 import Admin from "./lib/pages/Admin/Admin.tsx";
-import { initializeApp } from 'firebase/app';
-
-const firebaseConfig = {
-  //...
-};
-
-initializeApp(firebaseConfig);
+import './lib/firebase';
 
 const queryClient = new QueryClient();
 
@@ -34,7 +28,7 @@ function App() {
               <HoneyHeader />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="admin" element={<Admin />} />
+                <Route path="admin/*" element={<Admin />} />
                 <Route path="/albums/:albumId" element={<AlbumGallery />} />
                 <Route path="/available-appointments" element={<AvailableAppointments />} />
                 <Route path="/contact" element={<Contact />} />

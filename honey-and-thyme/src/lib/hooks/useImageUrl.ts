@@ -1,7 +1,7 @@
 function useImageUrl(
   imageId: string | undefined | null,
   size: number,
-  password: string | undefined = undefined,
+  password: string | undefined | null = undefined,
 ): string {
   if (!imageId) return "";
   const baseUrl = import.meta.env.VITE_BASE_URL;
