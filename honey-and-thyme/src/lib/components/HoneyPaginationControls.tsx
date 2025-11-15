@@ -41,8 +41,8 @@ function HoneyPaginationControls({
 }: Props) {
   const pages = getPageItems(pageIndex, totalPages, showPageCount);
 
-  const canPrev = pageIndex > 1;
-  const canNext = pageIndex < totalPages;
+  const canPrev = pageIndex > 0;
+  const canNext = pageIndex < totalPages - 1;
 
   return (
     <div className="flex items-center justify-between gap-4">
@@ -66,9 +66,9 @@ function HoneyPaginationControls({
               <button
                 key={p}
                 type="button"
-                onClick={() => onPageChange(p)}
+                onClick={() => onPageChange(p - 1)}
                 aria-current={p === pageIndex ? "page" : undefined}
-                className={`rounded px-2 py-1 ${p === pageIndex ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}
+                className={`rounded px-2 py-1 ${p - 1 === pageIndex ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}
               >
                 {p}
               </button>

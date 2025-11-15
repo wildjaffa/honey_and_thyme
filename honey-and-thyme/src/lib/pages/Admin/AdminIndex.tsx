@@ -12,7 +12,7 @@ function AdminIndex() {
       <HoneyButton onClick={() => navigate("/Admin/Albums")}>
         Photo Shoots
       </HoneyButton>
-      <HoneyButton onClick={() => navigate("/Admin/Albums")}>
+      <HoneyButton onClick={() => navigate("/Admin/Products")}>
         Products
       </HoneyButton>
       <HoneyButton onClick={() => navigate("/Admin/Albums")}>

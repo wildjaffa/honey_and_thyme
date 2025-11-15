@@ -36,7 +36,7 @@ function AlbumRow({ album, onUpdated }: AlbumRowProps) {
   return (
     <div
       key={album.albumId}
-      className="flex cursor-pointer items-center gap-4 rounded border p-2 hover:shadow"
+      className="im-fell-english flex cursor-pointer"
       onClick={() => {
         navigate(`${album.albumId}`);
       }}
@@ -50,10 +50,8 @@ function AlbumRow({ album, onUpdated }: AlbumRowProps) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="im-fell-english truncate text-sm font-medium">
-          {album.name}
-        </div>
-        <div className="im-fell-english truncate text-xs text-gray-500">
+        <div className="truncate text-sm font-medium">{album.name}</div>
+        <div className="truncate text-xs text-gray-500">
           {album.description}
         </div>
       </div>

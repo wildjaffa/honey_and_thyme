@@ -16,7 +16,7 @@ function AlbumEdit({
   onCancel,
 }: AlbumEditProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [album, setAlbum] = useState(initialAlbum);
+  const [album, setAlbum] = useState<AlbumModel>(initialAlbum);
 
   const create = apiClient.useMutation("post", "/albums/create");
   const update = apiClient.useMutation("post", "/albums/update");

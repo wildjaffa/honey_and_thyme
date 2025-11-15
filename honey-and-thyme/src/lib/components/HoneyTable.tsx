@@ -1,16 +1,13 @@
 import { useId, useState, type ReactElement } from "react";
-import usePagination from "../hooks/usePagination";
 import useDebounce from "../hooks/useDebounce";
 import type { UseQueryResult } from "@tanstack/react-query";
-import type PaginationResult from "../types/paginationResult";
 import HoneyInput from "./HoneyInput";
 import HoneyIconButton from "./HoneyIconButton";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import HoneyCircularLoader from "./HoneyCircularLoader";
-import HoneyPaginationControls from "./HoneyPaginationControls";
 import HoneyModal from "./HoneyModal";
 
-interface HoneyPaginatedTableProps<T> {
+interface HoneyTableProps<T> {
   hasSearch?: boolean;
   searchHint?: string;
   createAddForm?: (
@@ -20,45 +17,27 @@ interface HoneyPaginatedTableProps<T> {
   ) => ReactElement;
   /** Optional initial item to pass when opening the add form. Can be a value or factory. */
   addInitial?: T | (() => T);
-  usePaginatedQuery: (
-    pageIndex: number,
-    pageSize: number,
-    searchString?: string,
-  ) => UseQueryResult<PaginationResult<T>>;
+  useQuery: (searchString?: string) => UseQueryResult<T[]>;
   /** renderRow receives the item and an optional onUpdated callback that should be called when the row updates data and the parent should refetch. */
   renderRow: (data: T, onUpdated?: () => void) => ReactElement;
 }
 
-function HoneyPaginatedTable<T>({
+function HoneyTable<T>({
   hasSearch,
   searchHint,
   createAddForm,
   addInitial,
-  usePaginatedQuery,
+  useQuery,
   renderRow,
-}: HoneyPaginatedTableProps<T>) {
+}: HoneyTableProps<T>) {
   const [search, setSearch] = useState("");
 
   const debouncedSearch = useDebounce(search.trim(), 400);
 
   const [newItem, setNewItem] = useState<T | undefined>(undefined);
 
-  // Use pagination as state-only controller. We won't use its built-in
-  // auto-load; instead we pass `pageIndex`/`pageSize` to `useAlbums` which
-  // returns a react-query result. This keeps caching and retries in react-query
-  // while `usePagination` manages UI state and navigation.
-  const pagination = usePagination({
-    pageNumber: 0,
-    pageSize: 10,
-    autoLoad: false,
-  });
-  const { pageIndex, pageSize, changePageSize, goToPage } = pagination;
-
-  const dataQuery = usePaginatedQuery(pageIndex, pageSize, debouncedSearch);
-  const { data: albumsData, isLoading, refetch, isError } = dataQuery;
-
-  const results = albumsData?.results ?? [];
-  const totalPages = albumsData?.pageCount ?? 1;
+  const dataQuery = useQuery(debouncedSearch);
+  const { data: results = [], isLoading, refetch, isError } = dataQuery;
   const id = useId();
 
   return (
@@ -111,14 +90,6 @@ function HoneyPaginatedTable<T>({
                   {renderRow(item, refetch)}
                 </div>
               ))}
-
-              <HoneyPaginationControls
-                pageIndex={pageIndex}
-                totalPages={totalPages}
-                pageSize={pageSize}
-                onPageChange={goToPage}
-                onPageSizeChange={changePageSize}
-              />
             </div>
           )}
         </div>
@@ -135,4 +106,4 @@ function HoneyPaginatedTable<T>({
   );
 }
 
-export default HoneyPaginatedTable;
+export default HoneyTable;

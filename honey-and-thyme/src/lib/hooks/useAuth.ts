@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { useState, useEffect } from "react";
 import "../firebase";
@@ -10,7 +10,7 @@ function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onIdTokenChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
       if (!user) return;
