@@ -9,6 +9,10 @@
   --color-honey-pink: #eadcd6;
 }
 
+:root {
+  background-color: var(--color-honey-gray);
+}
+
 @font-face {
   font-family: "MarchRough";
   /* set name */

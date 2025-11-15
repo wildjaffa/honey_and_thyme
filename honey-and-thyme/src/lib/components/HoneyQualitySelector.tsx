@@ -47,10 +47,13 @@ function HoneyQualitySelector({
   const [selectedQuality, setSelectedQuality] = useState<number>(
     ImageSize.large,
   );
-  if (!isOpen) return null;
 
   return (
-    <HoneyModal onClose={onClose} onSubmit={() => onSelect(selectedQuality)}>
+    <HoneyModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={() => onSelect(selectedQuality)}
+    >
       <h2 className="mb-4 text-xl font-semibold">
         {selectedImagesCount
           ? `Download ${selectedImagesCount} Images`

@@ -17,7 +17,7 @@ export interface ImageSlideshowProps {
   images: ImageModel[];
   currentIndex: number;
   onClose: () => void;
-  password?: string;
+  password?: string | null;
 }
 
 export function HoneyImageSlideshow({

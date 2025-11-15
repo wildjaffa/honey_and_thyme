@@ -1,34 +1,44 @@
-import { HoneyImage } from "../../../components";
+import { faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import { HoneyIconButton, HoneyImage } from "../../../components";
 import ImageSize from "../../../enums/imageSize";
 import useImageUrl from "../../../hooks/useImageUrl";
 import type { AlbumModel } from "../../../types/api";
+import { useNavigate } from "react-router";
+import apiClient from "../../../api/client";
+import { toast } from "react-toastify";
+import CopyLinkAlbum from "./CopyLinkButton";
 
 interface AlbumRowProps {
   album: AlbumModel;
+  onUpdated: () => void;
 }
 
-function AlbumRow({ album }: AlbumRowProps) {
+function AlbumRow({ album, onUpdated }: AlbumRowProps) {
+  const navigate = useNavigate();
   const albumCoverUrl = useImageUrl(
     album.coverImageId,
     ImageSize.small,
     album?.password,
   );
-  function handleUnlock(album: AlbumModel) {
-    console.log(album);
-    throw new Error("Function not implemented.");
-  }
+  const unlockMutation = apiClient.useMutation("post", "/albums/unlock");
 
-  function handleShare(album: AlbumModel) {
-    console.log(album);
-    throw new Error("Function not implemented.");
-  }
+  const handleUnlock = async () => {
+    try {
+      await unlockMutation.mutateAsync({ body: album });
+      toast.success("Album unlocked");
+      onUpdated();
+    } catch (ex) {
+      console.error(ex);
+      toast.error("There was a problem unlocking the album");
+    }
+  };
 
   return (
     <div
       key={album.albumId}
       className="flex cursor-pointer items-center gap-4 rounded border p-2 hover:shadow"
       onClick={() => {
-        window.location.hash = `#/admin/albums/edit?albumId=${album.albumId}`;
+        navigate(`${album.albumId}`);
       }}
     >
       <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded bg-gray-100">
@@ -40,33 +50,24 @@ function AlbumRow({ album }: AlbumRowProps) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{album.name}</div>
-        <div className="truncate text-xs text-gray-500">
+        <div className="im-fell-english truncate text-sm font-medium">
+          {album.name}
+        </div>
+        <div className="im-fell-english truncate text-xs text-gray-500">
           {album.description}
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          title={album.isLocked ? "Unlock" : "Unlocked"}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (album.isLocked) handleUnlock(album);
-          }}
-          className={`rounded p-1 ${album.isLocked ? "bg-yellow-100" : "bg-green-100"}`}
-        >
-          {album.isLocked ? "🔒" : "🔓"}
-        </button>
-        <button
-          title="Share"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleShare(album);
-          }}
-          className="rounded bg-gray-100 p-1"
-        >
-          📤
-        </button>
+        <HoneyIconButton
+          icon={album.isLocked ? faLock : faUnlock}
+          onClick={handleUnlock}
+          title="Lock/Unlock"
+          disabled={!album.isLocked}
+          opacityOnHover={false}
+          isSelected
+        />
+        <CopyLinkAlbum album={album} />
       </div>
     </div>
   );

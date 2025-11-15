@@ -1,13 +1,18 @@
 import { useId } from "react";
+import HoneyLabel from "./HoneyLabel";
 
 interface HoneyInputProps {
   id?: string;
-  label: string;
+  label?: string;
   value: string;
   onChange?: (value: string) => void;
-  type?: string;
+  type?: React.HTMLInputTypeAttribute;
   required?: boolean;
   placeholder?: string;
+  autoFocus?: boolean;
+  disabled?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 function HoneyInput({
@@ -18,14 +23,16 @@ function HoneyInput({
   type = "text",
   required = false,
   placeholder = "",
+  autoFocus,
+  disabled,
+  onFocus,
+  onBlur,
 }: HoneyInputProps) {
   const autoId = useId();
-  if(!id) id = autoId;
+  if (!id) id = autoId;
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="im-fell-english mb-1 block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-xs text-red-500">*</span>}
-      </label>
+    <>
+      {label && <HoneyLabel id={id} label={label} required={required} />}
       {type === "textarea" ? (
         <textarea
           id={id}
@@ -35,6 +42,10 @@ function HoneyInput({
           required={required}
           placeholder={placeholder}
           name={label}
+          autoFocus={autoFocus}
+          disabled={disabled}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
       ) : (
         <input
@@ -46,9 +57,13 @@ function HoneyInput({
           required={required}
           placeholder={placeholder}
           name={label}
+          autoFocus={autoFocus}
+          disabled={disabled}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
       )}
-    </div>
+    </>
   );
 }
 

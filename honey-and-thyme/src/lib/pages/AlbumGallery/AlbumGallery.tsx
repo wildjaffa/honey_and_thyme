@@ -5,6 +5,7 @@ import {
   HoneyFadeInImage,
   HoneyGallery,
   HoneyInput,
+  HoneyPageLoader,
 } from "../../components";
 import useAlbum from "../../hooks/useAlbum";
 import { useHeader } from "../../hooks/useHeader";
@@ -17,6 +18,7 @@ import HoneyDownloadButton from "../../components/HoneyDownloadButton";
 
 function AlbumGallery() {
   const { setToolbarItems, setHideUntilScroll } = useHeader();
+  const [coverLoaded, setCoverLoaded] = useState(false);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const params = useParams();
@@ -81,7 +83,6 @@ function AlbumGallery() {
       <form
         className="flex h-full flex-col items-center justify-center gap-4 pt-50"
         onSubmit={() => {
-          console.log("Submitting password:", passwordField);
           setSubmittedPassword(passwordField);
         }}
       >
@@ -96,12 +97,9 @@ function AlbumGallery() {
       </form>
     );
   }
+
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-      </div>
-    );
+    return <HoneyPageLoader fullCoverage />;
   }
   if (!album || !album.images) {
     return (
@@ -119,44 +117,48 @@ function AlbumGallery() {
   }
 
   return (
-    <div className="relative min-h-screen">
-      {/* Cover should fill the viewport initially but be in normal flow so it scrolls away. */}
-      <div className="h-screen w-full">
-        <div className="relative h-full w-full contain-content">
-          {coverImage && (
-            <HoneyFadeInImage
-              image={coverImage}
-              imageQuality={ImageSize.extraLarge}
-              pixelWidth={windowWidth}
-              className="h-full w-full object-cover"
-              password={password}
-            />
-          )}
-          <div className="absolute bottom-8 left-8">
-            <h1 className="march-rough text-4xl text-white">{album.name}</h1>
-          </div>
-          <div className="absolute right-8 bottom-8 animate-bounce rounded-full p-1">
-            <HoneyIconButton
-              title="Scroll to album"
-              icon={faArrowDown}
-              onClick={scrollPastCoverImage}
-              size="large"
-              nonSelectedColor="white"
-              opacityOnHover={false}
-            />
+    <>
+      {!coverLoaded && <HoneyPageLoader fullCoverage />}
+      <div className="relative min-h-screen">
+        {/* Cover should fill the viewport initially but be in normal flow so it scrolls away. */}
+        <div className="h-screen w-full">
+          <div className="relative h-full w-full">
+            {coverImage && (
+              <HoneyFadeInImage
+                image={coverImage}
+                imageQuality={ImageSize.extraLarge}
+                pixelWidth={windowWidth}
+                className="h-full w-full"
+                password={album.password}
+                fitToRatio={false}
+                onLoad={() => setCoverLoaded(true)}
+              />
+            )}
+            <div className="absolute bottom-8 left-8">
+              <h1 className="march-rough text-4xl text-white">{album.name}</h1>
+            </div>
+            <div className="absolute right-8 bottom-8 animate-bounce rounded-full p-1">
+              <HoneyIconButton
+                title="Scroll to album"
+                icon={faArrowDown}
+                onClick={scrollPastCoverImage}
+                size="large"
+                nonSelectedColor="white"
+                opacityOnHover={false}
+              />
+            </div>
           </div>
         </div>
+        <div className="min-h-screen pt-2">
+          <HoneyGallery
+            album={album}
+            selectedImages={selectedImages}
+            onImageSelected={onImageSelected}
+            password={album.password}
+          />
+        </div>
       </div>
-      <div className="min-h-screen pt-2">
-        <HoneyGallery
-          album={album}
-          isLoading={isLoading}
-          selectedImages={selectedImages}
-          onImageSelected={onImageSelected}
-          password={password}
-        />
-      </div>
-    </div>
+    </>
   );
 }
 

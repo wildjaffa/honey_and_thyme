@@ -21,7 +21,7 @@ function HoneyButton({
   return (
     <button
       type={isSubmit ? "submit" : "button"}
-      className="im-fell-english bg-honey-gold relative flex min-w-20 items-center justify-center px-4 py-1 text-black shadow-sm transition-colors hover:cursor-pointer hover:shadow-md"
+      className={`im-fell-english relative flex min-w-20 items-center justify-center px-4 py-1 text-black shadow-sm transition-colors ${disabled ? "bg-honey-gold/40" : "bg-honey-gold/90 hover:bg-honey-gold cursor-pointer hover:shadow-md"}`}
       onClick={onClick}
       disabled={isLoading || disabled}
     >

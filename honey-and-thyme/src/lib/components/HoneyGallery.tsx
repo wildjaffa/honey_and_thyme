@@ -7,10 +7,9 @@ import type { AlbumModel } from "../types/api";
 
 interface HoneyGalleryProps {
   album: AlbumModel;
-  isLoading: boolean;
   selectedImages?: string[]; // array of image IDs to display only these images
   onImageSelected?: (imageId: string) => void; // callback when an image is selected
-  password?: string;
+  password?: string | null;
 }
 
 function HoneyGallery({

@@ -7,6 +7,7 @@ interface HoneyModalProps {
   onClose: () => void;
   onSubmit?: () => void;
   submitText?: string;
+  isOpen: boolean;
 }
 
 function HoneyModal({
@@ -14,11 +15,17 @@ function HoneyModal({
   onClose,
   onSubmit,
   submitText,
+  isOpen,
 }: HoneyModalProps) {
+  if (!isOpen) return null;
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 no-doc-scroll">
+      <div
+        onClick={onClose}
+        className="no-doc-scroll fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      >
         <dialog
+          onClick={(e) => e.stopPropagation()}
           open
           className="bg-honey-gray im-fell-english relative w-full max-w-md rounded-lg p-6"
         >

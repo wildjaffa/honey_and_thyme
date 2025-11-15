@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
-export interface PaginationResult {
-  // Total number of pages available (optional)
-  pageCount?: number;
-}
+import type PaginationResult from "../types/paginationResult";
 
 export type DataFetchCallback<T> = (
   page: number,
@@ -13,12 +9,12 @@ export type DataFetchCallback<T> = (
 interface UsePaginationOptions<T> {
   pageSize?: number;
   pageNumber?: number;
-  fetchCallback?: DataFetchCallback<T>;
+  fetchCallback?: DataFetchCallback<PaginationResult<T>>;
   // If true, automatically load when page or pageSize changes
   autoLoad?: boolean;
 }
 
-function usePagination<T extends PaginationResult = PaginationResult>({
+function usePagination<T>({
   pageNumber = 0,
   pageSize: initialPageSize = 10,
   fetchCallback,
@@ -27,11 +23,13 @@ function usePagination<T extends PaginationResult = PaginationResult>({
   const [pageIndex, setPageIndex] = useState<number>(pageNumber);
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<PaginationResult<T> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Keep the latest fetch callback in a ref so callers can update it
-  const fetchRef = useRef<DataFetchCallback<T> | undefined>(fetchCallback);
+  const fetchRef = useRef<DataFetchCallback<PaginationResult<T>> | undefined>(
+    fetchCallback,
+  );
   useEffect(() => {
     fetchRef.current = fetchCallback;
   }, [fetchCallback]);
@@ -115,9 +113,12 @@ function usePagination<T extends PaginationResult = PaginationResult>({
     setPageIndex(0);
   }, []);
 
-  const setFetchCallback = useCallback((cb: DataFetchCallback<T>) => {
-    fetchRef.current = cb;
-  }, []);
+  const setFetchCallback = useCallback(
+    (cb: DataFetchCallback<PaginationResult<T>>) => {
+      fetchRef.current = cb;
+    },
+    [],
+  );
 
   const loadInitialData = useCallback(
     () => loadData(pageIndex, pageSize),

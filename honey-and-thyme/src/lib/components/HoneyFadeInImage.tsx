@@ -13,7 +13,9 @@ interface HoneyImageProps {
   onSelected?: (imageId: string) => void;
   isSelected?: boolean;
   imageQuality: number;
-  password?: string;
+  password?: string | null;
+  fitToRatio?: boolean;
+  onLoad?: () => void;
 }
 
 /**
@@ -35,14 +37,18 @@ function HoneyFadeInImage({
   className = "",
   alt = "",
   password,
+  fitToRatio = true,
+  onLoad,
 }: HoneyImageProps) {
   const [loaded, setLoaded] = useState(false);
 
   const url = useImageUrl(image.imageId, imageQuality, password);
-
+  const height = fitToRatio
+    ? `${pixelWidth / (image.metaData?.aspectRatio || 1)}px`
+    : "";
   const containerStyle: React.CSSProperties = {
     width: `${pixelWidth}px`,
-    height: `${pixelWidth / (image.metaData?.aspectRatio || 1)}px`,
+    height: height,
   };
 
   return (
@@ -61,7 +67,10 @@ function HoneyFadeInImage({
         loading="lazy"
         src={url}
         alt={alt ?? ""}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          setLoaded(true);
+          if (onLoad) onLoad();
+        }}
         className={`h-full w-full object-cover transition-opacity duration-1000 ease-out ${
           loaded ? "opacity-100" : "opacity-0"
         } ${onTapped ? "cursor-pointer" : ""}`}

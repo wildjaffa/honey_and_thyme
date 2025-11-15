@@ -4,7 +4,7 @@ import type { ImageModel } from "../types/api";
 interface HoneyImageProps {
   image?: ImageModel;
   imageQuality?: number;
-  password?: string;
+  password?: string | null;
   src?: string;
 }
 

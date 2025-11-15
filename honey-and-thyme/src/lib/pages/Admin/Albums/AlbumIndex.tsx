@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import useAlbums from "../../../hooks/useAlbums";
 import usePagination from "../../../hooks/usePagination";
 import AlbumRow from "./AlbumRow";
-import HoneyPaginationControls from "../../../components/HoneyPaginationControls";
+import {
+  HoneyCircularLoader,
+  HoneyIconButton,
+  HoneyInput,
+  HoneyModal,
+  HoneyPaginationControls,
+} from "../../../components";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AlbumEdit from "./AlbumEdit";
+import type { AlbumModel } from "../../../types/api";
+import useDebounce from "../../../hooks/useDebounce";
 
 function AlbumIndex() {
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [adding, setAdding] = useState(false);
-  const [creating, setCreating] = useState(false);
+
+  const debouncedSearch = useDebounce(search.trim(), 400);
+
+  const [album, setAlbum] = useState<AlbumModel | undefined>(undefined);
 
   // Use pagination as state-only controller. We won't use its built-in
   // auto-load; instead we pass `pageIndex`/`pageSize` to `useAlbums` which
@@ -21,130 +32,78 @@ function AlbumIndex() {
   });
   const { pageIndex, pageSize, changePageSize, goToPage } = pagination;
 
-  // debounce search input
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search.trim()), 400);
-    return () => clearTimeout(t);
-  }, [search]);
-
   const albumsQuery = useAlbums(pageIndex, pageSize, debouncedSearch);
   const { data: albumsData, isLoading, refetch, isError } = albumsQuery;
 
   const results = albumsData?.results ?? [];
   const totalPages = albumsData?.pageCount ?? 1;
 
-  async function handleCreate(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const name = String(formData.get("name") ?? "").trim();
-    const description = String(formData.get("description") ?? "").trim();
-    const password = String(formData.get("password") ?? "").trim() || undefined;
-    if (!name) {
-      alert("Name is required");
-      return;
+  const generatePassword = () => {
+    let password = "";
+    for (let i = 0; i < 6; i++) {
+      password += Math.floor(Math.random() * 10);
     }
-    setCreating(true);
-    try {
-      const res = await fetch("/albums", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, password }),
-      });
-      if (!res.ok) throw new Error(`Create failed: ${res.status}`);
-      setAdding(false);
-      // trigger react-query refetch of albums
-      void refetch();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setCreating(false);
-    }
-  }
+    return password;
+  };
 
   return (
     <div className="mx-auto max-w-3xl p-4">
-      <div className="w-full rounded bg-white p-4 shadow">
+      <div className="w-full rounded p-4 shadow">
         <div className="mb-4 flex items-center gap-3">
-          <input
-            className="flex-1 rounded border px-3 py-2 focus:ring focus:outline-none"
-            placeholder="Search Albums"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
+          <div className="w-11/12">
+            <HoneyInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search Albums"
+            />
+          </div>
+
+          <HoneyIconButton
+            icon={faPlus}
+            onClick={() =>
+              setAlbum({ isPublic: false, password: generatePassword() })
+            }
+            title="Add Album"
+            isSelected
+            background="honey-gold"
+            selectedColor="black"
           />
-          <button
-            className="rounded bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
-            onClick={() => setAdding((s) => !s)}
-          >
-            {adding ? "Cancel" : "Create New Album"}
-          </button>
         </div>
 
-        {adding ? (
-          <form onSubmit={handleCreate} className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium">Name</label>
-              <input name="name" className="w-full rounded border px-2 py-1" />
+        <div>
+          {isLoading ? (
+            <div className="py-10 text-center">
+              <HoneyCircularLoader />
             </div>
-            <div>
-              <label className="block text-sm font-medium">Description</label>
-              <input
-                name="description"
-                className="w-full rounded border px-2 py-1"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium">
-                Password (optional)
-              </label>
-              <input
-                name="password"
-                className="w-full rounded border px-2 py-1"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={creating}
-                className="rounded bg-green-600 px-3 py-1 text-white hover:bg-green-700"
-              >
-                {creating ? "Creating..." : "Create"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setAdding(false)}
-                className="rounded border px-3 py-1"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div>
-            {isLoading ? (
-              <div className="py-10 text-center">Loading…</div>
-            ) : isError ? (
-              <div className="text-red-600">Error:</div>
-            ) : results.length === 0 ? (
-              <div className="py-10 text-center">No albums found</div>
-            ) : (
-              <div className="space-y-2">
-                {results.map((album) => (
-                  <AlbumRow album={album} />
-                ))}
+          ) : isError ? (
+            <div className="text-red-600">Error:</div>
+          ) : results.length === 0 ? (
+            <div className="py-10 text-center">No albums found</div>
+          ) : (
+            <div className="space-y-2">
+              {results.map((album) => (
+                <AlbumRow album={album} onUpdated={refetch} />
+              ))}
 
-                <HoneyPaginationControls
-                  pageIndex={pageIndex}
-                  totalPages={totalPages}
-                  pageSize={pageSize}
-                  onPageChange={goToPage}
-                  onPageSizeChange={changePageSize}
-                />
-              </div>
-            )}
-          </div>
-        )}
+              <HoneyPaginationControls
+                pageIndex={pageIndex}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                onPageChange={goToPage}
+                onPageSizeChange={changePageSize}
+              />
+            </div>
+          )}
+        </div>
+        <HoneyModal isOpen={album != null} onClose={() => setAlbum(undefined)}>
+          {album && (
+            <AlbumEdit
+              album={album}
+              onAfterSave={refetch}
+              onCancel={() => setAlbum(undefined)}
+            />
+          )}
+        </HoneyModal>
       </div>
     </div>
   );

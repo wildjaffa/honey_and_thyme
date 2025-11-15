@@ -184,20 +184,20 @@ function HoneyDownloadButton({
           progress={downloadState.progress}
         />
       )}
-      {downloadUrl && (
-        <HoneyModal
-          submitText="Download"
-          onClose={() => {
-            setDownloadUrl(undefined);
-          }}
-          onSubmit={() => openDownloadInNewTab(downloadUrl)}
-        >
-          <div className="im-fell-english">
-            Your download should start automatically, if it does not, please tap
-            the button below to start the download.
-          </div>
-        </HoneyModal>
-      )}
+
+      <HoneyModal
+        isOpen={downloadUrl != undefined}
+        submitText="Download"
+        onClose={() => {
+          setDownloadUrl(undefined);
+        }}
+        onSubmit={() => downloadUrl && openDownloadInNewTab(downloadUrl)}
+      >
+        <div className="im-fell-english">
+          Your download should start automatically, if it does not, please tap
+          the button below to start the download.
+        </div>
+      </HoneyModal>
     </>
   );
 }

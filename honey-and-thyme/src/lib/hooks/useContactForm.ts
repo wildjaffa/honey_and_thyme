@@ -15,6 +15,7 @@ export default function useContactForm(initial?: Partial<ContactFormFields>) {
   });
   const [status, setStatus] = useState<ContactStatus>("notSent");
   const [error, setError] = useState<string | null>(null);
+  const contactSubmit = apiClient.useMutation("post", "/api/contact");
 
   function setField<K extends keyof ContactFormFields>(
     key: K,
@@ -26,10 +27,9 @@ export default function useContactForm(initial?: Partial<ContactFormFields>) {
   async function submit(): Promise<boolean> {
     setStatus("sending");
     setError(null);
-    const mutation = apiClient.useMutation("post", "/api/contact");
     try {
       // openapi-react-query expects the request body under `requestBody`
-      await mutation.mutateAsync({
+      await contactSubmit.mutateAsync({
         body: { email: fields.email, message: fields.message },
       });
       setStatus("sent");

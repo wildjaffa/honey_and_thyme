@@ -6,3 +6,5 @@ export type PaginatedAlbumModels =
   components["schemas"]["AlbumModelPaginationResultModel"];
 export type DownloadRequest = components["schemas"]["DownloadRequest"];
 export type DownloadResponse = components["schemas"]["DownloadResponse"];
+
+export type { default as PaginationResult } from "./paginationResult";

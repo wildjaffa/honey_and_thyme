@@ -32,7 +32,7 @@ function Gallery() {
       </div>
     );
   }
-  return <HoneyGallery album={album} isLoading={isLoading} />;
+  return <HoneyGallery album={album} />;
 }
 
 export default Gallery;

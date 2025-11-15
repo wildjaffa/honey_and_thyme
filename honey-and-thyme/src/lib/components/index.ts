@@ -1,4 +1,5 @@
 export { default as HoneyButton } from "./HoneyButton";
+export { default as HoneyCheckbox } from "./HoneyCheckbox";
 export { default as HoneyCircularLoader } from "./HoneyCircularLoader";
 export { default as HoneyDownloadButton } from "./HoneyDownloadButton";
 export { default as HoneyFadeInImage } from "./HoneyFadeInImage";
@@ -9,6 +10,8 @@ export { default as HoneyIconButton } from "./HoneyIconButton";
 export { default as HoneyImage } from "./HoneyImage";
 export { default as HoneyImageSlideshow } from "./HoneyImageSlideshow";
 export { default as HoneyInput } from "./HoneyInput";
+export { default as HoneyLabel } from "./HoneyLabel";
 export { default as HoneyModal } from "./HoneyModal";
 export { default as HoneyPageLoader } from "./HoneyPageLoader";
+export { default as HoneyPaginationControls } from "./HoneyPaginationControls";
 export { default as HoneyQualitySelector } from "./HoneyQualitySelector";

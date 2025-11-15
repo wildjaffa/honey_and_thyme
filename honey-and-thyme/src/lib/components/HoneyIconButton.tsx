@@ -20,6 +20,7 @@ interface HoneyButtonProps {
   opacityOnHover?: boolean;
   badge?: number;
   title: string;
+  background?: string;
 }
 
 function HoneyIconButton({
@@ -36,6 +37,7 @@ function HoneyIconButton({
   opacityOnHover = true,
   badge,
   title,
+  background,
 }: HoneyButtonProps) {
   const [prevIcon, setPrevIcon] = useState<IconProp | null>(null);
   const prevIconRef = useRef<IconProp | null>(null);
@@ -80,14 +82,15 @@ function HoneyIconButton({
       disabled={disabled || isLoading}
       type={isSubmit ? "submit" : "button"}
       onClick={(e) => {
-        rippleEffect(e);
         e.stopPropagation();
+        if (disabled || isLoading) return;
+        rippleEffect(e);
         if (onClick) {
           onClick();
         }
       }}
       aria-label={ariaLabel}
-      className="group/icon relative cursor-pointer overflow-visible rounded-full p-1 hover:bg-white/30 focus:outline-none"
+      className={`group/icon relative cursor-pointer overflow-visible rounded-full p-1 hover:bg-${background ? background : "white"}/30 focus:outline-none ${background ? `bg-${background}` : ""}`}
     >
       <div className="relative">
         <div
