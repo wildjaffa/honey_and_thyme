@@ -49,7 +49,7 @@ function AlbumRow({ album, onUpdated }: AlbumRowProps) {
         )}
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 pl-2">
         <div className="truncate text-sm font-medium">{album.name}</div>
         <div className="truncate text-xs text-gray-500">
           {album.description}

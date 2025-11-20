@@ -6,6 +6,8 @@ import { HoneyButton } from "../../components";
 import AlbumIndex from "./Albums/AlbumIndex";
 import AlbumImageManagement from "./Albums/AlbumImageManagement";
 import ProductsIndex from "./Products/ProductsIndex";
+import EmailIndex from "./Emails/EmailsIndex";
+import PhotoShootsIndex from "./PhotoShoots/PhotoShootsIndex";
 
 function Admin() {
   const { user, loading } = useAuth();
@@ -47,8 +49,9 @@ function Admin() {
       <Route path="/" element={<AdminIndex />} />
       <Route path="/Albums/:albumId" element={<AlbumImageManagement />} />
       <Route path="/Albums" element={<AlbumIndex />} />
+      <Route path="/PhotoShoots" element={<PhotoShootsIndex />} />
       <Route path="/Products" element={<ProductsIndex />} />
-      <Route path="/Albums" element={<AlbumIndex />} />
+      <Route path="/Emails" element={<EmailIndex />} />
     </Routes>
   );
 }

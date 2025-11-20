@@ -3,6 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HoneyCircularLoader from "./HoneyCircularLoader";
 import "..//styles/HoneyIconButton.css";
 import { useEffect, useRef, useState } from "react";
+import {
+  getButtonClasses,
+  getIconClasses,
+  getIconWrapperClasses,
+  getIconColorStyle,
+} from "./HoneyIconButton.utils";
 
 interface HoneyButtonProps {
   /** Button label */
@@ -20,7 +26,7 @@ interface HoneyButtonProps {
   opacityOnHover?: boolean;
   badge?: number;
   title: string;
-  background?: string;
+  background?: "gold" | "sage" | "white";
 }
 
 function HoneyIconButton({
@@ -34,7 +40,7 @@ function HoneyIconButton({
   size = "medium",
   selectedColor = "honey-gold",
   nonSelectedColor = "honey-pink",
-  opacityOnHover = true,
+  opacityOnHover,
   badge,
   title,
   background,
@@ -90,67 +96,53 @@ function HoneyIconButton({
         }
       }}
       aria-label={ariaLabel}
-      className={`group/icon relative cursor-pointer overflow-visible rounded-full p-1 hover:bg-${background ? background : "white"}/30 focus:outline-none ${background ? `bg-${background}` : ""}`}
+      className={getButtonClasses(background)}
     >
-      <div className="relative">
-        <div
-          className={`relative flex items-center justify-center ${
-            size === "small"
-              ? "size-6"
-              : size === "large"
-                ? "size-10"
-                : "size-7"
-          }`}
-        >
-          {isLoading && (
-            <HoneyCircularLoader
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white"
-              size="small"
-            />
-          )}
-          {!isLoading && (
-            <div className="relative flex h-full w-full items-center justify-center">
-              {prevIcon && (
-                <FontAwesomeIcon
-                  className={`icon-fade-out absolute ${
-                    isSelected
-                      ? `text-${selectedColor}`
-                      : `text-${nonSelectedColor}`
-                  } ${
-                    size === "small"
-                      ? "text-sm"
-                      : size === "large"
-                        ? "text-2xl"
-                        : "text-xl"
-                  } ${opacityOnHover ? "opacity-50 group-hover/icon:opacity-100" : ""}`}
-                  icon={prevIcon}
-                />
-              )}
-
+      <div className={getIconWrapperClasses(size)}>
+        {isLoading && (
+          <HoneyCircularLoader
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white"
+            size="small"
+          />
+        )}
+        {!isLoading && (
+          <div className="relative flex h-full w-full items-center justify-center">
+            {prevIcon && (
               <FontAwesomeIcon
-                key={String(icon)}
-                className={`${prevIcon ? "icon-fade-in" : ""} ${
-                  isSelected
-                    ? `text-${selectedColor} opacity-100`
-                    : `text-${nonSelectedColor}`
-                } ${
-                  size === "small"
-                    ? "text-sm"
-                    : size === "large"
-                      ? "text-2xl"
-                      : "text-xl"
-                } ${opacityOnHover ? "opacity-50 group-hover/icon:opacity-100" : ""}`}
-                icon={icon}
+                className={`icon-fade-out absolute ${getIconClasses(
+                  size,
+                  opacityOnHover,
+                )}`}
+                style={getIconColorStyle(
+                  isSelected,
+                  selectedColor,
+                  nonSelectedColor,
+                )}
+                icon={prevIcon}
               />
-            </div>
-          )}
-        </div>
-        {badge !== undefined && (
-          <div className="bg-honey-gold absolute -top-1 -right-1 flex min-h-5 min-w-5 items-center justify-center overflow-visible rounded-full text-xs text-white">
-            {badge}
+            )}
+
+            <FontAwesomeIcon
+              key={String(icon)}
+              className={`${prevIcon ? "icon-fade-in" : ""} ${getIconClasses(
+                size,
+                opacityOnHover,
+              )}`}
+              style={getIconColorStyle(
+                isSelected,
+                selectedColor,
+                nonSelectedColor,
+              )}
+              icon={icon}
+            />
           </div>
         )}
       </div>
+      {badge !== undefined && (
+        <div className="bg-honey-gold absolute -top-1 -right-1 flex min-h-5 min-w-5 items-center justify-center overflow-visible rounded-full text-xs text-white">
+          {badge}
+        </div>
+      )}
     </button>
   );
 }

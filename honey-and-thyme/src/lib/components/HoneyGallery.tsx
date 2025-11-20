@@ -3,6 +3,7 @@ import { useWindowWidth } from "@react-hook/window-size";
 import { useState } from "react";
 import { HoneyImageSlideshow, HoneyFadeInImage } from ".";
 import type { AlbumModel } from "../types/api";
+import ImageSize from "../enums/imageSize";
 // import useAlbum from "../hooks/useAlbum";
 
 interface HoneyGalleryProps {
@@ -23,14 +24,19 @@ function HoneyGallery({
 
   const width = useWindowWidth();
   let pictureWidth = 200;
+  let imageQuality = ImageSize.medium;
   if (width >= 1200) {
     pictureWidth = Math.floor(width / 5) - 5;
+    imageQuality = ImageSize.large;
   } else if (width >= 900) {
     pictureWidth = Math.floor(width / 4) - 5;
+    imageQuality = ImageSize.large;
   } else if (width >= 750) {
+    imageQuality = ImageSize.large;
     pictureWidth = Math.floor(width / 3) - 5;
   } else if (width >= 350) {
     pictureWidth = Math.floor(width / 2) - 5;
+    imageQuality = ImageSize.medium;
   }
 
   if (!album?.images?.length) {
@@ -60,7 +66,7 @@ function HoneyGallery({
                   setSlideShowIsOpen(true);
                   setCurrentImageIndex(index);
                 }}
-                imageQuality={2}
+                imageQuality={imageQuality}
                 isSelected={
                   image.imageId !== undefined &&
                   selectedImages &&
