@@ -7,11 +7,13 @@ import HoneyInput from "./HoneyInput";
 interface HoneyAlbumPickerProps {
   disabled?: boolean;
   onAlbumSelected: (albumId: string | undefined) => void;
+  label?: string;
 }
 
 function HoneyAlbumPicker({
   disabled,
   onAlbumSelected,
+  label,
 }: HoneyAlbumPickerProps) {
   const [searchString, setSearchString] = useState("");
   const debouncedSearch = useDebounce(searchString, 400);
@@ -30,6 +32,7 @@ function HoneyAlbumPicker({
     <div className="honey-album-picker">
       <HoneyInput
         type="text"
+        label={label}
         value={searchString}
         onChange={inputChanged}
         placeholder="Search albums..."

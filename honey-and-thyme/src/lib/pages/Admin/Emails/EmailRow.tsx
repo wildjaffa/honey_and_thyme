@@ -4,7 +4,7 @@ import type { EmailRecordModel } from "../../../types/api";
 import MessageStatus from "../../../enums/messageStatus";
 import { toast } from "react-toastify";
 import apiClient from "../../../api/client";
-import { getLocalDateTimeString } from "../../../utils/date";
+import { formatDateTime } from "../../../utils/date";
 
 interface EmailRowProps {
   email: EmailRecordModel;
@@ -62,7 +62,9 @@ function EmailRow({ email, onUpdated }: EmailRowProps) {
         <div className="truncate text-xs text-gray-500">{email.email}</div>
       </div>
 
-      <div className="flex items-center gap-2">{getLocalDateTimeString(email.dateSent)}</div>
+      <div className="flex items-center gap-2">
+        {formatDateTime(email.dateSent)}
+      </div>
     </div>
   );
 }

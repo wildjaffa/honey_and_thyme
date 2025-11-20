@@ -2,7 +2,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { HoneyIconButton } from "../../../components";
 import type { PhotoShootModel } from "../../../types/api";
 import { useNavigate } from "react-router";
-import { getLocalDateTimeString } from "../../../utils/date";
+import { formatDateTime } from "../../../utils/date";
 
 interface PhotoShootRowProps {
   photoShoot: PhotoShootModel;
@@ -32,7 +32,7 @@ function PhotoShootRow({ photoShoot }: PhotoShootRowProps) {
           {photoShoot.nameOfShoot}
         </div>
         <div className="truncate text-xs text-gray-500">
-          {getLocalDateTimeString(photoShoot.dateTimeUtc)}
+          {formatDateTime(photoShoot.dateTimeUtc)}
         </div>
       </div>
 

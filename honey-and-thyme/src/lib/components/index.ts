@@ -1,3 +1,4 @@
+export { default as HoneyAlbumPicker } from "./HoneyAlbumPicker";
 export { default as HoneyButton } from "./HoneyButton";
 export { default as HoneyCheckbox } from "./HoneyCheckbox";
 export { default as HoneyCircularLoader } from "./HoneyCircularLoader";
@@ -16,4 +17,5 @@ export { default as HoneyPageLoader } from "./HoneyPageLoader";
 export { default as HoneyPaginationControls } from "./HoneyPaginationControls";
 export { default as HoneyPaginatedTable } from "./HoneyPaginatedTable";
 export { default as HoneyQualitySelector } from "./HoneyQualitySelector";
+export { default as HoneyDropDownSelector } from "./HoneyDropDownSelector";
 export { default as HoneyTable } from "./HoneyTable";

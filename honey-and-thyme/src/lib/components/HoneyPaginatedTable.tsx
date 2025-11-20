@@ -37,6 +37,9 @@ interface HoneyPaginatedTableProps<T, F = unknown> {
     filters: F | undefined,
     setFilters: (f: F | undefined) => void,
   ) => ReactElement | null;
+  /** Optional initial filters to use when the component mounts. */
+  initialFilters?: F;
+  onAddClick?: () => void;
 }
 
 function HoneyPaginatedTable<T, F = unknown>({
@@ -47,6 +50,8 @@ function HoneyPaginatedTable<T, F = unknown>({
   usePaginatedQuery,
   renderRow,
   renderFilterControls,
+  initialFilters,
+  onAddClick,
 }: HoneyPaginatedTableProps<T, F>) {
   const [search, setSearch] = useState("");
 
@@ -55,7 +60,7 @@ function HoneyPaginatedTable<T, F = unknown>({
   // Local filters state (generic). Pages can render filter UI via
   // renderFilterControls and update these filters. They will be passed to
   // usePaginatedQuery so the hook can include them in the API request.
-  const [filters, setFilters] = useState<F | undefined>(undefined);
+  const [filters, setFilters] = useState<F | undefined>(initialFilters);
 
   const [newItem, setNewItem] = useState<T | undefined>(undefined);
 
@@ -103,16 +108,20 @@ function HoneyPaginatedTable<T, F = unknown>({
             </div>
           </div>
 
-          {createAddForm && (
+          {(createAddForm || onAddClick) && (
             <HoneyIconButton
               icon={faPlus}
-              onClick={() =>
-                setNewItem(
-                  typeof addInitial === "function"
-                    ? (addInitial as () => T)()
-                    : ((addInitial as T) ?? ({} as T)),
-                )
-              }
+              onClick={() => {
+                if (onAddClick) {
+                  onAddClick();
+                } else {
+                  setNewItem(
+                    typeof addInitial === "function"
+                      ? (addInitial as () => T)()
+                      : ((addInitial as T) ?? ({} as T)),
+                  );
+                }
+              }}
               title="Add Item"
               isSelected
               background="gold"

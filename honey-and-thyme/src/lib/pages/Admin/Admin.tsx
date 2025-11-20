@@ -8,6 +8,7 @@ import AlbumImageManagement from "./Albums/AlbumImageManagement";
 import ProductsIndex from "./Products/ProductsIndex";
 import EmailIndex from "./Emails/EmailsIndex";
 import PhotoShootsIndex from "./PhotoShoots/PhotoShootsIndex";
+import PhotoShootEdit from "./PhotoShoots/PhotoShootEdit";
 
 function Admin() {
   const { user, loading } = useAuth();
@@ -50,6 +51,8 @@ function Admin() {
       <Route path="/Albums/:albumId" element={<AlbumImageManagement />} />
       <Route path="/Albums" element={<AlbumIndex />} />
       <Route path="/PhotoShoots" element={<PhotoShootsIndex />} />
+      <Route path="/PhotoShoots/new" element={<PhotoShootEdit />} />
+      <Route path="/PhotoShoots/:photoShootId" element={<PhotoShootEdit />} />
       <Route path="/Products" element={<ProductsIndex />} />
       <Route path="/Emails" element={<EmailIndex />} />
     </Routes>

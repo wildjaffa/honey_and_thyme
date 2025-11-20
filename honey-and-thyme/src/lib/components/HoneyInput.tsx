@@ -13,9 +13,12 @@ interface HoneyInputProps {
   placeholder?: string;
   autoFocus?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  onClick?: () => void;
   startIcon?: IconProp;
+  className?: string;
 }
 
 function HoneyInput({
@@ -28,9 +31,12 @@ function HoneyInput({
   placeholder = "",
   autoFocus,
   disabled,
+  readOnly,
   onFocus,
   onBlur,
+  onClick,
   startIcon,
+  className = "",
 }: HoneyInputProps) {
   const autoId = useId();
   if (!id) id = autoId;
@@ -42,14 +48,16 @@ function HoneyInput({
           id={id}
           value={value}
           onChange={(e) => onChange && onChange(e.target.value)}
-          className="border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-full rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none"
+          className={`border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-full rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none ${className}`}
           required={required}
           placeholder={placeholder}
           name={label}
           autoFocus={autoFocus}
           disabled={disabled}
+          readOnly={readOnly}
           onFocus={onFocus}
           onBlur={onBlur}
+          onClick={onClick}
         />
       ) : (
         <div className="flex w-full items-center">
@@ -59,14 +67,16 @@ function HoneyInput({
             type={type}
             value={value}
             onChange={(e) => onChange && onChange(e.target.value)}
-            className="border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-fit flex-1 rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none"
+            className={`border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-fit flex-1 rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none ${className}`}
             required={required}
             placeholder={placeholder}
             name={label}
             autoFocus={autoFocus}
             disabled={disabled}
+            readOnly={readOnly}
             onFocus={onFocus}
             onBlur={onBlur}
+            onClick={onClick}
           />
         </div>
       )}

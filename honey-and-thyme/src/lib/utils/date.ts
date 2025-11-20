@@ -20,6 +20,27 @@ export function formatDate(
 }
 
 /**
+ * Formats a date as MM/DD/YYYY HH:mm AM/PM.
+ * @param date The date to format.
+ * @returns Formatted date string.
+ */
+export function formatDateTime(date: DateInput): string {
+  const d = parseDate(date);
+  if (!d) return "N/A";
+
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  })
+    .format(d)
+    .replace(",", "");
+}
+
+/**
  * Formats a date as a relative time string (e.g., "2 hours ago").
  * @param date The date to format.
  * @returns Relative time string.
@@ -65,7 +86,7 @@ export function formatRelativeTime(date: DateInput): string {
  * @param date The value to check.
  * @returns True if valid, false otherwise.
  */
-export function isValidDate(date: any): boolean {
+export function isValidDate(date: DateInput): boolean {
   const d = parseDate(date);
   return d !== null;
 }
@@ -127,8 +148,10 @@ export function parseDate(date: DateInput): Date | null {
 export function getLocalDateTimeString(date: DateInput): string {
   const d = parseDate(date);
   if (!d) return "";
-  
+
   const offset = d.getTimezoneOffset() * 60000;
-  const localISOTime = new Date(d.getTime() - offset).toISOString().slice(0, -1);
+  const localISOTime = new Date(d.getTime() - offset)
+    .toISOString()
+    .slice(0, -1);
   return localISOTime;
 }
