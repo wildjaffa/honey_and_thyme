@@ -20,6 +20,7 @@ interface HoneyTableProps<T> {
   useQuery: (searchString?: string) => UseQueryResult<T[]>;
   /** renderRow receives the item and an optional onUpdated callback that should be called when the row updates data and the parent should refetch. */
   renderRow: (data: T, onUpdated?: () => void) => ReactElement;
+  onAddClick?: () => void;
 }
 
 function HoneyTable<T>({
@@ -29,6 +30,7 @@ function HoneyTable<T>({
   addInitial,
   useQuery,
   renderRow,
+  onAddClick,
 }: HoneyTableProps<T>) {
   const [search, setSearch] = useState("");
 
@@ -53,19 +55,23 @@ function HoneyTable<T>({
               />
             )}
           </div>
-          {createAddForm && (
+          {(createAddForm || onAddClick) && (
             <HoneyIconButton
               icon={faPlus}
-              onClick={() =>
-                setNewItem(
-                  typeof addInitial === "function"
-                    ? (addInitial as () => T)()
-                    : ((addInitial as T) ?? ({} as T)),
-                )
-              }
+              onClick={() => {
+                if (onAddClick) {
+                  onAddClick();
+                } else {
+                  setNewItem(
+                    typeof addInitial === "function"
+                      ? (addInitial as () => T)()
+                      : ((addInitial as T) ?? ({} as T)),
+                  );
+                }
+              }}
               title="Add Item"
               isSelected
-              background="honey-gold"
+              background="gold"
               selectedColor="black"
             />
           )}

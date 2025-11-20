@@ -11,12 +11,11 @@ import Contact from "./lib/pages/Contact/Contact.tsx";
 import AlbumGallery from "./lib/pages/AlbumGallery/AlbumGallery.tsx";
 import { QueryClient } from "@tanstack/query-core";
 import { ToastContainer } from "react-toastify";
-import AvailableAppointments from "./lib/pages/AvailableAppointments/AvailableAppointments.tsx";
+import UpcomingAppointments from "./lib/pages/UpcomingAppointments/UpcomingAppointments.tsx";
 import Admin from "./lib/pages/Admin/Admin.tsx";
-import './lib/firebase';
+import "./lib/firebase";
 
 const queryClient = new QueryClient();
-
 
 function App() {
   return (
@@ -30,7 +29,10 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="admin/*" element={<Admin />} />
                 <Route path="/albums/:albumId" element={<AlbumGallery />} />
-                <Route path="/available-appointments" element={<AvailableAppointments />} />
+                <Route
+                  path="/available-appointments"
+                  element={<UpcomingAppointments />}
+                />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/pricing" element={<Pricing />} />
