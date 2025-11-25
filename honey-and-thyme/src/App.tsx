@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import UpcomingAppointments from "./lib/pages/UpcomingAppointments/UpcomingAppointments.tsx";
 import Admin from "./lib/pages/Admin/Admin.tsx";
 import "./lib/firebase";
+import Invoice from "./lib/pages/Invoice/Invoice.tsx";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ function App() {
                 />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/gallery" element={<Gallery />} />
+                <Route path="/invoice/:reservationCode" element={<Invoice />} />
                 <Route path="/pricing" element={<Pricing />} />
               </Routes>
               {/* <App /> */}

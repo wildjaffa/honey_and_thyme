@@ -3,6 +3,8 @@ import type { components } from "../api/v1";
 export type AlbumModel = components["schemas"]["AlbumModel"];
 export type CreatePaymentRequest =
   components["schemas"]["CreatePhotoShootPaymentRequest"];
+export type CreatePaymentResponse =
+  components["schemas"]["CreatePhotoShootPaymentResponse"];
 export type DownloadRequest = components["schemas"]["DownloadRequest"];
 export type DownloadResponse = components["schemas"]["DownloadResponse"];
 export type EmailRecordModel = components["schemas"]["EmailRecordModel"];

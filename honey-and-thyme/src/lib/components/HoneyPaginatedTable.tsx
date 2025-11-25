@@ -161,12 +161,19 @@ function HoneyPaginatedTable<T, F = unknown>({
           )}
         </div>
         <HoneyModal
-          isOpen={newItem != null}
+          isOpen={newItem != null && newItem !== undefined}
           onClose={() => setNewItem(undefined)}
         >
           {createAddForm &&
             newItem &&
-            createAddForm(newItem, refetch, () => setNewItem(undefined))}
+            createAddForm(
+              newItem,
+              () => {
+                refetch();
+                setNewItem(undefined);
+              },
+              () => setNewItem(undefined),
+            )}
         </HoneyModal>
       </div>
     </div>

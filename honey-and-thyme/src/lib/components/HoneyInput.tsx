@@ -2,6 +2,7 @@ import { useId } from "react";
 import HoneyLabel from "./HoneyLabel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { getLocalDateTimeString } from "../utils/date";
 
 interface HoneyInputProps {
   id?: string;
@@ -65,8 +66,23 @@ function HoneyInput({
           <input
             id={id}
             type={type}
-            value={value}
-            onChange={(e) => onChange && onChange(e.target.value)}
+            value={
+              type === "datetime-local" ? getLocalDateTimeString(value) : value
+            }
+            onChange={(e) => {
+              if (onChange) {
+                if (type === "datetime-local") {
+                  const date = new Date(e.target.value);
+                  if (!isNaN(date.getTime())) {
+                    onChange(date.toISOString());
+                  } else {
+                    onChange("");
+                  }
+                } else {
+                  onChange(e.target.value);
+                }
+              }
+            }}
             className={`border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-fit flex-1 rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none ${className}`}
             required={required}
             placeholder={placeholder}

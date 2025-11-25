@@ -99,7 +99,7 @@ function PhotoShootEdit() {
           body: formState,
         });
       }
-      navigate("/PhotoShoots");
+      navigate("/Admin/PhotoShoots");
     } catch (error) {
       console.error("Error saving photo shoot:", error);
       toast.error("Error saving photo shoot");
@@ -119,7 +119,7 @@ function PhotoShootEdit() {
       await deletePhotoShoot.mutateAsync({
         params: { path: { id: photoShootId } },
       });
-      navigate("/PhotoShoots");
+      navigate("Admin/PhotoShoots");
     } catch (error) {
       console.error("Error deleting photo shoot:", error);
       toast.error("Error deleting photo shoot");
@@ -157,7 +157,7 @@ function PhotoShootEdit() {
             invoiceId: createRes.invoiceId,
           },
         });
-        navigate("/PhotoShoots");
+        navigate("/Admin/PhotoShoots");
       }
     } catch (error) {
       console.error("Error marking paid:", error);
@@ -168,7 +168,7 @@ function PhotoShootEdit() {
   };
 
   const copyInvoiceLink = () => {
-    const url = `${window.location.origin}/#/invoice?id=${formState.reservationCode}`;
+    const url = `${window.location.origin}/invoice/${formState.reservationCode}`;
     navigator.clipboard.writeText(
       `You can pay for your upcoming photo shoot at ${url}`,
     );

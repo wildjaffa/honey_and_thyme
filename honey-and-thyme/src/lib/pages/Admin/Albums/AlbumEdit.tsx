@@ -28,7 +28,17 @@ function AlbumEdit({
     try {
       await (album.albumId
         ? update.mutateAsync({ body: album })
-        : create.mutateAsync({ body: album }));
+        : create.mutateAsync({
+            body: {
+              ...album,
+              urlName: album.name
+                ?.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, "")
+                .trim()
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-"),
+            },
+          }));
       onAfterSave();
     } catch (e) {
       toast.error("There was an error saving the album");
