@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, isValidElement } from "react";
 import HoneyLabel from "./HoneyLabel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -18,7 +18,7 @@ interface HoneyInputProps {
   onFocus?: () => void;
   onBlur?: () => void;
   onClick?: () => void;
-  startIcon?: IconProp;
+  startIcon?: IconProp | React.ReactNode;
   className?: string;
 }
 
@@ -62,7 +62,12 @@ function HoneyInput({
         />
       ) : (
         <div className="flex w-full items-center">
-          {startIcon && <FontAwesomeIcon icon={startIcon} className="pr-3" />}
+          {startIcon &&
+            (isValidElement(startIcon) ? (
+              <span className="pr-3">{startIcon}</span>
+            ) : (
+              <FontAwesomeIcon icon={startIcon as IconProp} className="pr-3" />
+            ))}
           <input
             id={id}
             type={type}

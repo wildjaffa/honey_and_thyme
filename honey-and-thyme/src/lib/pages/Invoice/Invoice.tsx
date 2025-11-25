@@ -9,7 +9,11 @@ import type {
   CreatePaymentResponse,
 } from "../../types/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCreditCard,
+  faSquareCheck,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 import PaymentProcessor from "../../enums/paymentProcessor";
 
 const InvoiceStatus = {
@@ -17,9 +21,10 @@ const InvoiceStatus = {
   payingDeposit: 1,
   payingTotal: 2,
   creatingOrder: 3,
-  capturing: 4,
-  error: 5,
-  success: 6,
+  acceptingInput: 4,
+  capturing: 5,
+  error: 6,
+  success: 7,
   declined: 8,
 };
 
@@ -28,7 +33,12 @@ type InvoiceStatusType = (typeof InvoiceStatus)[keyof typeof InvoiceStatus];
 
 function Invoice() {
   const { reservationCode } = useParams();
-  const { data: photoShoot, isLoading, isError } = useInvoice(reservationCode);
+  const {
+    data: photoShoot,
+    isLoading,
+    isError,
+    refetch,
+  } = useInvoice(reservationCode);
   const [status, setStatus] = useState<InvoiceStatusType>(
     InvoiceStatus.selecting,
   );
@@ -75,8 +85,7 @@ function Invoice() {
       });
 
       const success = response.isSuccess === true;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const shouldTryAgain = (response as any).shouldTryAgain === true;
+      const shouldTryAgain = response.shouldTryAgain === true;
 
       if (!success && !shouldTryAgain) {
         setStatus(InvoiceStatus.error);
@@ -91,7 +100,7 @@ function Invoice() {
         );
         return;
       }
-
+      refetch();
       setStatus(InvoiceStatus.success);
     } catch (e) {
       console.error(e);
@@ -113,9 +122,8 @@ function Invoice() {
   };
 
   const createOrder = async () => {
-    if (!photoShoot) throw new Error("No photoshoot data");
+    if (!photoShoot) throw new Error("No photoShoot data");
     setStatus(InvoiceStatus.creatingOrder);
-
     try {
       const createRequest: CreatePaymentRequest = {
         amount: amountToBePaid,
@@ -128,7 +136,7 @@ function Invoice() {
         body: createRequest,
       });
       setOrder(response);
-
+      setStatus(InvoiceStatus.acceptingInput);
       if (response.isSuccess !== true || !response.processorOrderId) {
         setStatus(InvoiceStatus.error);
         throw new Error("Failed to create order");
@@ -141,8 +149,6 @@ function Invoice() {
       throw e;
     }
   };
-  // 56c46249-86b8-44a1-af87-a01b64d1b44b
-  // 56c46249-86b8-44a1-af87-a01b64d1b44b
   if (isLoading) {
     return <HoneyPageLoader />;
   }
@@ -199,8 +205,10 @@ function Invoice() {
 
   if (status === InvoiceStatus.declined) {
     return (
-      <div className="flex h-[300px] flex-col items-center justify-center text-center">
-        <div className="text-honey-gold mb-4 text-4xl">💳</div>
+      <div className="im-fell-english flex h-[300px] flex-col items-center justify-center text-center">
+        <div className="text-honey-gold mb-4 text-4xl">
+          <FontAwesomeIcon icon={faCreditCard} />
+        </div>
         <h2 className="text-3xl">Something went wrong</h2>
         <p className="text-xl">{errorString}</p>
         <div className="mt-4">
@@ -219,8 +227,10 @@ function Invoice() {
 
   if (status === InvoiceStatus.success) {
     return (
-      <div className="flex h-[300px] flex-col items-center justify-center text-center">
-        <div className="text-honey-gold mb-4 text-4xl">✅</div>
+      <div className="im-fell-english flex h-[300px] flex-col items-center justify-center text-center">
+        <div className="text-honey-gold mb-4 text-4xl">
+          <FontAwesomeIcon icon={faSquareCheck} />
+        </div>
         <h2 className="text-3xl">Your payment was successful!</h2>
         {paymentNeeded && (
           <p className="mt-2 text-xl">
@@ -242,55 +252,57 @@ function Invoice() {
         intent: "capture",
       }}
     >
-      <div className="im-fell-english mx-auto flex max-w-[600px] flex-col items-center p-4">
+      {(status == InvoiceStatus.creatingOrder ||
+        status == InvoiceStatus.capturing) && <HoneyPageLoader />}
+      <div className="im-fell-english mx-auto flex max-w-[500px] flex-col items-center p-4">
         <h1 className="im-fell-english-sc mb-4 text-3xl">Invoice Summary</h1>
 
-        <div className="w-full max-w-[300px]">
-          <div className="flex justify-between text-xl">
-            <span>Invoice for:</span>
-            <span>{photoShoot.responsiblePartyName}</span>
-          </div>
-          <div className="flex justify-between text-xl">
-            <span>Service:</span>
-            <span>{photoShoot.nameOfShoot}</span>
-          </div>
-          <div className="flex justify-between text-xl">
-            <span>Date of Service:</span>
-            <span>
-              {photoShoot.dateTimeUtc
-                ? new Date(photoShoot.dateTimeUtc).toLocaleDateString() +
-                  " " +
-                  new Date(photoShoot.dateTimeUtc).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : ""}
-            </span>
-          </div>
-          <div className="flex justify-between text-xl">
-            <span>Total Billed:</span>
-            <span>${photoShoot.price}</span>
-          </div>
+        <div className="grid w-full grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-xl">
+          <span>Invoice for:</span>
+          <span className="text-right">{photoShoot.responsiblePartyName}</span>
+
+          <span>Service:</span>
+          <span className="text-right">{photoShoot.nameOfShoot}</span>
+
+          <span>Date of Service:</span>
+          <span className="text-right">
+            {photoShoot.dateTimeUtc
+              ? new Date(photoShoot.dateTimeUtc).toLocaleDateString() +
+                " " +
+                new Date(photoShoot.dateTimeUtc).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : ""}
+          </span>
+
+          <span>Total Billed:</span>
+          <span className="text-right">${photoShoot.price}</span>
+
           {hasDiscount && (
-            <div className="flex justify-between text-xl">
+            <>
               <span>Discount:</span>
-              <span>
+              <span className="text-right">
                 {photoShoot.discountName} ${photoShoot.discount}
               </span>
-            </div>
+            </>
           )}
-          <div className="flex justify-between text-xl">
-            <span>Total Paid:</span>
-            <span>${totalPaid}</span>
-          </div>
-          <div className="flex justify-between text-xl">
-            <span>Total Remaining:</span>
-            <span>${photoShoot.paymentRemaining}</span>
-          </div>
-          <div className="flex justify-between text-xl">
-            <span>Payment Status:</span>
-            <span>{photoShoot.paymentRemaining === 0 ? "Paid" : "Unpaid"}</span>
-          </div>
+
+          <span>Total Paid:</span>
+          <span className="text-right">${totalPaid}</span>
+
+          <span>Total Remaining:</span>
+          <span className="text-right">
+            $
+            {(photoShoot.paymentRemaining ?? 0) > 0
+              ? photoShoot.paymentRemaining
+              : 0}
+          </span>
+
+          <span>Payment Status:</span>
+          <span className="text-right">
+            {(photoShoot.paymentRemaining ?? 0) > 0 ? "Unpaid" : "Paid"}
+          </span>
         </div>
 
         <div className="h-5"></div>
@@ -315,20 +327,21 @@ function Invoice() {
                 setAmountToBePaid((photoShoot.paymentRemaining ?? 0) + newTip);
               }}
               type="number"
+              startIcon={<div>$</div>}
             />
           </div>
         )}
 
         {(status === InvoiceStatus.payingTotal ||
           status === InvoiceStatus.payingDeposit ||
+          status === InvoiceStatus.acceptingInput ||
           status === InvoiceStatus.creatingOrder) && (
-          <div className="mt-2 flex w-[300px] flex-col gap-2">
+          <div className="z-0 mt-2 flex w-[300px] flex-col gap-2">
             <PayPalButtons
               style={{ layout: "vertical", color: "gold" }}
               createOrder={createOrder}
               onApprove={onApprove}
               onError={onError}
-              disabled={status === InvoiceStatus.creatingOrder}
             />
 
             <div className="bg-honey-gold/90 hover:bg-honey-gold relative flex min-w-20 cursor-pointer items-center justify-center px-4 py-1 text-black shadow-sm transition-colors hover:shadow-md">

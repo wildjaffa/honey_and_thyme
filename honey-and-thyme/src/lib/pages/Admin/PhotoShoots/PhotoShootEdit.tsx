@@ -12,6 +12,7 @@ import usePhotoShoot from "../../../hooks/usePhotoShoot";
 import useProducts from "../../../hooks/useProducts";
 import type { PhotoShootModel } from "../../../types/api";
 import { toast } from "react-toastify";
+import PaymentProcessor from "../../../enums/paymentProcessor";
 
 const PhotoShootStatusMap: Record<number, string> = {
   0: "Unbooked",
@@ -141,7 +142,7 @@ function PhotoShootEdit() {
         body: {
           amount: formState.paymentRemaining,
           description: "Admin Payment",
-          paymentProcessorEnum: 0, // External
+          paymentProcessorEnum: (PaymentProcessor.External as 0) || 1,
           reservationCode: formState.reservationCode,
         },
       });
@@ -152,7 +153,7 @@ function PhotoShootEdit() {
           body: {
             amountToBeCharged: formState.paymentRemaining,
             externalOrderId: photoShootId,
-            paymentProcessor: 0, // External
+            paymentProcessor: (PaymentProcessor.External as 0) || 1,
             reservationCode: formState.reservationCode,
             invoiceId: createRes.invoiceId,
           },
@@ -220,7 +221,10 @@ function PhotoShootEdit() {
 
         {!isNew && (
           <div className="text-sm font-medium">
-            Balance: ${formState.paymentRemaining ?? 0}
+            Balance: $
+            {(formState.paymentRemaining ?? 0) > 0
+              ? formState.paymentRemaining
+              : 0}
           </div>
         )}
 
@@ -265,12 +269,14 @@ function PhotoShootEdit() {
               value={formState.price?.toString() ?? ""}
               onChange={(val) => handleChange("price", parseFloat(val))}
               type="number"
+              startIcon={<div>$</div>}
             />
             <HoneyInput
               label="Deposit"
               value={formState.deposit?.toString() ?? ""}
               onChange={(val) => handleChange("deposit", parseFloat(val))}
               type="number"
+              startIcon={<div>$</div>}
             />
             <HoneyInput
               label="Discount"
