@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard, A11y, Virtual } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
 import HoneyImage from "./HoneyImage";
-import "../styles/HoneyImageSlideshow.css";
+import "../styles/SwiperStyles.css";
 import { useRef } from "react";
 import HoneyIconButton from "./HoneyIconButton";
 

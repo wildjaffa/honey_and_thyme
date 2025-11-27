@@ -18,7 +18,7 @@ function AdminIndex() {
       <HoneyButton onClick={() => navigate("/Admin/Emails")}>
         Email Records
       </HoneyButton>
-      <HoneyButton onClick={() => navigate("/Admin/Albums")}>
+      <HoneyButton onClick={() => navigate("/available-appointments")}>
         Upcoming Appointments
       </HoneyButton>
       <div className="im-fell-english text-center">Site Version 2.0.0</div>

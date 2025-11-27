@@ -18,6 +18,7 @@ interface HoneyInputProps {
   onFocus?: () => void;
   onBlur?: () => void;
   onClick?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   startIcon?: IconProp | React.ReactNode;
   className?: string;
 }
@@ -36,6 +37,7 @@ function HoneyInput({
   onFocus,
   onBlur,
   onClick,
+  onKeyDown,
   startIcon,
   className = "",
 }: HoneyInputProps) {
@@ -98,6 +100,7 @@ function HoneyInput({
             onFocus={onFocus}
             onBlur={onBlur}
             onClick={onClick}
+            onKeyDown={onKeyDown}
           />
         </div>
       )}

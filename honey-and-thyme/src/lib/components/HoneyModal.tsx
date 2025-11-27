@@ -8,6 +8,7 @@ interface HoneyModalProps {
   onSubmit?: () => void;
   submitText?: string;
   isOpen: boolean;
+  isLoading?: boolean;
 }
 
 function HoneyModal({
@@ -16,6 +17,7 @@ function HoneyModal({
   onSubmit,
   submitText,
   isOpen,
+  isLoading,
 }: HoneyModalProps) {
   if (!isOpen) return null;
   return (
@@ -45,6 +47,7 @@ function HoneyModal({
                 onClick={() => {
                   onSubmit();
                 }}
+                isLoading={isLoading}
               >
                 {submitText ? submitText : "Download"}
               </HoneyButton>
