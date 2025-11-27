@@ -15,6 +15,7 @@ import UpcomingAppointments from "./lib/pages/UpcomingAppointments/UpcomingAppoi
 import Admin from "./lib/pages/Admin/Admin.tsx";
 import "./lib/firebase";
 import Invoice from "./lib/pages/Invoice/Invoice.tsx";
+import Booking from "./lib/pages/Booking/Booking.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function App() {
                   path="/available-appointments"
                   element={<UpcomingAppointments />}
                 />
+                <Route path="/booking" element={<Booking />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/invoice/:reservationCode" element={<Invoice />} />

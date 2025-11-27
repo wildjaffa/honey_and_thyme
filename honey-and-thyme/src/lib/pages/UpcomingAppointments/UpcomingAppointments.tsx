@@ -128,7 +128,7 @@ function UpcomingAppointments() {
             There are currently no available appointment slots. Please check
             back soon or contact us to schedule an appointment.
           </p>
-          <HoneyButton onClick={() => navigate("/contact")}>
+          <HoneyButton onClick={() => navigate("/booking")}>
             <FontAwesomeIcon className="mr-2" icon={faEnvelope} />
             Contact Us
           </HoneyButton>
@@ -150,7 +150,7 @@ function UpcomingAppointments() {
               Contact us to schedule an appointment.
             </p>
             <div className="flex justify-center">
-              <HoneyButton onClick={() => navigate("/contact")}>
+              <HoneyButton onClick={() => navigate("/booking")}>
                 <FontAwesomeIcon className="mr-2" icon={faEnvelope} />
                 Contact Us
               </HoneyButton>
