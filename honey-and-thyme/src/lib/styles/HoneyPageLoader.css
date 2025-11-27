@@ -1,4 +1,4 @@
-#loader-parent {
+#full-page-loader-parent {
     position: absolute;
     display: grid;
     position: absolute;
@@ -10,10 +10,9 @@
     width: 50%;
 }
 
-.loader {
+.full-page-loader {
     grid-row: 1;
     grid-column: 1;
-    opacity: 0;
     width: 100%;
     transition: opacity 500ms ease;
     -webkit-transition: opacity 500ms ease;
@@ -22,7 +21,7 @@
     -o-transition: opacity 500ms ease;
 }
 
-#hexagons {
+#full-page-loader-parent .hexagons {
     animation: spin 4s infinite linear, fade 2s infinite linear;
     -webkit-animation: spin 4s infinite linear, fade 2s infinite linear;
     /* animation: fade 2s infinite linear;

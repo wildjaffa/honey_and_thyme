@@ -27,16 +27,16 @@ function HoneyPageLoader({
           className="no-doc-scroll bg-honey-gray fixed inset-0 z-99"
           aria-hidden="true"
         ></div>
-        <div className="z-100" id="loader-parent">
+        <div className="z-100" id="full-page-loader-parent">
           <img
-            className="hexagons loader"
+            className="hexagons full-page-loader"
             alt="Loading..."
             id="hexagons"
             src={hexagons}
           />
           <img
             onLoad={onLogoLoad}
-            className="loader"
+            className="full-page-loader"
             id="logo"
             src={logoNoHexagons}
           />

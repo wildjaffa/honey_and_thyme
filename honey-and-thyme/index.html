@@ -1,6 +1,78 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <style>
+      body {
+        background-color: #d9d9d9;
+      }
+
+      #loader-parent {
+        position: absolute;
+        display: grid;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        width: 50%;
+        max-width: 400px;
+      }
+
+      .loader {
+        grid-row: 1;
+        grid-column: 1;
+        opacity: 0;
+        width: 100%;
+        transition: opacity 500ms ease;
+        -webkit-transition: opacity 500ms ease;
+        -moz-transition: opacity 500ms ease;
+        -ms-transition: opacity 500ms ease;
+        -o-transition: opacity 500ms ease;
+      }
+
+      #hexagons {
+        animation: spin 4s infinite linear, fade 2s infinite linear;
+        -webkit-animation: spin 4s infinite linear, fade 2s infinite linear;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fade {
+        0%,
+        100% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes fade {
+        0%,
+        100% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,12 +85,26 @@
     />
 
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>honey-and-thyme</title>
+    <title>Honey And Thyme</title>
   </head>
 
   <body>
+    <div id="loader-parent">
+      <img
+        class="loader"
+        alt="Loading..."
+        id="hexagons"
+        src="/src/assets/images/hexagons.png"
+      />
+      <img
+        class="loader"
+        onload="this.style.opacity=1"
+        id="logo"
+        src="/src/assets/images/logo-no-hexagons.png"
+      />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
