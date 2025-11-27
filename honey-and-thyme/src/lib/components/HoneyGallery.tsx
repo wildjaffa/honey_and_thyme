@@ -4,7 +4,6 @@ import { useState } from "react";
 import { HoneyImageSlideshow, HoneyFadeInImage } from ".";
 import type { AlbumModel } from "../types/api";
 import ImageSize from "../enums/imageSize";
-// import useAlbum from "../hooks/useAlbum";
 
 interface HoneyGalleryProps {
   album: AlbumModel;
@@ -24,7 +23,8 @@ function HoneyGallery({
 
   const width = useWindowWidth();
   let pictureWidth = 200;
-  let imageQuality = ImageSize.medium;
+  let imageQuality: (typeof ImageSize)[keyof typeof ImageSize] =
+    ImageSize.medium;
   if (width >= 1200) {
     pictureWidth = Math.floor(width / 5) - 5;
     imageQuality = ImageSize.large;

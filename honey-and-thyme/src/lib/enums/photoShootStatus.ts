@@ -16,7 +16,10 @@ const PhotoShootStatusEnum = {
   Paid: 4,
   Delivered: 5,
   Deleted: 6,
-};
+} as const;
+
+export type PhotoShootStatus =
+  (typeof PhotoShootStatusEnum)[keyof typeof PhotoShootStatusEnum];
 
 export default PhotoShootStatusMap;
 export { PhotoShootStatusEnum };

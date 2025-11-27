@@ -5,6 +5,8 @@ const ImageSize = {
   medium: 3,
   preview: 4,
   small: 5,
-};
+} as const;
+
+export type ImageSize = (typeof ImageSize)[keyof typeof ImageSize];
 
 export default ImageSize;

@@ -1,31 +1,31 @@
-import ImageSize from "../enums/imageSize";
+import ExportSize from "../enums/exportSize";
 import { useState } from "react";
 import HoneyModal from "./HoneyModal";
 
 interface ImageQualityOption {
-  value: number;
+  value: (typeof ExportSize)[keyof typeof ExportSize];
   label: string;
   description: string;
 }
 
 const QUALITY_OPTIONS: ImageQualityOption[] = [
   {
-    value: ImageSize.extraLarge,
+    value: ExportSize.FullRes,
     label: "Original",
     description: "Full resolution, perfect for printing",
   },
   {
-    value: ImageSize.large,
+    value: ExportSize.Large,
     label: "High",
     description: "Excellent quality for digital displays",
   },
   {
-    value: ImageSize.medium,
+    value: ExportSize.Medium,
     label: "Medium",
     description: "Good balance of quality and file size",
   },
   {
-    value: ImageSize.small,
+    value: ExportSize.Small,
     label: "Low",
     description: "Smaller file size, suitable for web sharing",
   },
@@ -34,7 +34,7 @@ const QUALITY_OPTIONS: ImageQualityOption[] = [
 interface HoneyQualitySelectorProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (quality: number) => void;
+  onSelect: (quality: (typeof ExportSize)[keyof typeof ExportSize]) => void;
   selectedImagesCount?: number;
 }
 
@@ -44,9 +44,9 @@ function HoneyQualitySelector({
   onSelect,
   selectedImagesCount,
 }: HoneyQualitySelectorProps) {
-  const [selectedQuality, setSelectedQuality] = useState<number>(
-    ImageSize.large,
-  );
+  const [selectedQuality, setSelectedQuality] = useState<
+    (typeof ExportSize)[keyof typeof ExportSize]
+  >(ExportSize.Large);
 
   return (
     <HoneyModal
@@ -66,7 +66,9 @@ function HoneyQualitySelector({
             key={option.value}
             className={`hover:border-honey-gold hover:bg-honey-gold/5 w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left ${selectedQuality === option.value ? "border-honey-gold bg-honey-gold/5" : ""}`}
             onClick={() => {
-              setSelectedQuality(option.value);
+              setSelectedQuality(
+                option.value as (typeof ExportSize)[keyof typeof ExportSize],
+              );
             }}
           >
             <div className="font-medium">{option.label}</div>

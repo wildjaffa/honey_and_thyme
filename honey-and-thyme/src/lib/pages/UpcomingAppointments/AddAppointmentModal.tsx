@@ -6,6 +6,7 @@ import PhotoShootType from "../../enums/photoShootType";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { PhotoShootStatusEnum } from "../../enums/photoShootStatus";
 import { addDays } from "../../utils/date";
+import type { PhotoShootModel } from "../../types/api";
 
 interface AddAppointmentModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export default function AddAppointmentModal({
 
     setIsSubmitting(true);
     try {
-      const photoShoots = [];
+      const photoShoots: PhotoShootModel[] = [];
       let currentStart = new Date(formData.startDate);
       const end = new Date(formData.endDate);
       const durationMs = formData.appointmentDuration * 60 * 1000;
@@ -83,8 +84,8 @@ export default function AddAppointmentModal({
           deposit: formData.deposit,
           endDateTimeUtc: currentEnd.toISOString(),
           description: formData.description,
-          photoShootType: PhotoShootType.calendarBooking as 0 | 1,
-          status: PhotoShootStatusEnum.Unbooked as 0 | 1 | 2 | 3 | 4 | 5 | 6,
+          photoShootType: PhotoShootType.calendarBooking,
+          status: PhotoShootStatusEnum.Scheduled,
         });
 
         currentStart = new Date(currentEnd.getTime() + breakMs);

@@ -12,6 +12,7 @@ import { faCircleDown, faImages } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import HoneyModal from "./HoneyModal";
+import ExportSize from "../enums/exportSize";
 
 interface DownloadProgressData {
   percentComplete: number;
@@ -56,7 +57,7 @@ function HoneyDownloadButton({
   };
 
   const initiateDownload = React.useCallback(
-    async (quality: number) => {
+    async (quality: (typeof ExportSize)[keyof typeof ExportSize]) => {
       setIsQualitySelectorOpen(false);
       setDownloadState({ isLoading: true, progress: 0 });
 
@@ -106,7 +107,7 @@ function HoneyDownloadButton({
                 ?.filter((img) => img.imageId != undefined)
                 .map((img) => img.imageId ?? "");
         // Start the download
-        const size = quality as 0 | 1 | 2 | 3 | 4;
+        const size = quality;
         const downloadRequest: DownloadRequest = {
           imageIds: imageIds ?? [],
           config: {

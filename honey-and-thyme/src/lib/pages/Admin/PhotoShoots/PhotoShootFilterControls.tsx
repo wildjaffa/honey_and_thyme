@@ -1,5 +1,3 @@
-// Mapping based on Flutter PhotoShootStatus enum
-
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import {
   HoneyCheckbox,
@@ -8,19 +6,12 @@ import {
 } from "../../../components";
 import { useState } from "react";
 import type { PhotoShootFilters } from "../../../hooks/usePhotoShoots";
+import PhotoShootStatusMap, {
+  PhotoShootStatusEnum,
+  type PhotoShootStatus,
+} from "../../../enums/photoShootStatus";
 
-// 0=Unbooked, 1=Scheduled, 2=Booked, 3=Confirmed, 4=Paid, 5=Delivered, 6=Deleted
-const PhotoShootStatusMap: Record<number, string> = {
-  0: "Unbooked",
-  1: "Scheduled",
-  2: "Booked",
-  3: "Confirmed",
-  4: "Paid",
-  5: "Delivered",
-  6: "Deleted",
-};
-
-const ALL_STATUSES = [0, 1, 2, 3, 4, 5, 6] as const;
+const ALL_STATUSES = Object.values(PhotoShootStatusEnum) as PhotoShootStatus[];
 
 interface PhotoShootFilterControlsProps {
   filters: PhotoShootFilters | undefined;
@@ -35,23 +26,20 @@ function PhotoShootFilterControls({
 
   // Initialize filters if undefined
   const currentFilters = filters || {
-    statuses: [3, 2, 4], // Default: Confirmed, Booked, Paid (matching Flutter)
-    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Default: 7 days ago
+    statuses: [
+      PhotoShootStatusEnum.Confirmed,
+      PhotoShootStatusEnum.Booked,
+      PhotoShootStatusEnum.Paid,
+    ],
+    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
   };
 
-  const handleStatusChange = (status: number, checked: boolean) => {
-    const currentStatuses = (currentFilters.statuses || []) as (
-      | 0
-      | 1
-      | 2
-      | 3
-      | 4
-      | 5
-      | 6
-    )[];
-    let newStatuses: (0 | 1 | 2 | 3 | 4 | 5 | 6)[];
+  const handleStatusChange = (status: PhotoShootStatus, checked: boolean) => {
+    const currentStatuses = (currentFilters.statuses ||
+      []) as PhotoShootStatus[];
+    let newStatuses: PhotoShootStatus[];
     if (checked) {
-      newStatuses = [...currentStatuses, status as 0 | 1 | 2 | 3 | 4 | 5 | 6];
+      newStatuses = [...currentStatuses, status];
     } else {
       newStatuses = currentStatuses.filter((s) => s !== status);
     }
@@ -65,7 +53,11 @@ function PhotoShootFilterControls({
 
   const clearFilters = () => {
     setFilters({
-      statuses: [3, 2, 4],
+      statuses: [
+        PhotoShootStatusEnum.Confirmed,
+        PhotoShootStatusEnum.Booked,
+        PhotoShootStatusEnum.Paid,
+      ],
       startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       endDate: undefined,
     });

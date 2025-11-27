@@ -78,7 +78,7 @@ function Invoice() {
         body: {
           amountToBeCharged: amountToBePaid,
           externalOrderId: data.orderID,
-          paymentProcessor: PaymentProcessor.PayPal as 0 | 1,
+          paymentProcessor: PaymentProcessor.PayPal,
           reservationCode: reservationCode,
           invoiceId: order.invoiceId,
         },
@@ -129,7 +129,7 @@ function Invoice() {
         amount: amountToBePaid,
         reservationCode: photoShoot.reservationCode,
         description: photoShoot.nameOfShoot,
-        paymentProcessorEnum: PaymentProcessor.PayPal as 0 | 1,
+        paymentProcessorEnum: PaymentProcessor.PayPal,
       };
 
       const response = await createPaymentMutation.mutateAsync({

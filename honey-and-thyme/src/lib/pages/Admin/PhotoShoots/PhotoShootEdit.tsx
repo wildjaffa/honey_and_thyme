@@ -13,7 +13,10 @@ import useProducts from "../../../hooks/useProducts";
 import type { PhotoShootModel } from "../../../types/api";
 import { toast } from "react-toastify";
 import PaymentProcessor from "../../../enums/paymentProcessor";
-import PhotoShootStatusMap from "../../../enums/photoShootStatus";
+import PhotoShootStatusMap, {
+  PhotoShootStatusEnum,
+} from "../../../enums/photoShootStatus";
+import PhotoShootType from "../../../enums/photoShootType";
 
 function PhotoShootEdit() {
   const { photoShootId } = useParams();
@@ -25,7 +28,8 @@ function PhotoShootEdit() {
   const { data: productsData } = useProducts();
 
   const [formState, setFormState] = useState<PhotoShootModel>({
-    status: 2,
+    status: PhotoShootStatusEnum.Booked,
+    photoShootType: PhotoShootType.customBooking,
   });
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
