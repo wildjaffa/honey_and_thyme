@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { HoneyButton } from "../../components";
+import CalendarSettings from "./CalendarSettings";
 
 function AdminIndex() {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ function AdminIndex() {
       <HoneyButton onClick={() => navigate("/available-appointments")}>
         Upcoming Appointments
       </HoneyButton>
+      <div className="max-w-2xs">
+        <CalendarSettings />
+      </div>
       <div className="im-fell-english text-center">Site Version 2.0.0</div>
     </div>
   );

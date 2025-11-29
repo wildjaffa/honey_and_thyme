@@ -13,5 +13,8 @@ export type PaginatedAlbumModels =
   components["schemas"]["AlbumModelPaginationResultModel"];
 export type PhotoShootModel = components["schemas"]["PhotoShootModel"];
 export type ProductModel = components["schemas"]["ProductModel"];
+export type CalendarListEntry = components["schemas"]["CalendarListEntry"];
+export type GoogleCalendarSettingsModel =
+  components["schemas"]["GoogleCalendarSettingsModel"];
 
 export type { default as PaginationResult } from "./paginationResult";
