@@ -1,6 +1,7 @@
 import createFetchClient, { type Middleware } from "openapi-fetch";
 import createClient from "openapi-react-query";
 import type { paths } from "./v1";
+import { getEnv } from "../utils/env";
 
 const bearerTokenMiddleware: Middleware = {
   async onRequest({ request }) {
@@ -13,7 +14,7 @@ const bearerTokenMiddleware: Middleware = {
 };
 
 const fetchClient = createFetchClient<paths>({
-  baseUrl: import.meta.env.VITE_BASE_URL,
+  baseUrl: getEnv("BASE_URL"),
   credentials: "include",
 });
 

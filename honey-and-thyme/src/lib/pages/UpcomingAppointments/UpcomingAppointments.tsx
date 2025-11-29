@@ -26,6 +26,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, A11y } from "swiper/modules";
 import "../../styles/SwiperStyles.css";
 import { PhotoShootStatusEnum } from "../../enums/photoShootStatus";
+import { getEnv } from "../../utils/env";
 
 function UpcomingAppointments() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ function UpcomingAppointments() {
 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl(`${import.meta.env.VITE_BASE_URL}/bookingHub`)
+      .withUrl(`${getEnv("BASE_URL")}/bookingHub`)
       .withAutomaticReconnect()
       .build();
 

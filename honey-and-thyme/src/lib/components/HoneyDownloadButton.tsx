@@ -13,6 +13,7 @@ import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import HoneyModal from "./HoneyModal";
 import ExportSize from "../enums/exportSize";
+import { getEnv } from "../utils/env";
 
 interface DownloadProgressData {
   percentComplete: number;
@@ -30,7 +31,7 @@ function HoneyDownloadButton({
   selectedImages,
   password,
 }: HoneyDownloadButtonProps) {
-  const apiUrl = import.meta.env.VITE_BASE_URL;
+  const apiUrl = getEnv("BASE_URL");
   const [isQualitySelectorOpen, setIsQualitySelectorOpen] =
     React.useState(false);
   const [downloadState, setDownloadState] = React.useState<{

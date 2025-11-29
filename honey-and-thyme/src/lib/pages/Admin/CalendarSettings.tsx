@@ -17,6 +17,7 @@ import {
   faCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import type { CalendarListEntry } from "../../types/api";
+import { getEnv } from "../../utils/env";
 
 // Declare google global for GIS
 declare global {
@@ -90,7 +91,7 @@ const CalendarSettings = () => {
   }, [validTokens, settings, isLoadingTokens, isLoadingSettings]);
 
   const requestAuthCode = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId = getEnv("GOOGLE_CLIENT_ID");
     if (!clientId) {
       console.error("Missing VITE_GOOGLE_CLIENT_ID");
       setIsConnecting(false);
