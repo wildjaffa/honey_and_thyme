@@ -92,11 +92,32 @@ interface HomeProps {
 function Home({ slowLoadImages = false }: HomeProps) {
   const controllerValue = useController(5, 5);
 
+  const width = useWindowWidth({ wait: 10 });
+  const isMobile = width < 768;
+
   const { data, error, isLoading } = useAlbum("site-images");
 
-  const width = useWindowWidth({ wait: 10 });
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        {isMobile ? (
+          <div className="flex flex-col pt-20">
+            <div className="px-2" style={{ height: 250 }} />
+            <div className="p-2" style={{ height: 350 }} />
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <div
+              className="px-2 pt-15"
+              style={{ height: Math.min(450, width / 2) }}
+            />
+            <div className="p-2" style={{ height: Math.min(450, width / 2) }} />
+          </div>
+        )}
+      </div>
+    );
+  }
 
-  if (isLoading) return <div />;
   if (error)
     return (
       <div className="p-4">Sorry, there was an issue loading the images.</div>
@@ -110,8 +131,6 @@ function Home({ slowLoadImages = false }: HomeProps) {
     const list = (album?.images as ImageModel[]) ?? [];
     return list.find((i) => i.fileName === fileName) ?? { fileName };
   };
-
-  const isMobile = width < 768;
 
   return (
     <div className="w-full">
