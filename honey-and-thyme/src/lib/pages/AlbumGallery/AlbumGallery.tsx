@@ -86,13 +86,15 @@ function AlbumGallery() {
           setSubmittedPassword(passwordField);
         }}
       >
-        <HoneyInput
-          id="password-input"
-          label="Password"
-          onChange={(value) => setPasswordField(value)}
-          value={passwordField}
-          placeholder="Enter album password"
-        />
+        <div className="w-1/2">
+          <HoneyInput
+            id="password-input"
+            label="Password"
+            onChange={(value) => setPasswordField(value)}
+            value={passwordField}
+            placeholder="Enter album password"
+          />
+        </div>
         <HoneyButton isSubmit label="Submit" />
       </form>
     );

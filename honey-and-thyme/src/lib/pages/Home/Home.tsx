@@ -42,7 +42,6 @@ interface HomePageImageProps {
   delayInSeconds: number;
   width?: number;
   height?: number;
-  slowLoadImages?: boolean;
 }
 
 function HomePageImage({
@@ -51,45 +50,36 @@ function HomePageImage({
   delayInSeconds,
   width,
   height,
-  slowLoadImages,
 }: HomePageImageProps) {
   const [loaded, setLoaded] = useState(false);
   const imageUrl = useImageUrl(image.imageId, ImageSize.medium);
   const size = useImageSize(image, width ?? null, height ?? null);
 
   // only render the img after controller value passes the delay (mimics Flutter animation controller)
-  const show = controllerValue >= delayInSeconds || slowLoadImages;
+  const show = controllerValue >= delayInSeconds;
 
   return (
     <div
       style={{ width: size.width, height: size.height }}
       className="relative"
     >
-      {!show ? (
-        <div style={{ width: size.width, height: size.height }} />
-      ) : (
-        <img
-          src={imageUrl}
-          alt={image.fileName ?? "photo"}
-          onLoad={() => setLoaded(true)}
-          style={{
-            opacity: loaded ? 1 : 0,
-            transition: "opacity 1s ease-in",
-            objectFit: "cover",
-            width: size.width,
-            height: size.height,
-          }}
-        />
-      )}
+      <img
+        src={imageUrl}
+        alt={image.fileName ?? "photo"}
+        onLoad={() => setLoaded(true)}
+        style={{
+          opacity: loaded && show ? 1 : 0,
+          transition: "opacity 1s ease-in",
+          objectFit: "cover",
+          width: size.width,
+          height: size.height,
+        }}
+      />
     </div>
   );
 }
 
-interface HomeProps {
-  slowLoadImages?: boolean;
-}
-
-function Home({ slowLoadImages = false }: HomeProps) {
+function Home() {
   const controllerValue = useController(5, 5);
 
   const width = useWindowWidth({ wait: 10 });
@@ -146,16 +136,14 @@ function Home({ slowLoadImages = false }: HomeProps) {
                   width={150}
                   delayInSeconds={0}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="pr-2">
                 <HomePageImage
                   image={findImage(fileNames[1])}
                   width={175}
-                  delayInSeconds={slowLoadImages ? 0 : 2}
+                  delayInSeconds={2}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="flex-1" />
@@ -170,18 +158,16 @@ function Home({ slowLoadImages = false }: HomeProps) {
                   <HomePageImage
                     image={findImage(fileNames[3])}
                     width={175}
-                    delayInSeconds={slowLoadImages ? 0 : 3}
+                    delayInSeconds={3}
                     controllerValue={controllerValue}
-                    slowLoadImages={slowLoadImages}
                   />
                 </div>
                 <div className="pt-2 pr-2">
                   <HomePageImage
                     image={findImage(fileNames[2])}
                     width={175}
-                    delayInSeconds={slowLoadImages ? 0 : 5}
+                    delayInSeconds={5}
                     controllerValue={controllerValue}
-                    slowLoadImages={slowLoadImages}
                   />
                 </div>
               </div>
@@ -191,18 +177,16 @@ function Home({ slowLoadImages = false }: HomeProps) {
                   <HomePageImage
                     image={findImage(fileNames[4])}
                     width={165}
-                    delayInSeconds={slowLoadImages ? 0 : 1}
+                    delayInSeconds={1}
                     controllerValue={controllerValue}
-                    slowLoadImages={slowLoadImages}
                   />
                 </div>
                 <div className="pt-2 pr-2">
                   <HomePageImage
                     image={findImage(fileNames[5])}
                     width={165}
-                    delayInSeconds={slowLoadImages ? 0 : 4}
+                    delayInSeconds={4}
                     controllerValue={controllerValue}
-                    slowLoadImages={slowLoadImages}
                   />
                 </div>
               </div>
@@ -226,25 +210,22 @@ function Home({ slowLoadImages = false }: HomeProps) {
                   width={183}
                   delayInSeconds={0}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="pr-6">
                 <HomePageImage
                   image={findImage(fileNames[1])}
                   width={250}
-                  delayInSeconds={slowLoadImages ? 0 : 2}
+                  delayInSeconds={2}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="pr-0">
                 <HomePageImage
                   image={findImage(fileNames[2])}
                   width={250}
-                  delayInSeconds={slowLoadImages ? 0 : 4}
+                  delayInSeconds={4}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="flex-1" />
@@ -261,27 +242,24 @@ function Home({ slowLoadImages = false }: HomeProps) {
                 <HomePageImage
                   image={findImage(fileNames[3])}
                   width={237.5}
-                  delayInSeconds={slowLoadImages ? 0 : 3}
+                  delayInSeconds={3}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="pr-2">
                 <HomePageImage
                   image={findImage(fileNames[4])}
                   width={233.75}
-                  delayInSeconds={slowLoadImages ? 0 : 5}
+                  delayInSeconds={5}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="pr-0">
                 <HomePageImage
                   image={findImage(fileNames[5])}
                   width={237.5}
-                  delayInSeconds={slowLoadImages ? 0 : 1}
+                  delayInSeconds={1}
                   controllerValue={controllerValue}
-                  slowLoadImages={slowLoadImages}
                 />
               </div>
               <div className="flex-1" />
