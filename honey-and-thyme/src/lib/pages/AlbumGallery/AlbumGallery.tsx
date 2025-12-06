@@ -86,7 +86,7 @@ function AlbumGallery() {
           setSubmittedPassword(passwordField);
         }}
       >
-        <div className="w-1/2">
+        <div>
           <HoneyInput
             id="password-input"
             label="Password"
