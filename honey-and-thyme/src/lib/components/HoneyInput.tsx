@@ -90,7 +90,7 @@ function HoneyInput({
                 }
               }
             }}
-            className={`border-honey-sage focus:ring-honey-gold focus:border-honey-gold w-fit flex-1 rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none ${className}`}
+            className={`border-honey-sage focus:ring-honey-gold focus:border-honey-gold min-w-0 flex-1 rounded-md border-2 bg-white px-3 py-2 shadow-sm focus:outline-none ${className}`}
             required={required}
             placeholder={placeholder}
             name={label}
