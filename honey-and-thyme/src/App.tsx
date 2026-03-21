@@ -39,6 +39,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/invoice/:reservationCode" element={<Invoice />} />
+                <Route path="/invoice" element={<Invoice />} />
                 <Route path="/pricing" element={<Pricing />} />
               </Routes>
               {/* <App /> */}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import useInvoice from "../../hooks/useInvoice";
 import { HoneyButton, HoneyInput, HoneyPageLoader } from "../../components";
@@ -33,7 +33,9 @@ const InvoiceStatus = {
 type InvoiceStatusType = (typeof InvoiceStatus)[keyof typeof InvoiceStatus];
 
 function Invoice() {
-  const { reservationCode } = useParams();
+  const { reservationCode: pathParam } = useParams();
+  const [searchParams] = useSearchParams();
+  const reservationCode = pathParam || searchParams.get("id") || undefined;
   const {
     data: photoShoot,
     isLoading,
