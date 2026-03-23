@@ -85,7 +85,7 @@ export default function AddAppointmentModal({
           endDateTimeUtc: currentEnd.toISOString(),
           description: formData.description,
           photoShootType: PhotoShootType.calendarBooking,
-          status: PhotoShootStatusEnum.Scheduled,
+          status: PhotoShootStatusEnum.Unbooked,
         });
 
         currentStart = new Date(currentEnd.getTime() + breakMs);
