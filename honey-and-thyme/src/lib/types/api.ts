@@ -1,0 +1,20 @@
+import type { components } from "../api/v1";
+
+export type AlbumModel = components["schemas"]["AlbumModel"];
+export type CreatePaymentRequest =
+  components["schemas"]["CreatePhotoShootPaymentRequest"];
+export type CreatePaymentResponse =
+  components["schemas"]["CreatePhotoShootPaymentResponse"];
+export type DownloadRequest = components["schemas"]["DownloadRequest"];
+export type DownloadResponse = components["schemas"]["DownloadResponse"];
+export type EmailRecordModel = components["schemas"]["EmailRecordModel"];
+export type ImageModel = components["schemas"]["ImageModel"];
+export type PaginatedAlbumModels =
+  components["schemas"]["AlbumModelPaginationResultModel"];
+export type PhotoShootModel = components["schemas"]["PhotoShootModel"];
+export type ProductModel = components["schemas"]["ProductModel"];
+export type CalendarListEntry = components["schemas"]["CalendarListEntry"];
+export type GoogleCalendarSettingsModel =
+  components["schemas"]["GoogleCalendarSettingsModel"];
+
+export type { default as PaginationResult } from "./paginationResult";

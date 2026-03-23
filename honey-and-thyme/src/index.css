@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Your existing font faces and classes below */
+
+@theme {
+  --color-honey-gray: #d3d3d3;
+  --color-honey-gold: #bb964e;
+  --color-honey-sage: #90a4a5;
+  --color-honey-pink: #eadcd6;
+}
+
+:root {
+  background-color: var(--color-honey-gray);
+}
+
+@font-face {
+  font-family: "MarchRough";
+  /* set name */
+  src: local("MarchRough"), url(../src/assets/fonts/March-Rough.ttf);
+  /* url of the font */
+}
+
+.im-fell-english-sc-regular {
+  font-family: "IM Fell English SC", serif;
+  font-style: normal;
+}
+
+.im-fell-english {
+  font-family: "IM Fell English", serif;
+  font-style: normal;
+}
+
+.march-rough {
+  font-family: "MarchRough", serif;
+  font-style: normal;
+}
+
+:root {
+  background-color: var(--color-honey-gray);
+}
+
+:root:has(.no-doc-scroll) {
+    overflow:hidden;
+}
+
+.shimmer {
+  background-color: var(--color-gray-200);
+  display: inline-block;
+  mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/350% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    mask-position: left;
+  }
+}
